@@ -21,7 +21,7 @@ export declare const SettingsContent: {
         readonly captureReportLogs: "Capture report logs";
         readonly captureReportLogsHint: "Keeps a run log on each report for debugging. Turn off to keep reports small.";
         readonly additionalSites: "Additional site URLs";
-        readonly additionalSitesHint: "One absolute URL per line. The host site is always included.";
+        readonly additionalSitesHint: "One absolute URL per line. The host site is always included. A run audits one of these at a time, picked when the run starts.";
     };
     readonly folder: {
         readonly title: "Report folder";

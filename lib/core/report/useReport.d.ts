@@ -19,6 +19,9 @@ export interface ReportController<TData, TConfig = Record<string, unknown>> {
     open(serverRelativeUrl: string): Promise<void>;
     /** Loads a previously exported run from a file, without touching the library. */
     importJson(file: File): Promise<void>;
+    /** Keeps the current settings as the starting point for future runs. */
+    saveConfigAsDefault(): void;
+    resetConfig(): void;
     resumeSaved(serverRelativeUrl: string): Promise<void>;
     clear(): void;
 }

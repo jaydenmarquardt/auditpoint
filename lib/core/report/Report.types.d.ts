@@ -4,6 +4,10 @@ export interface ConfigField<TConfig> {
     key: keyof TConfig & string;
     label: string;
     type: ConfigFieldType;
+    /** Heading this field sits under in the run dialog. Ungrouped fields come first. */
+    group?: string;
+    /** Text fields holding a list read better with room for one entry per line. */
+    multiline?: boolean;
     description?: string;
     required?: boolean;
     min?: number;
@@ -27,9 +31,12 @@ export interface StageContext<TData, TConfig> {
     /** Blocks while the run is paused; call inside long loops. */
     waitIfPaused(): Promise<void>;
 }
+/** What a stage spends its time on, so a slow run can be read at a glance. */
+export type StageWork = "network" | "client" | "both";
 export interface ReportStageDefinition<TData, TConfig> {
     key: string;
     label: string;
+    work?: StageWork;
     run(context: StageContext<TData, TConfig>): Promise<void>;
 }
 export interface ReportDefinition<TData, TConfig = Record<string, unknown>> {

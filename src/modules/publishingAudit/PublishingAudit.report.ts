@@ -35,6 +35,7 @@ export const publishingAuditReport: ReportDefinition<PublishingAuditData, Publis
       key: "months",
       label: "Timeframe (months)",
       type: "number",
+      group: "Thresholds",
       min: 1,
       max: 60,
       step: 1,
@@ -44,6 +45,7 @@ export const publishingAuditReport: ReportDefinition<PublishingAuditData, Publis
       key: "staleDays",
       label: "Stale after (days)",
       type: "number",
+      group: "Thresholds",
       min: 30,
       max: 3650,
       step: 30,
@@ -53,6 +55,7 @@ export const publishingAuditReport: ReportDefinition<PublishingAuditData, Publis
       key: "listScope",
       label: "Lists to read",
       type: "choice",
+      group: "Options",
       options: [
         { key: "all", text: "Every list and library" },
         { key: "pages", text: "Site Pages only" },
@@ -64,18 +67,22 @@ export const publishingAuditReport: ReportDefinition<PublishingAuditData, Publis
       key: "listNames",
       label: "List names",
       type: "text",
+      group: "Columns and paths",
+      multiline: true,
       description: "Comma separated titles, used when the scope is set to named lists.",
     },
     {
       key: "includeHidden",
       label: "Include hidden and system lists",
       type: "toggle",
+      group: "What to scan",
       description: "System lists rarely hold published content and add a lot of noise.",
     },
     {
       key: "maxLists",
       label: "Maximum lists per site",
       type: "number",
+      group: "Limits",
       min: 5,
       max: 500,
       step: 5,
@@ -85,6 +92,7 @@ export const publishingAuditReport: ReportDefinition<PublishingAuditData, Publis
       key: "maxItemsPerList",
       label: "Maximum items per list",
       type: "number",
+      group: "Limits",
       min: 50,
       max: 5000,
       step: 50,
@@ -94,18 +102,22 @@ export const publishingAuditReport: ReportDefinition<PublishingAuditData, Publis
       key: "dateColumns",
       label: "Extra date columns",
       type: "text",
+      group: "Columns and paths",
+      multiline: true,
       description: "Comma separated internal names, for example ReviewDate,ExpiryDate. Missing columns are ignored.",
     },
     {
       key: "readVersions",
       label: "Read version history",
       type: "toggle",
+      group: "What to scan",
       description: "One request per sampled item. Off still reports the version label held on the item.",
     },
     {
       key: "versionSample",
       label: "Items sampled for versions",
       type: "number",
+      group: "Thresholds",
       min: 10,
       max: 5000,
       step: 10,
@@ -115,6 +127,7 @@ export const publishingAuditReport: ReportDefinition<PublishingAuditData, Publis
       key: "versionDepth",
       label: "Versions read per item",
       type: "number",
+      group: "Thresholds",
       min: 5,
       max: 500,
       step: 5,
@@ -124,6 +137,7 @@ export const publishingAuditReport: ReportDefinition<PublishingAuditData, Publis
       key: "readPopularity",
       label: "Read view counts from search",
       type: "toggle",
+      group: "What to scan",
       description: "One search request adds recent and lifetime views for items search knows about.",
     },
   ],
@@ -131,6 +145,7 @@ export const publishingAuditReport: ReportDefinition<PublishingAuditData, Publis
   stages: [
     {
       key: "items",
+      work: "both",
       label: "Read items",
       async run(context) {
         const columns = context.config.dateColumns
@@ -189,6 +204,7 @@ export const publishingAuditReport: ReportDefinition<PublishingAuditData, Publis
     },
     {
       key: "versions",
+      work: "network",
       label: "Read version history",
       async run(context) {
         if (!context.config.readVersions) {
@@ -233,6 +249,7 @@ export const publishingAuditReport: ReportDefinition<PublishingAuditData, Publis
     },
     {
       key: "popularity",
+      work: "network",
       label: "Read view counts",
       async run(context) {
         if (!context.config.readPopularity) {
@@ -262,6 +279,7 @@ export const publishingAuditReport: ReportDefinition<PublishingAuditData, Publis
     },
     {
       key: "summarise",
+      work: "client",
       label: "Summarise",
       async run(context) {
         const items = context.data.items ?? [];

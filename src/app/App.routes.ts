@@ -49,7 +49,7 @@ const SYSTEM_ROUTES: RouteDefinition[] = [
   {
     key: "reports",
     label: "Reports",
-    iconName: "ReportDocument",
+    iconName: "ReportLibrary",
     description: "Saved report output.",
     group: "system",
     load: () =>

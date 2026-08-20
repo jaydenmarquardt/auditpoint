@@ -6,7 +6,11 @@ import { Notice } from "@/components/feedback/Notice";
 import { Toolbar } from "@/components/layout/Toolbar";
 import { Modal } from "@/components/actions/Modal";
 import { ReportDetails } from "@/modules/shared/ReportDetails";
-import { useSettings } from "@/api/Settings.api";
+import { getSettings, useSettings } from "@/api/Settings.api";
+import { Dropdown } from "@/components/inputs/Dropdown";
+import { NumberField } from "@/components/inputs/NumberField";
+import { FieldRow } from "@/components/inputs/FieldRow";
+import { configureThrottle } from "@/api/Throttle.api";
 import { ProgressStatus, ProgressStep } from "@/components/Components.types";
 import { Theme } from "@/theme/Theme.api";
 import { ReportEnvelope } from "@/api/Reports.types";
@@ -33,6 +37,16 @@ export const ReportRunPanel: React.FC<ReportRunPanelProps> = ({
   const throttle = useThrottleState();
   const [internalOpen, setInternalOpen] = React.useState(false);
   const fileInput = React.useRef<HTMLInputElement>(null);
+  const sites = useSettings((settings) => settings.sites);
+  // A run reads one site: several at once made every count ambiguous.
+  const [site, setSite] = React.useState<string>(() => getSettings().sites[0]?.url ?? "");
+  const [concurrency, setConcurrency] = React.useState<number>(() => getSettings().concurrency);
+  const [saved, setSaved] = React.useState(false);
+
+  const startRun = (): void => {
+    configureThrottle({ concurrency });
+    controller.start(site ? [site] : undefined);
+  };
   const open = configOpen ?? internalOpen;
 
   const setOpen = (next: boolean): void => {
@@ -43,6 +57,7 @@ export const ReportRunPanel: React.FC<ReportRunPanelProps> = ({
   const steps: ProgressStep[] = (envelope?.stages ?? []).map((stage) => ({
     key: stage.key,
     label: stage.label,
+    work: definition?.stages.find((entry) => entry.key === stage.key)?.work,
     status: stage.status as ProgressStatus,
     ratio: stage.total ? stage.processed / stage.total : undefined,
     countLabel: countLabel(stage),
@@ -143,14 +158,45 @@ export const ReportRunPanel: React.FC<ReportRunPanelProps> = ({
                 iconName="Play"
                 onClick={() => {
                   setOpen(false);
-                  controller.start();
+                  setSaved(false);
+                  startRun();
                 }}
               />
+              <Button
+                label={saved ? "Saved" : "Save as default"}
+                iconName="Save"
+                onClick={() => {
+                  controller.saveConfigAsDefault();
+                  setSaved(true);
+                }}
+              />
+              <Button label="Reset" iconName="Undo" onClick={() => { controller.resetConfig(); setSaved(false); }} />
               <Button label={runLabel.cancel} onClick={() => setOpen(false)} />
             </>
           }
         >
-          {configPanel}
+          <div style={{ display: "grid", gap: Theme.tokens.space.md }}>
+            <FieldRow>
+              <Dropdown
+                label="Site to audit"
+                options={sites.map((target) => ({ key: target.url, text: target.title || target.url }))}
+                selectedKey={site}
+                onChange={setSite}
+              />
+              <NumberField
+                label="Parallel requests"
+                value={concurrency}
+                min={1}
+                max={12}
+                onChange={setConcurrency}
+              />
+            </FieldRow>
+
+            {/* The fields scroll; the actions below them do not. */}
+            <div style={{ maxHeight: "52vh", overflowY: "auto", paddingRight: Theme.tokens.space.xs }}>
+              {configPanel}
+            </div>
+          </div>
         </Modal>
       )}
 

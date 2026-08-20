@@ -6,7 +6,7 @@ import { Card } from "@/components/layout/Card";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { StatTile } from "@/components/layout/StatTile";
 import { Tokens } from "@/theme/Tokens";
-import { ROUTES } from "@/app/App.routes";
+import { GROUP_LABELS, ROUTES } from "@/app/App.routes";
 import { navigate } from "@/core/state/App.store";
 import { useActiveTaskCount } from "@/core/queue/Queue.store";
 import { useApp } from "@/core/context/App.context";
@@ -79,38 +79,51 @@ const Dashboard: React.FC = () => {
         </div>
       )}
 
-      <h2 style={{ fontSize: Tokens.font.lg, margin: `0 0 ${Tokens.space.md}` }}>
-        {DashboardContent.toolsTitle}
-      </h2>
+      {(["audits", "tools", "system"] as const).map((group) => {
+        const routes = ROUTES.filter(
+          (route) =>
+            route.group === group &&
+            route.key !== "dashboard" &&
+            !route.hidden &&
+            isModuleEnabled(route.key, disabledModules)
+        );
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(min(260px, 100%), 1fr))",
-          gap: Tokens.space.md,
-        }}
-      >
-        {ROUTES.filter(
-          (route) => route.key !== "dashboard" && !route.hidden && isModuleEnabled(route.key, disabledModules)
-        ).map((route) => {
-          const module = findModule(route.key);
-          const locked = Boolean(module) && module?.requiresConfig !== false && !config.configured;
+        if (routes.length === 0) return undefined;
 
-          return (
-            <Card
-              key={route.key}
-              title={route.label}
-              subtitle={route.description}
-              onClick={() => navigate(locked ? "settings" : route.key)}
+        return (
+          <section key={group} style={{ marginBottom: Tokens.space.lg }}>
+            <h2 style={{ fontSize: Tokens.font.lg, margin: `0 0 ${Tokens.space.md}` }}>{GROUP_LABELS[group]}</h2>
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(min(260px, 100%), 1fr))",
+                gap: Tokens.space.md,
+              }}
             >
-              <span style={{ color: locked ? Tokens.colour.textMuted : Tokens.colour.accent, fontWeight: 600 }}>
-                <i className={`ms-Icon ms-Icon--${locked ? "Lock" : route.iconName}`} aria-hidden="true" />{" "}
-                {locked ? "Configure to enable" : "Open"}
-              </span>
-            </Card>
-          );
-        })}
-      </div>
+              {routes.map((route) => {
+                const module = findModule(route.key);
+                const locked = Boolean(module) && module?.requiresConfig !== false && !config.configured;
+
+                return (
+                  <Card
+                    key={route.key}
+                    title={route.label}
+                    subtitle={route.description}
+                    onClick={() => navigate(locked ? "settings" : route.key)}
+                  >
+                    <span style={{ color: locked ? Tokens.colour.textMuted : Tokens.colour.accent, fontWeight: 600 }}>
+                      <i className={`ms-Icon ms-Icon--${locked ? "Lock" : route.iconName}`} aria-hidden="true" />{" "}
+                      {locked ? "Configure to enable" : "Open"}
+                    </span>
+                  </Card>
+                );
+              })}
+            </div>
+          </section>
+        );
+      })}
+
     </>
   );
 };

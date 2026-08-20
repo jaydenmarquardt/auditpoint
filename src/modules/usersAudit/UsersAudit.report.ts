@@ -29,6 +29,7 @@ export const usersAuditReport: ReportDefinition<UsersAuditData, UsersAuditConfig
       key: "months",
       label: "Timeframe (months)",
       type: "number",
+      group: "Thresholds",
       min: 1,
       max: 60,
       step: 1,
@@ -38,6 +39,7 @@ export const usersAuditReport: ReportDefinition<UsersAuditData, UsersAuditConfig
       key: "recentDays",
       label: "Recent window (days)",
       type: "number",
+      group: "Thresholds",
       min: 7,
       max: 365,
       step: 7,
@@ -47,24 +49,28 @@ export const usersAuditReport: ReportDefinition<UsersAuditData, UsersAuditConfig
       key: "includeSystemAccounts",
       label: "Include system accounts",
       type: "toggle",
+      group: "What to scan",
       description: "Keeps app and service identities in the counts. Off gives a cleaner people number.",
     },
     {
       key: "readGroups",
       label: "Read groups and membership",
       type: "toggle",
+      group: "What to scan",
       description: "One request per group. Needed for group sizes and the people in no group count.",
     },
     {
       key: "readProfiles",
       label: "Read user profiles",
       type: "toggle",
+      group: "What to scan",
       description: "One profile service request per sampled person, for department, job title and photo.",
     },
     {
       key: "profileSample",
       label: "Profiles sampled",
       type: "number",
+      group: "Thresholds",
       min: 10,
       max: 5000,
       step: 10,
@@ -75,6 +81,7 @@ export const usersAuditReport: ReportDefinition<UsersAuditData, UsersAuditConfig
   stages: [
     {
       key: "users",
+      work: "network",
       label: "Read site users",
       async run(context) {
         const api = SiteUsers(context.siteUrl);
@@ -96,6 +103,7 @@ export const usersAuditReport: ReportDefinition<UsersAuditData, UsersAuditConfig
     },
     {
       key: "groups",
+      work: "network",
       label: "Read groups",
       async run(context) {
         if (!context.config.readGroups) {
@@ -110,6 +118,7 @@ export const usersAuditReport: ReportDefinition<UsersAuditData, UsersAuditConfig
     },
     {
       key: "profiles",
+      work: "network",
       label: "Read profiles",
       async run(context) {
         if (!context.config.readProfiles) {
@@ -145,6 +154,7 @@ export const usersAuditReport: ReportDefinition<UsersAuditData, UsersAuditConfig
     },
     {
       key: "summarise",
+      work: "client",
       label: "Summarise",
       async run(context) {
         const users = context.data.users ?? [];

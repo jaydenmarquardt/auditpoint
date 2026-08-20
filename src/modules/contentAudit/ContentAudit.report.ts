@@ -32,6 +32,7 @@ export const contentAuditReport: ReportDefinition<ContentAuditData, ContentAudit
       key: "maxPages",
       label: "Maximum pages per site",
       type: "number",
+      group: "Limits",
       min: 10,
       max: 20000,
       step: 50,
@@ -41,24 +42,29 @@ export const contentAuditReport: ReportDefinition<ContentAuditData, ContentAudit
       key: "scanListItems",
       label: "Scan rich text columns on lists",
       type: "toggle",
+      group: "What to scan",
       description: "Reads list items that carry HTML, such as an event description or a news body.",
     },
     {
       key: "autoDetectColumns",
       label: "Detect rich text columns automatically",
       type: "toggle",
+      group: "What to scan",
       description: "Looks at each list's fields for multi line and HTML columns instead of relying on names alone.",
     },
     {
       key: "columnNames",
       label: "Column names to include",
       type: "text",
+      group: "Columns and paths",
+      multiline: true,
       description: "Comma separated internal names, always checked even when detection is off.",
     },
     {
       key: "maxItemsPerList",
       label: "Maximum items per list",
       type: "number",
+      group: "Limits",
       min: 50,
       max: 5000,
       step: 50,
@@ -68,6 +74,7 @@ export const contentAuditReport: ReportDefinition<ContentAuditData, ContentAudit
       key: "maxLists",
       label: "Maximum lists per site",
       type: "number",
+      group: "Limits",
       min: 5,
       max: 500,
       step: 5,
@@ -77,6 +84,7 @@ export const contentAuditReport: ReportDefinition<ContentAuditData, ContentAudit
       key: "thinWordCount",
       label: "Thin content under (words)",
       type: "number",
+      group: "Thresholds",
       min: 20,
       max: 2000,
       step: 10,
@@ -87,6 +95,7 @@ export const contentAuditReport: ReportDefinition<ContentAuditData, ContentAudit
   stages: [
     {
       key: "pages",
+      work: "both",
       label: "Read and measure pages",
       async run(context) {
         const host = hostOf(context.siteUrl);
@@ -113,6 +122,7 @@ export const contentAuditReport: ReportDefinition<ContentAuditData, ContentAudit
     },
     {
       key: "items",
+      work: "both",
       label: "Read and measure list content",
       async run(context) {
         if (!context.config.scanListItems) {
@@ -184,6 +194,7 @@ export const contentAuditReport: ReportDefinition<ContentAuditData, ContentAudit
     },
     {
       key: "summarise",
+      work: "client",
       label: "Summarise",
       async run(context) {
         const entries = context.data.entries ?? [];

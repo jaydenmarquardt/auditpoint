@@ -31,24 +31,28 @@ export const listsAuditReport: ReportDefinition<ListsAuditData, ListsAuditConfig
       key: "includeHidden",
       label: "Include hidden and system lists",
       type: "toggle",
+      group: "What to scan",
       description: "Adds catalogs and system lists such as the Master Page Gallery. Off keeps the report to content lists.",
     },
     {
       key: "readContentTypes",
       label: "Read content types",
       type: "toggle",
+      group: "What to scan",
       description: "One batched request per 20 lists. Off if you only care about sizes and counts.",
     },
     {
       key: "scanItems",
       label: "Scan items for folders, files and sizes",
       type: "toggle",
+      group: "What to scan",
       description: "Pages every list to count folders and files and sum file sizes. This is the slow part of the run.",
     },
     {
       key: "maxItemsPerList",
       label: "Maximum items scanned per list",
       type: "number",
+      group: "Limits",
       min: 100,
       max: 50000,
       step: 100,
@@ -58,6 +62,7 @@ export const listsAuditReport: ReportDefinition<ListsAuditData, ListsAuditConfig
       key: "staleDays",
       label: "Stale after (days)",
       type: "number",
+      group: "Thresholds",
       min: 30,
       max: 3650,
       step: 30,
@@ -67,6 +72,7 @@ export const listsAuditReport: ReportDefinition<ListsAuditData, ListsAuditConfig
       key: "maxLists",
       label: "Maximum lists per site",
       type: "number",
+      group: "Limits",
       min: 10,
       max: 2000,
       step: 10,
@@ -77,6 +83,7 @@ export const listsAuditReport: ReportDefinition<ListsAuditData, ListsAuditConfig
   stages: [
     {
       key: "inventory",
+      work: "network",
       label: "Read lists",
       async run(context) {
         const lists = await SiteLists(context.siteUrl).getAll(context.config.includeHidden);
@@ -91,6 +98,7 @@ export const listsAuditReport: ReportDefinition<ListsAuditData, ListsAuditConfig
     },
     {
       key: "contentTypes",
+      work: "network",
       label: "Read content types",
       async run(context) {
         if (!context.config.readContentTypes) {
@@ -130,6 +138,7 @@ export const listsAuditReport: ReportDefinition<ListsAuditData, ListsAuditConfig
     },
     {
       key: "items",
+      work: "both",
       label: "Scan items",
       async run(context) {
         if (!context.config.scanItems) {
@@ -166,6 +175,7 @@ export const listsAuditReport: ReportDefinition<ListsAuditData, ListsAuditConfig
     },
     {
       key: "summarise",
+      work: "client",
       label: "Summarise",
       async run(context) {
         const lists = context.data.lists ?? [];

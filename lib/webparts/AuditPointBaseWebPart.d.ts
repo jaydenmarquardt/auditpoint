@@ -16,6 +16,8 @@ export interface AuditPointSetup {
     settings?: Partial<SettingsFile>;
     /** Starting config per report kind, merged over that report's own defaults. */
     reportDefaults?: Record<string, Record<string, unknown>>;
+    /** The component board is a development aid, so a host ships it deliberately. */
+    componentBoard?: boolean;
 }
 /** Per module switch, stored as `module_<key>` so the property pane can bind to it. */
 export declare function modulePropertyKey(key: string): string;

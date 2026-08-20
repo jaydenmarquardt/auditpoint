@@ -66,6 +66,7 @@ export const linkAuditReport: ReportDefinition<LinkAuditData, LinkAuditConfig> =
       key: "maxPages",
       label: "Maximum pages per site",
       type: "number",
+      group: "Limits",
       min: 10,
       max: 20000,
       step: 50,
@@ -75,30 +76,36 @@ export const linkAuditReport: ReportDefinition<LinkAuditData, LinkAuditConfig> =
       key: "scanWebParts",
       label: "Scan web part properties",
       type: "toggle",
+      group: "What to scan",
       description: "Finds links saved in web part settings, such as a quick links or hero tile.",
     },
     {
       key: "scanListItems",
       label: "Scan rich text columns on lists",
       type: "toggle",
+      group: "What to scan",
       description: "Reads list items carrying HTML, such as an event description or a news body.",
     },
     {
       key: "autoDetectColumns",
       label: "Detect rich text columns automatically",
       type: "toggle",
+      group: "What to scan",
       description: "Reads each list's fields rather than relying on column names alone.",
     },
     {
       key: "columnNames",
       label: "Column names to include",
       type: "text",
+      group: "Columns and paths",
+      multiline: true,
       description: "Comma separated internal names, always checked when present on the list.",
     },
     {
       key: "maxItemsPerList",
       label: "Maximum items per list",
       type: "number",
+      group: "Limits",
       min: 50,
       max: 5000,
       step: 50,
@@ -108,6 +115,7 @@ export const linkAuditReport: ReportDefinition<LinkAuditData, LinkAuditConfig> =
       key: "maxLists",
       label: "Maximum lists per site",
       type: "number",
+      group: "Limits",
       min: 5,
       max: 500,
       step: 5,
@@ -117,12 +125,14 @@ export const linkAuditReport: ReportDefinition<LinkAuditData, LinkAuditConfig> =
       key: "scanNavigation",
       label: "Scan navigation menus",
       type: "toggle",
+      group: "What to scan",
       description: "Adds the quick launch and top navigation as one item, so menu links resolve like any other.",
     },
     {
       key: "scanAttachments",
       label: "Scan list item attachments",
       type: "toggle",
+      group: "What to scan",
       description:
         "Reads the attachments hanging off list items, so a link inside an attached document counts like any other.",
     },
@@ -130,6 +140,8 @@ export const linkAuditReport: ReportDefinition<LinkAuditData, LinkAuditConfig> =
       key: "configPaths",
       label: "Configuration files to scan",
       type: "text",
+      group: "Columns and paths",
+      multiline: true,
       description:
         "Comma separated server relative paths to JSON files, such as /sites/intranet/SiteAssets/config.json. Every url shaped value inside is read as a link.",
     },
@@ -137,6 +149,8 @@ export const linkAuditReport: ReportDefinition<LinkAuditData, LinkAuditConfig> =
       key: "megaMenuPath",
       label: "Mega menu configuration file",
       type: "text",
+      group: "Columns and paths",
+      multiline: true,
       description:
         "Server relative path to a config file holding a megamenu.items tree. Its links are read with the trail through the menu as the label.",
     },
@@ -144,12 +158,14 @@ export const linkAuditReport: ReportDefinition<LinkAuditData, LinkAuditConfig> =
       key: "includeDocuments",
       label: "Inventory documents in libraries",
       type: "toggle",
+      group: "What to scan",
       description: "Needed for links that point at a file to resolve to something.",
     },
     {
       key: "maxFilesPerLibrary",
       label: "Maximum files per library",
       type: "number",
+      group: "Limits",
       min: 100,
       max: 20000,
       step: 100,
@@ -159,18 +175,21 @@ export const linkAuditReport: ReportDefinition<LinkAuditData, LinkAuditConfig> =
       key: "scanDocx",
       label: "Read links inside Word files",
       type: "toggle",
+      group: "What to scan",
       description: "Downloads each .docx and reads its hyperlinks in the browser. Slow on a large library.",
     },
     {
       key: "scanPdf",
       label: "Read links inside PDF files",
       type: "toggle",
+      group: "What to scan",
       description: "Downloads each .pdf and reads its link annotations in the browser. Slow on a large library.",
     },
     {
       key: "scanHtmlFiles",
       label: "Read links inside .html and .htm files",
       type: "toggle",
+      group: "What to scan",
       description:
         "Reads html files held in libraries or attached to items, which is where a migrated page usually ends up.",
     },
@@ -178,6 +197,7 @@ export const linkAuditReport: ReportDefinition<LinkAuditData, LinkAuditConfig> =
       key: "maxDocumentMb",
       label: "Skip documents larger than (MB)",
       type: "number",
+      group: "Thresholds",
       min: 1,
       max: 100,
       step: 1,
@@ -187,6 +207,7 @@ export const linkAuditReport: ReportDefinition<LinkAuditData, LinkAuditConfig> =
       key: "checkBrokenLinks",
       label: "Request unresolved links on this tenancy",
       type: "toggle",
+      group: "What to scan",
       description:
         "Asks the server for every link that matched nothing, to tell a typo from a page that simply was not scanned. External links cannot be tested from the browser.",
     },
@@ -194,6 +215,8 @@ export const linkAuditReport: ReportDefinition<LinkAuditData, LinkAuditConfig> =
       key: "legacyHosts",
       label: "Retired hosts",
       type: "text",
+      group: "Columns and paths",
+      multiline: true,
       description:
         "Comma separated hosts that have been switched off, such as an old intranet. Every link to one is reported as broken without being requested.",
     },
@@ -202,6 +225,7 @@ export const linkAuditReport: ReportDefinition<LinkAuditData, LinkAuditConfig> =
   stages: [
     {
       key: "pages",
+      work: "both",
       label: "Read links on pages",
       async run(context) {
         const scanner = LinkScanner(context.siteUrl);
@@ -252,6 +276,7 @@ export const linkAuditReport: ReportDefinition<LinkAuditData, LinkAuditConfig> =
 
     {
       key: "items",
+      work: "both",
       label: "Read links in list content",
       async run(context) {
         if (!context.config.scanListItems) {
@@ -341,6 +366,7 @@ export const linkAuditReport: ReportDefinition<LinkAuditData, LinkAuditConfig> =
 
     {
       key: "navigation",
+      work: "network",
       label: "Read links in navigation",
       async run(context) {
         if (!context.config.scanNavigation) {
@@ -382,6 +408,7 @@ export const linkAuditReport: ReportDefinition<LinkAuditData, LinkAuditConfig> =
 
     {
       key: "config",
+      work: "both",
       label: "Read links in configuration files",
       async run(context) {
         const paths = splitPaths(context.config.configPaths);
@@ -440,6 +467,7 @@ export const linkAuditReport: ReportDefinition<LinkAuditData, LinkAuditConfig> =
 
     {
       key: "attachments",
+      work: "both",
       label: "Inventory item attachments",
       async run(context) {
         if (!context.config.scanAttachments) {
@@ -501,6 +529,7 @@ export const linkAuditReport: ReportDefinition<LinkAuditData, LinkAuditConfig> =
 
     {
       key: "documents",
+      work: "both",
       label: "Inventory documents",
       async run(context) {
         if (!context.config.includeDocuments) {
@@ -566,6 +595,7 @@ export const linkAuditReport: ReportDefinition<LinkAuditData, LinkAuditConfig> =
 
     {
       key: "files",
+      work: "both",
       label: "Read links inside documents",
       async run(context) {
         const kinds = [
@@ -645,6 +675,7 @@ export const linkAuditReport: ReportDefinition<LinkAuditData, LinkAuditConfig> =
 
     {
       key: "resolve",
+      work: "client",
       label: "Resolve and classify links",
       async run(context) {
         const references = context.data.references ?? [];
@@ -668,6 +699,7 @@ export const linkAuditReport: ReportDefinition<LinkAuditData, LinkAuditConfig> =
 
     {
       key: "broken",
+      work: "network",
       label: "Check unresolved links",
       async run(context) {
         if (!context.config.checkBrokenLinks) {
@@ -707,6 +739,7 @@ export const linkAuditReport: ReportDefinition<LinkAuditData, LinkAuditConfig> =
 
     {
       key: "summarise",
+      work: "client",
       label: "Summarise",
       async run(context) {
         const references = context.data.references ?? [];

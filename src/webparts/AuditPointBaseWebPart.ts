@@ -12,7 +12,7 @@ import App from "@/app/App";
 import { setupSp } from "@/api/Sp.api";
 import { initSettings, registerSettingsWriter } from "@/api/Settings.api";
 import { appStore } from "@/core/state/App.store";
-import { MODULES, setHostModules } from "@/modules/Modules.registry";
+import { MODULES, setHiddenRoutes, setHostModules } from "@/modules/Modules.registry";
 import { setReportDefaults } from "@/core/report/Report.store";
 import { SettingsFile } from "@/api/Settings.types";
 import { APP_VERSION } from "@/version";
@@ -32,6 +32,8 @@ export interface AuditPointSetup {
   settings?: Partial<SettingsFile>;
   /** Starting config per report kind, merged over that report's own defaults. */
   reportDefaults?: Record<string, Record<string, unknown>>;
+  /** The component board is a development aid, so a host ships it deliberately. */
+  componentBoard?: boolean;
 }
 
 /** Per module switch, stored as `module_<key>` so the property pane can bind to it. */
@@ -158,6 +160,7 @@ export abstract class AuditPointBaseWebPart<
     setupSp(this.context);
     setHostModules(this.offered().filter((module) => this.moduleEnabled(module.key)).map((module) => module.key));
     setReportDefaults(this.host.reportDefaults);
+    setHiddenRoutes(this.host.componentBoard ? [] : ["components"]);
 
     // The app edits its own settings, so it writes back onto this web part.
     registerSettingsWriter((json: string) => {

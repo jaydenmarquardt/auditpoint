@@ -5,6 +5,7 @@ import { ReportEnvelope, StageStatus } from "@/api/Reports.types";
 import { Reports } from "@/api/Reports.api";
 import { getContext } from "@/api/Sp.api";
 import { getSettings } from "@/api/Settings.api";
+import { readLocal, writeLocal } from "@/utils/Storage.util";
 import { AppSettings } from "@/api/Settings.types";
 import { ReportDefinition } from "@/core/report/Report.types";
 import { runReport } from "@/core/report/Report.engine";
@@ -52,7 +53,21 @@ export function reportConfig<TConfig>(definition: ReportDefinition<unknown, TCon
     ...definition.defaultConfig,
     ...(hostConfigDefaults.get(definition.kind) ?? {}),
     ...mappedConfig(definition.kind, getSettings()),
+    // Whatever this person last chose to keep wins: it is the most deliberate of the four.
+    ...readLocal<Record<string, unknown>>(configKey(definition.kind), {}),
   } as TConfig;
+}
+
+export function saveReportConfig<TConfig>(kind: string, config: TConfig): void {
+  writeLocal(configKey(kind), config as unknown as Record<string, unknown>);
+}
+
+export function clearReportConfig(kind: string): void {
+  writeLocal(configKey(kind), {});
+}
+
+function configKey(kind: string): string {
+  return `report-config:${kind}`;
 }
 
 /** Settings the site owner filled in that a report would otherwise have to guess. */

@@ -57,9 +57,27 @@ export function stripUrlSuffix(url: string): string {
   return cut > 0 ? trimmed.substring(0, cut) : trimmed;
 }
 
+/**
+ * A retired entry is a host, a path, or a wildcard pattern where a star stands for
+ * any run of characters, so "star slash admin-circulars slash pages slash star"
+ * retires a whole section. An entry with no star still matches as a plain
+ * substring, which is how hosts were always written.
+ */
 export function isLegacyUrl(url: string, legacyHosts: string[]): boolean {
   const value = `${url ?? ""}`.toLowerCase();
-  return legacyHosts.some((host) => value.indexOf(host) !== -1);
+
+  return legacyHosts.some((pattern) => {
+    const trimmed = pattern.trim().toLowerCase();
+    if (!trimmed) return false;
+    if (trimmed.indexOf("*") === -1) return value.indexOf(trimmed) !== -1;
+
+    const expression = trimmed
+      .split("*")
+      .map((part) => part.replace(/[.+?^${}()|[\]\\]/g, "\\$&"))
+      .join(".*");
+
+    return new RegExp(expression).test(value);
+  });
 }
 
 /** Same tenancy and inside the audited site, rather than a neighbouring one. */

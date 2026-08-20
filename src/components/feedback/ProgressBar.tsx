@@ -66,8 +66,8 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
             animation: indeterminate ? "auditpoint-indeterminate 1.4s ease-in-out infinite" : undefined,
           }}
         >
-          {/* The stripes are painted on the fill and slid across, so a slow stage
-              still reads as working rather than stalled. */}
+          {/* Stripes are slid across the fill, so a slow stage still reads as
+              working rather than stalled. */}
           {active && (
             <span
               aria-hidden="true"
@@ -75,8 +75,8 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
                 position: "absolute",
                 inset: 0,
                 backgroundImage:
-                  "linear-gradient(115deg, rgba(255,255,255,0.35) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.35) 50%, rgba(255,255,255,0.35) 75%, transparent 75%)",
-                backgroundSize: "36px 36px",
+                  "repeating-linear-gradient(115deg, rgba(255,255,255,0.38) 0 8px, transparent 8px 18px)",
+                backgroundSize: "36px 100%",
                 animation: "auditpoint-stripes 1s linear infinite",
               }}
             />

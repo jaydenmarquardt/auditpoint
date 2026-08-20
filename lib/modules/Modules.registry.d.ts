@@ -3,6 +3,8 @@ export declare const MODULES: Module[];
 /** Every report is registered whatever the host allows, so a saved run still opens. */
 export declare function registerModules(): void;
 export declare function findModule(key: string): Module | undefined;
+export declare function setHiddenRoutes(keys: string[]): void;
+export declare function isRouteVisible(key: string): boolean;
 export declare function setHostModules(keys: string[] | undefined): void;
 export declare function hostModules(): string[] | undefined;
 /**

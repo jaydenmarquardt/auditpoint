@@ -32,30 +32,35 @@ export const permissionsAuditReport: ReportDefinition<PermissionsAuditData, Perm
       key: "readGroupMembers",
       label: "Read group members",
       type: "toggle",
+      group: "What to scan",
       description: "One request per group. Off gives you the group list without membership.",
     },
     {
       key: "includeHidden",
       label: "Include hidden and system lists",
       type: "toggle",
+      group: "What to scan",
       description: "System lists often carry their own permissions by design, which adds noise.",
     },
     {
       key: "readListGrants",
       label: "Read grants on lists with unique permissions",
       type: "toggle",
+      group: "What to scan",
       description: "One request per list that has broken inheritance, to see who was given what.",
     },
     {
       key: "checkItemBreaks",
       label: "Sample items for item level permissions",
       type: "toggle",
+      group: "What to scan",
       description: "Reads a page of items per list and counts those carrying their own permissions. Slow on large lists.",
     },
     {
       key: "itemBreakScope",
       label: "Where to look for item breaks",
       type: "choice",
+      group: "Options",
       options: [
         { key: "unique", text: "Lists that already break inheritance" },
         { key: "all", text: "Every list on the site" },
@@ -66,6 +71,7 @@ export const permissionsAuditReport: ReportDefinition<PermissionsAuditData, Perm
       key: "itemSampleSize",
       label: "Maximum items read per list",
       type: "number",
+      group: "Thresholds",
       min: 100,
       max: 100000,
       step: 100,
@@ -75,6 +81,7 @@ export const permissionsAuditReport: ReportDefinition<PermissionsAuditData, Perm
       key: "maxLists",
       label: "Maximum lists per site",
       type: "number",
+      group: "Limits",
       min: 10,
       max: 2000,
       step: 10,
@@ -85,6 +92,7 @@ export const permissionsAuditReport: ReportDefinition<PermissionsAuditData, Perm
   stages: [
     {
       key: "levels",
+      work: "network",
       label: "Read permission levels",
       async run(context) {
         const levels = await SitePermissions(context.siteUrl).levels();
@@ -97,6 +105,7 @@ export const permissionsAuditReport: ReportDefinition<PermissionsAuditData, Perm
     },
     {
       key: "groups",
+      work: "network",
       label: "Read groups",
       async run(context) {
         const groups = await SitePermissions(context.siteUrl).groups(context.config.readGroupMembers);
@@ -107,6 +116,7 @@ export const permissionsAuditReport: ReportDefinition<PermissionsAuditData, Perm
     },
     {
       key: "siteGrants",
+      work: "network",
       label: "Read site grants",
       async run(context) {
         const grants = await SitePermissions(context.siteUrl).webGrants(context.siteUrl);
@@ -118,6 +128,7 @@ export const permissionsAuditReport: ReportDefinition<PermissionsAuditData, Perm
     },
     {
       key: "scopes",
+      work: "network",
       label: "Find broken inheritance",
       async run(context) {
         const lists = await SiteLists(context.siteUrl).getAll(context.config.includeHidden);
@@ -144,6 +155,7 @@ export const permissionsAuditReport: ReportDefinition<PermissionsAuditData, Perm
     },
     {
       key: "listGrants",
+      work: "network",
       label: "Read list grants",
       async run(context) {
         if (!context.config.readListGrants) {
@@ -181,6 +193,7 @@ export const permissionsAuditReport: ReportDefinition<PermissionsAuditData, Perm
     },
     {
       key: "itemBreaks",
+      work: "network",
       label: "Sample item permissions",
       async run(context) {
         if (!context.config.checkItemBreaks) {

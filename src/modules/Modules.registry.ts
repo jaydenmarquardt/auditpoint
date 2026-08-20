@@ -160,6 +160,17 @@ export function findModule(key: string): Module | undefined {
  * empty list means the host has no opinion and every registered module is offered.
  */
 let hostAllowed: string[] | undefined;
+/** Routes the host has switched off, such as the component board on a live intranet. */
+const hiddenRoutes = new Set<string>();
+
+export function setHiddenRoutes(keys: string[]): void {
+  hiddenRoutes.clear();
+  keys.forEach((key) => hiddenRoutes.add(key));
+}
+
+export function isRouteVisible(key: string): boolean {
+  return !hiddenRoutes.has(key);
+}
 
 export function setHostModules(keys: string[] | undefined): void {
   hostAllowed = keys && keys.length > 0 ? keys : undefined;
@@ -175,6 +186,7 @@ export function hostModules(): string[] | undefined {
  * locking a host down must never cost it the page that unlocks it again.
  */
 export function isModuleEnabled(key: string, disabled: string[] = []): boolean {
+  if (!isRouteVisible(key)) return false;
   if (!findModule(key)) return true;
   if (hostAllowed && hostAllowed.indexOf(key) === -1) return false;
   return disabled.indexOf(key) === -1;

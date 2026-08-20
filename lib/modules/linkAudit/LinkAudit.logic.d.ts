@@ -13,6 +13,12 @@ export declare function legacyHostsOf(config: LinkAuditConfig): string[];
  * before matching against the index or requesting the url.
  */
 export declare function stripUrlSuffix(url: string): string;
+/**
+ * A retired entry is a host, a path, or a wildcard pattern where a star stands for
+ * any run of characters, so "star slash admin-circulars slash pages slash star"
+ * retires a whole section. An entry with no star still matches as a plain
+ * substring, which is how hosts were always written.
+ */
 export declare function isLegacyUrl(url: string, legacyHosts: string[]): boolean;
 /** Same tenancy and inside the audited site, rather than a neighbouring one. */
 export declare function isShareUrl(url: string): boolean;

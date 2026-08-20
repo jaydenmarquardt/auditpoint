@@ -4,6 +4,9 @@ import { ProgressBar } from "@/components/feedback/ProgressBar";
 import { statusTone, statusText } from "@/components/feedback/StatusBadge";
 import { ProgressGroupProps, ProgressStatus, ProgressStep } from "@/components/Components.types";
 
+const WORK_LABEL = { network: "Requests", client: "Local", both: "Requests + local" };
+const WORK_ICON = { network: "Cloud", client: "Processing", both: "SyncOccurence" };
+
 const ICONS: Record<ProgressStatus, string> = {
   pending: "CircleRing",
   queued: "Clock",
@@ -118,7 +121,7 @@ const StepRow: React.FC<{ step: ProgressStep }> = ({ step }) => {
       }}
     >
       <i
-        className={`ms-Icon ms-Icon--${ICONS[step.status]}`}
+        className={`ms-Icon ms-Icon--${ICONS[step.status]}${active ? " auditpoint-spin" : ""}`}
         aria-hidden="true"
         style={{ color: tone.solid, fontSize: 16 }}
       />
@@ -134,26 +137,26 @@ const StepRow: React.FC<{ step: ProgressStep }> = ({ step }) => {
           }}
         >
           {step.label}
+          {step.work && (
+            <span
+              style={{
+                marginLeft: Theme.tokens.space.sm,
+                fontSize: Theme.tokens.font.sm,
+                fontWeight: 400,
+                color: Theme.palette().textMuted,
+                whiteSpace: "nowrap",
+              }}
+              title={`This step is mostly ${WORK_LABEL[step.work].toLowerCase()}`}
+            >
+              <i className={`ms-Icon ms-Icon--${WORK_ICON[step.work]}`} aria-hidden="true" /> {WORK_LABEL[step.work]}
+            </span>
+          )}
         </div>
 
         {(active || step.ratio !== undefined) && (
-          <div
-            style={{
-              marginTop: 8,
-              height: 10,
-              borderRadius: 10,
-              background: Theme.chart().track,
-              overflow: "hidden",
-            }}
-          >
-            <div
-              style={{
-                width: `${Math.round((step.ratio ?? 0) * 100)}%`,
-                height: "100%",
-                background: tone.solid,
-                transition: "width 200ms ease",
-              }}
-            />
+          <div style={{ marginTop: 8 }}>
+            {/* Same bar as the run itself, so a child reads the same way. */}
+            <ProgressBar ratio={step.ratio} status={step.status} compact />
           </div>
         )}
 

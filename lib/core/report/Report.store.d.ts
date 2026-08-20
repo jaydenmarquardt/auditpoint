@@ -24,6 +24,8 @@ export declare function setReportDefaults(defaults: Record<string, Record<string
  * mapping the site itself has filled in, which is the most specific of the three.
  */
 export declare function reportConfig<TConfig>(definition: ReportDefinition<unknown, TConfig>): TConfig;
+export declare function saveReportConfig<TConfig>(kind: string, config: TConfig): void;
+export declare function clearReportConfig(kind: string): void;
 export declare function getReportDefinition(kind: string): ReportDefinition<unknown, unknown> | undefined;
 export declare function resumeSavedEnvelope(envelope: ReportEnvelope): string | undefined;
 export declare function taskKind(kind: string): string;

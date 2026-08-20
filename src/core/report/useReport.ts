@@ -4,7 +4,15 @@ import { TaskStatus } from "@/core/queue/Queue.types";
 import { ReportEnvelope } from "@/api/Reports.types";
 import { Reports } from "@/api/Reports.api";
 import { ReportDefinition } from "@/core/report/Report.types";
-import { clearRun, openEnvelope, reportConfig, startReport, useReportRun } from "@/core/report/Report.store";
+import {
+  clearReportConfig,
+  clearRun,
+  openEnvelope,
+  reportConfig,
+  saveReportConfig,
+  startReport,
+  useReportRun,
+} from "@/core/report/Report.store";
 import { toErrorMessage } from "@/utils/Guard.util";
 
 const MISSING_REPORT = "That report could not be opened. It may have been deleted or you may not have access.";
@@ -27,6 +35,9 @@ export interface ReportController<TData, TConfig = Record<string, unknown>> {
   open(serverRelativeUrl: string): Promise<void>;
   /** Loads a previously exported run from a file, without touching the library. */
   importJson(file: File): Promise<void>;
+  /** Keeps the current settings as the starting point for future runs. */
+  saveConfigAsDefault(): void;
+  resetConfig(): void;
   resumeSaved(serverRelativeUrl: string): Promise<void>;
   clear(): void;
 }
@@ -142,6 +153,11 @@ export function useReport<TData, TConfig>(
     cancel,
     open,
     importJson,
+    saveConfigAsDefault: useCallback(() => saveReportConfig(definition.kind, config), [definition.kind, config]),
+    resetConfig: useCallback(() => {
+      clearReportConfig(definition.kind);
+      setConfig(reportConfig(definition as unknown as ReportDefinition<unknown, TConfig>));
+    }, [definition]),
     resumeSaved,
     clear: useCallback(() => clearRun(definition.kind), [definition.kind]),
   };

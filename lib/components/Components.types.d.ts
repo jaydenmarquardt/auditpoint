@@ -161,6 +161,8 @@ export interface ProgressBarProps {
 export interface ProgressStep {
     key: string;
     label: string;
+    /** Whether the step spends its time on requests, on local work, or both. */
+    work?: "network" | "client" | "both";
     status: ProgressStatus;
     ratio?: number;
     message?: string;

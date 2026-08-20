@@ -34,6 +34,7 @@ export const imagesAuditReport: ReportDefinition<ImagesAuditData, ImagesAuditCon
       key: "maxPages",
       label: "Maximum pages per site",
       type: "number",
+      group: "Limits",
       min: 10,
       max: 20000,
       step: 50,
@@ -43,24 +44,29 @@ export const imagesAuditReport: ReportDefinition<ImagesAuditData, ImagesAuditCon
       key: "scanListItems",
       label: "Scan rich text columns on lists",
       type: "toggle",
+      group: "What to scan",
       description: "Finds images inside list item HTML, such as a news body or event description.",
     },
     {
       key: "autoDetectColumns",
       label: "Detect rich text columns automatically",
       type: "toggle",
+      group: "What to scan",
       description: "Reads each list's fields rather than relying on column names alone.",
     },
     {
       key: "columnNames",
       label: "Column names to include",
       type: "text",
+      group: "Columns and paths",
+      multiline: true,
       description: "Comma separated internal names, always checked when present on the list.",
     },
     {
       key: "maxItemsPerList",
       label: "Maximum items per list",
       type: "number",
+      group: "Limits",
       min: 50,
       max: 5000,
       step: 50,
@@ -70,6 +76,7 @@ export const imagesAuditReport: ReportDefinition<ImagesAuditData, ImagesAuditCon
       key: "maxLists",
       label: "Maximum lists per site",
       type: "number",
+      group: "Limits",
       min: 5,
       max: 500,
       step: 5,
@@ -79,12 +86,14 @@ export const imagesAuditReport: ReportDefinition<ImagesAuditData, ImagesAuditCon
       key: "scanLibraries",
       label: "Inventory image files in libraries",
       type: "toggle",
+      group: "What to scan",
       description: "Needed for duplicate, unused and storage numbers.",
     },
     {
       key: "maxFilesPerLibrary",
       label: "Maximum files per library",
       type: "number",
+      group: "Limits",
       min: 100,
       max: 20000,
       step: 100,
@@ -94,6 +103,7 @@ export const imagesAuditReport: ReportDefinition<ImagesAuditData, ImagesAuditCon
       key: "largeImageKb",
       label: "Oversized above (KB)",
       type: "number",
+      group: "Thresholds",
       min: 50,
       max: 10000,
       step: 50,
@@ -104,6 +114,7 @@ export const imagesAuditReport: ReportDefinition<ImagesAuditData, ImagesAuditCon
   stages: [
     {
       key: "pages",
+      work: "both",
       label: "Read image use on pages",
       async run(context) {
         const images = ImageFiles(context.siteUrl);
@@ -132,6 +143,7 @@ export const imagesAuditReport: ReportDefinition<ImagesAuditData, ImagesAuditCon
     },
     {
       key: "items",
+      work: "both",
       label: "Read image use in list content",
       async run(context) {
         if (!context.config.scanListItems) {
@@ -197,6 +209,7 @@ export const imagesAuditReport: ReportDefinition<ImagesAuditData, ImagesAuditCon
     },
     {
       key: "files",
+      work: "both",
       label: "Inventory image files",
       async run(context) {
         if (!context.config.scanLibraries) {

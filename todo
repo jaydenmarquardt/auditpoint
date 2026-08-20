@@ -41,6 +41,7 @@ other dfat tools?
 provisioning tools
 content type management
 list exporter 
+update all webpart props
 
 - tool to reduce/format
 
@@ -78,3 +79,11 @@ set this repo up so other repos can include it as a npm package with branch bein
 
 pre audit report config ui improvements pls
 
+hide from webpart list only manual adding
+
+
+1. link audit 
+- What was scanned include how many lists
+2. new fun feature, on overview tabs of reports, have a toggle that says "Comparison" if they toggle it will show a field to select a a previous report for this audit, 
+- if enabled make a new o stat variant that shows the prev vs now and percentage up or down and or diff amount
+- also check each audit that exists and think of other o cards that are usefull for when comparing these

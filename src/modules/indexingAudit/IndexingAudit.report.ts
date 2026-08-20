@@ -31,24 +31,28 @@ export const indexingAuditReport: ReportDefinition<IndexingAuditData, IndexingAu
       key: "includeHidden",
       label: "Include hidden and system lists",
       type: "toggle",
+      group: "What to scan",
       description: "System lists are rarely indexed on purpose, so leaving this off keeps the numbers meaningful.",
     },
     {
       key: "checkCoverage",
       label: "Compare item counts with the index",
       type: "toggle",
+      group: "What to scan",
       description: "One search request per list asks how many items search holds under that path.",
     },
     {
       key: "checkItems",
       label: "Spot check individual items",
       type: "toggle",
+      group: "What to scan",
       description: "Runs a Path query per sampled item to prove it is findable and current.",
     },
     {
       key: "itemsPerList",
       label: "Items sampled per list",
       type: "number",
+      group: "Thresholds",
       min: 1,
       max: 5000,
       step: 1,
@@ -58,12 +62,14 @@ export const indexingAuditReport: ReportDefinition<IndexingAuditData, IndexingAu
       key: "readManagedProperties",
       label: "List managed properties returned",
       type: "toggle",
+      group: "What to scan",
       description: "Reads the properties present on a sample result, which is what search can actually return.",
     },
     {
       key: "coverageWarningPercent",
       label: "Coverage target (%)",
       type: "number",
+      group: "Thresholds",
       min: 10,
       max: 100,
       step: 5,
@@ -73,6 +79,7 @@ export const indexingAuditReport: ReportDefinition<IndexingAuditData, IndexingAu
       key: "maxLists",
       label: "Maximum lists per site",
       type: "number",
+      group: "Limits",
       min: 10,
       max: 1000,
       step: 10,
@@ -83,6 +90,7 @@ export const indexingAuditReport: ReportDefinition<IndexingAuditData, IndexingAu
   stages: [
     {
       key: "site",
+      work: "network",
       label: "Read site settings",
       async run(context) {
         const settings = await Indexing(context.siteUrl).site();
@@ -99,6 +107,7 @@ export const indexingAuditReport: ReportDefinition<IndexingAuditData, IndexingAu
     },
     {
       key: "lists",
+      work: "network",
       label: "Read lists",
       async run(context) {
         const lists = await SiteLists(context.siteUrl).getAll(context.config.includeHidden);
@@ -123,6 +132,7 @@ export const indexingAuditReport: ReportDefinition<IndexingAuditData, IndexingAu
     },
     {
       key: "coverage",
+      work: "network",
       label: "Compare with the index",
       async run(context) {
         if (!context.config.checkCoverage) {
@@ -159,6 +169,7 @@ export const indexingAuditReport: ReportDefinition<IndexingAuditData, IndexingAu
     },
     {
       key: "items",
+      work: "both",
       label: "Spot check items",
       async run(context) {
         if (!context.config.checkItems) {
@@ -213,6 +224,7 @@ export const indexingAuditReport: ReportDefinition<IndexingAuditData, IndexingAu
     },
     {
       key: "properties",
+      work: "network",
       label: "Read managed properties",
       async run(context) {
         if (!context.config.readManagedProperties) {

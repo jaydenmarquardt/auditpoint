@@ -27,6 +27,7 @@ export const webPartAuditReport: ReportDefinition<WebPartAuditData, WebPartAudit
       key: "maxPages",
       label: "Maximum pages per site",
       type: "number",
+      group: "Limits",
       min: 10,
       max: 20000,
       step: 100,
@@ -36,18 +37,21 @@ export const webPartAuditReport: ReportDefinition<WebPartAuditData, WebPartAudit
       key: "includeTitleArea",
       label: "Include page title area",
       type: "toggle",
+      group: "What to scan",
       description: "Counts web parts placed in the banner area as well as the page body.",
     },
     {
       key: "keepProperties",
       label: "Keep full web part properties",
       type: "toggle",
+      group: "What to scan",
       description: "Stores every saved property on each instance. Off keeps the report small when pages are complex.",
     },
     {
       key: "readCatalogue",
       label: "Read the web part catalogue for names and icons",
       type: "toggle",
+      group: "What to scan",
       description: "Resolves component ids to real names, icons and groups, and finds installed web parts nobody uses.",
     },
   ],
@@ -55,6 +59,7 @@ export const webPartAuditReport: ReportDefinition<WebPartAuditData, WebPartAudit
   stages: [
     {
       key: "catalogue",
+      work: "network",
       label: "Read web part catalogue",
       async run(context) {
         if (!context.config.readCatalogue) {
@@ -77,6 +82,7 @@ export const webPartAuditReport: ReportDefinition<WebPartAuditData, WebPartAudit
     },
     {
       key: "pages",
+      work: "both",
       label: "Read pages",
       async run(context) {
         const pages = await PageCanvas(context.siteUrl).getPages(context.config.maxPages);
@@ -88,6 +94,7 @@ export const webPartAuditReport: ReportDefinition<WebPartAuditData, WebPartAudit
     },
     {
       key: "canvas",
+      work: "network",
       label: "Extract web parts",
       async run(context) {
         const pages = (context.data.rawPages ?? []).filter((page) => page.siteUrl === context.siteUrl);
@@ -152,6 +159,7 @@ export const webPartAuditReport: ReportDefinition<WebPartAuditData, WebPartAudit
     },
     {
       key: "summarise",
+      work: "client",
       label: "Summarise",
       async run(context) {
         // Raw canvas HTML is large; drop it once web parts are extracted.
