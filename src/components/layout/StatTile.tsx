@@ -12,6 +12,7 @@ export const StatTile: React.FC<StatTileProps> = ({
   badge,
   info,
   iconName,
+  unavailable,
   width = 160,
 }) => (
   <div
@@ -22,7 +23,9 @@ export const StatTile: React.FC<StatTileProps> = ({
       padding: Tokens.space.md,
       minWidth: width,
       flex: `1 1 ${width}px`,
+      opacity: unavailable ? 0.55 : 1,
     }}
+    aria-disabled={unavailable ? true : undefined}
   >
     <div style={{ display: "flex", justifyContent: "space-between", gap: Tokens.space.sm }}>
       <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: Tokens.font.sm, color: Tokens.colour.textMuted }}>
@@ -33,7 +36,7 @@ export const StatTile: React.FC<StatTileProps> = ({
           </TooltipHost>
         )}
       </span>
-      {badge ? <Badge label={badge} tone={tone} /> : undefined}
+      {badge && !unavailable ? <Badge label={badge} tone={tone} /> : undefined}
     </div>
     <div
       style={{
@@ -52,7 +55,7 @@ export const StatTile: React.FC<StatTileProps> = ({
           style={{ fontSize: Tokens.font.lg, color: Tokens.colour.textMuted }}
         />
       )}
-      {value}
+      {unavailable ? "NA" : value}
     </div>
     {hint && (
       <div style={{ fontSize: Tokens.font.sm, color: Tokens.colour.textMuted, marginTop: 2 }}>{hint}</div>

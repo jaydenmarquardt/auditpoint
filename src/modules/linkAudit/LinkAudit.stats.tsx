@@ -3,7 +3,7 @@ import { StatGrid } from "@/components/layout/StatGrid";
 import { StatTileSpec } from "@/components/Components.types";
 import { Theme } from "@/theme/Theme.api";
 import { LinkAuditContent } from "@/modules/linkAudit/LinkAudit.content";
-import { LinkAuditView } from "@/modules/linkAudit/LinkAudit.types";
+import { LinkAuditConfig, LinkAuditView } from "@/modules/linkAudit/LinkAudit.types";
 import { formatNumber } from "@/utils/Format.util";
 
 export interface StatSection {
@@ -16,8 +16,10 @@ export interface StatSection {
  * Four questions, four grids: what was read, where the links point, how they were
  * written, and what is wrong. One flat wall of twenty numbers answered none of them.
  */
-export function statSections(view: LinkAuditView): StatSection[] {
+export function statSections(view: LinkAuditView, config?: LinkAuditConfig): StatSection[] {
   const { totals, linkTypes } = view;
+  // A stage that never ran measured nothing, and nothing is not zero.
+  const off = (ran: boolean | undefined): boolean | undefined => (config && !ran ? true : undefined);
 
   return [
     {
@@ -27,13 +29,13 @@ export function statSections(view: LinkAuditView): StatSection[] {
         { key: "items", label: LinkAuditContent.stats.items, value: formatNumber(totals.items), iconName: "Documentation", info: LinkAuditContent.tileInfo.items },
         { key: "pages", label: LinkAuditContent.stats.pages, value: formatNumber(totals.pages), iconName: "Page", info: LinkAuditContent.tileInfo.pages },
         { key: "listItems", label: LinkAuditContent.stats.listItems, value: formatNumber(totals.listItems), iconName: "BulletedList", info: LinkAuditContent.tileInfo.listItems },
-        { key: "documents", label: LinkAuditContent.stats.documents, value: formatNumber(totals.documents), iconName: "TextDocument", info: LinkAuditContent.tileInfo.documents },
-        { key: "attachments", label: LinkAuditContent.stats.attachments, value: formatNumber(totals.attachments), iconName: "Attach", info: LinkAuditContent.tileInfo.attachments },
-        { key: "pdfs", label: LinkAuditContent.stats.pdfs, value: formatNumber(totals.pdfs), iconName: "PDF", info: LinkAuditContent.tileInfo.pdfs },
-        { key: "docx", label: LinkAuditContent.stats.docx, value: formatNumber(totals.docx), iconName: "WordDocument", info: LinkAuditContent.tileInfo.docx },
-        { key: "configFiles", label: LinkAuditContent.stats.configFiles, value: formatNumber(totals.configFiles), iconName: "Settings", info: LinkAuditContent.tileInfo.configFiles },
+        { key: "documents", label: LinkAuditContent.stats.documents, value: formatNumber(totals.documents), iconName: "TextDocument", unavailable: off(config?.includeDocuments), info: LinkAuditContent.tileInfo.documents },
+        { key: "attachments", label: LinkAuditContent.stats.attachments, value: formatNumber(totals.attachments), iconName: "Attach", unavailable: off(config?.scanAttachments), info: LinkAuditContent.tileInfo.attachments },
+        { key: "pdfs", label: LinkAuditContent.stats.pdfs, value: formatNumber(totals.pdfs), iconName: "PDF", unavailable: off(config?.includeDocuments), info: LinkAuditContent.tileInfo.pdfs },
+        { key: "docx", label: LinkAuditContent.stats.docx, value: formatNumber(totals.docx), iconName: "WordDocument", unavailable: off(config?.includeDocuments), info: LinkAuditContent.tileInfo.docx },
+        { key: "configFiles", label: LinkAuditContent.stats.configFiles, value: formatNumber(totals.configFiles), iconName: "Settings", unavailable: off(Boolean(config?.configPaths.trim() || config?.megaMenuPath.trim())), info: LinkAuditContent.tileInfo.configFiles },
         { key: "scanned", label: LinkAuditContent.stats.scanned, value: formatNumber(totals.scanned), iconName: "CheckList", info: LinkAuditContent.tileInfo.scanned },
-        { key: "documentsRead", label: LinkAuditContent.stats.documentsRead, value: formatNumber(totals.documentsRead), iconName: "OpenFile", info: LinkAuditContent.tileInfo.documentsRead },
+        { key: "documentsRead", label: LinkAuditContent.stats.documentsRead, value: formatNumber(totals.documentsRead), iconName: "OpenFile", unavailable: off(config?.scanDocx || config?.scanPdf || config?.scanHtmlFiles), info: LinkAuditContent.tileInfo.documentsRead },
       ],
     },
     {
@@ -50,6 +52,8 @@ export function statSections(view: LinkAuditView): StatSection[] {
         { key: "documentsLinked", label: LinkAuditContent.stats.documentsLinked, value: formatNumber(linkTypes.document), iconName: "OpenFile", info: LinkAuditContent.tileInfo.documentsLinked },
         { key: "contact", label: LinkAuditContent.stats.contact, value: formatNumber(linkTypes.contact), iconName: "Mail", info: LinkAuditContent.tileInfo.contact },
         { key: "anchor", label: LinkAuditContent.stats.anchor, value: formatNumber(linkTypes.anchor), iconName: "Down", info: LinkAuditContent.tileInfo.anchor },
+        { key: "share", label: LinkAuditContent.stats.share, value: formatNumber(linkTypes.share), tone: linkTypes.share > 0 ? "warning" : "neutral", iconName: "Share", info: LinkAuditContent.tileInfo.share },
+        { key: "displayForm", label: LinkAuditContent.stats.displayForm, value: formatNumber(linkTypes.displayForm), iconName: "EntryView", info: LinkAuditContent.tileInfo.displayForm },
         { key: "orphans", label: LinkAuditContent.stats.orphans, value: formatNumber(totals.orphans), iconName: "Unlink", info: LinkAuditContent.tileInfo.orphans },
       ],
     },
@@ -57,13 +61,15 @@ export function statSections(view: LinkAuditView): StatSection[] {
       key: "written",
       title: LinkAuditContent.sections.written,
       tiles: [
-        { key: "webpart", label: LinkAuditContent.stats.webpart, value: formatNumber(totals.webpart), iconName: "Puzzle", info: LinkAuditContent.tileInfo.webpart },
-        { key: "navigation", label: LinkAuditContent.stats.navigation, value: formatNumber(totals.navigation), iconName: "GlobalNavButton", info: LinkAuditContent.tileInfo.navigation },
-        { key: "megaMenuLinks", label: LinkAuditContent.stats.megaMenuLinks, value: formatNumber(totals.megaMenuLinks), iconName: "CollapseMenu", info: LinkAuditContent.tileInfo.megaMenuLinks },
+        { key: "webpart", label: LinkAuditContent.stats.webpart, value: formatNumber(totals.webpart), iconName: "Puzzle", unavailable: off(config?.scanWebParts), info: LinkAuditContent.tileInfo.webpart },
+        { key: "navigation", label: LinkAuditContent.stats.navigation, value: formatNumber(totals.navigation), iconName: "GlobalNavButton", unavailable: off(config?.scanNavigation), info: LinkAuditContent.tileInfo.navigation },
+        { key: "megaMenuLinks", label: LinkAuditContent.stats.megaMenuLinks, value: formatNumber(totals.megaMenuLinks), iconName: "CollapseMenu", unavailable: off(Boolean(config?.megaMenuPath.trim())), info: LinkAuditContent.tileInfo.megaMenuLinks },
         { key: "documentLinks", label: LinkAuditContent.stats.documentLinks, value: formatNumber(totals.documentLinks), iconName: "TextDocument", info: LinkAuditContent.tileInfo.documentLinks },
-        { key: "attachmentLinks", label: LinkAuditContent.stats.attachmentLinks, value: formatNumber(totals.attachmentLinks), iconName: "Attach", info: LinkAuditContent.tileInfo.attachmentLinks },
-        { key: "configLinks", label: LinkAuditContent.stats.configLinks, value: formatNumber(totals.configLinks), iconName: "Settings", info: LinkAuditContent.tileInfo.configLinks },
+        { key: "attachmentLinks", label: LinkAuditContent.stats.attachmentLinks, value: formatNumber(totals.attachmentLinks), iconName: "Attach", unavailable: off(config?.scanAttachments), info: LinkAuditContent.tileInfo.attachmentLinks },
+        { key: "configLinks", label: LinkAuditContent.stats.configLinks, value: formatNumber(totals.configLinks), iconName: "Settings", unavailable: off(Boolean(config?.configPaths.trim())), info: LinkAuditContent.tileInfo.configLinks },
         { key: "newTab", label: LinkAuditContent.stats.newTab, value: formatNumber(linkTypes.newTab), iconName: "OpenInNewWindow", info: LinkAuditContent.tileInfo.newTab },
+        { key: "relative", label: LinkAuditContent.stats.relative, value: formatNumber(linkTypes.relative), iconName: "Nav2DMapView", info: LinkAuditContent.tileInfo.relative },
+        { key: "absolute", label: LinkAuditContent.stats.absolute, value: formatNumber(linkTypes.absolute), iconName: "Globe", info: LinkAuditContent.tileInfo.absolute },
         {
           key: "emptyText",
           label: LinkAuditContent.stats.emptyText,
@@ -90,6 +96,14 @@ export function statSections(view: LinkAuditView): StatSection[] {
         },
         { key: "untested", label: LinkAuditContent.stats.untested, value: formatNumber(totals.untested), tone: "warning", iconName: "Help", info: LinkAuditContent.tileInfo.untested },
         {
+          key: "checked",
+          label: LinkAuditContent.stats.checked,
+          value: formatNumber(view.checkedUrls),
+          iconName: "TestBeaker",
+          unavailable: off(config?.checkBrokenLinks),
+          info: LinkAuditContent.tileInfo.checked,
+        },
+        {
           key: "legacy",
           label: LinkAuditContent.stats.legacy,
           value: formatNumber(linkTypes.legacy),
@@ -105,23 +119,23 @@ export function statSections(view: LinkAuditView): StatSection[] {
           iconName: "Unlock",
           info: LinkAuditContent.tileInfo.insecure,
         },
-        { key: "matched", label: LinkAuditContent.status.matched, value: formatNumber(linkTypes.matched), iconName: "CheckMark", info: LinkAuditContent.tileInfo.destinations },
+        { key: "mapped", label: LinkAuditContent.stats.mapped, value: formatNumber(linkTypes.matched), iconName: "CheckMark", info: LinkAuditContent.tileInfo.mapped },
         {
           key: "unmapped",
-          label: LinkAuditContent.status.unmapped,
+          label: LinkAuditContent.stats.unmapped,
           value: formatNumber(linkTypes.unmapped),
-          tone: "warning",
+          tone: linkTypes.unmapped > 0 ? "warning" : "neutral",
           iconName: "StatusCircleQuestionMark",
-          info: LinkAuditContent.tileInfo.untested,
+          info: LinkAuditContent.tileInfo.unmapped,
         },
       ],
     },
   ];
 }
 
-export const LinkAuditStats: React.FC<{ view: LinkAuditView }> = ({ view }) => (
+export const LinkAuditStats: React.FC<{ view: LinkAuditView; config?: LinkAuditConfig }> = ({ view, config }) => (
   <div style={{ display: "grid", gap: Theme.tokens.space.lg, width: "100%", minWidth: 0 }}>
-    {statSections(view).map((section) => (
+    {statSections(view, config).map((section) => (
       <StatGrid key={section.key} title={section.title} tiles={section.tiles} minWidth={180} />
     ))}
   </div>

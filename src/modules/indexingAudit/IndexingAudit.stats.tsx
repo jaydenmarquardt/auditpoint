@@ -46,7 +46,8 @@ export const IndexingAuditStats: React.FC<IndexingStatsProps> = ({ view, config 
       <StatTile
         iconName="SearchAndApps"
         label={IndexingAuditContent.stats.indexed}
-        value={config.checkCoverage ? formatNumber(totals.indexedItems) : "-"}
+        value={formatNumber(totals.indexedItems)}
+        unavailable={!(config.checkCoverage)}
         info={IndexingAuditContent.tileInfo.indexed}
       />
       <StatTile
@@ -58,14 +59,16 @@ export const IndexingAuditStats: React.FC<IndexingStatsProps> = ({ view, config 
       <StatTile
         iconName="Down"
         label={IndexingAuditContent.stats.below}
-        value={config.checkCoverage ? formatNumber(totals.listsBelowTarget) : "-"}
+        value={formatNumber(totals.listsBelowTarget)}
+        unavailable={!(config.checkCoverage)}
         tone="warning"
         info={IndexingAuditContent.tileInfo.below}
       />
       <StatTile
         iconName="Warning"
         label={IndexingAuditContent.stats.missing}
-        value={config.checkItems ? formatNumber(totals.itemsMissing) : "-"}
+        value={formatNumber(totals.itemsMissing)}
+        unavailable={!(config.checkItems)}
         tone="warning"
         badge={totals.itemsMissing > 0 ? IndexingAuditContent.review : undefined}
         info={IndexingAuditContent.tileInfo.missing}
@@ -73,7 +76,8 @@ export const IndexingAuditStats: React.FC<IndexingStatsProps> = ({ view, config 
       <StatTile
         iconName="Clock"
         label={IndexingAuditContent.stats.stale}
-        value={config.checkItems ? formatNumber(totals.itemsStale) : "-"}
+        value={formatNumber(totals.itemsStale)}
+        unavailable={!(config.checkItems)}
         info={IndexingAuditContent.tileInfo.stale}
       />
       <StatTile

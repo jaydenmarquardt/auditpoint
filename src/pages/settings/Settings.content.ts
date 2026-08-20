@@ -48,6 +48,27 @@ export const SettingsContent = {
     resume: "Resume requests",
   },
   configWarning: "Modules stay disabled until these settings are complete:",
+  mapping: {
+    title: "Column mapping",
+    description:
+      "Which columns this site uses for the things the audits look for. Leave one empty and the audits skip that measure rather than guessing at a name.",
+    organisationalUnit: "Organisational unit column",
+    organisationalUnitHint: "Internal name of the column holding the owning area, such as OrgUnit.",
+    organisationalUnitList: "Organisational unit list",
+    organisationalUnitListHint: "Title of the list the column looks up, when it is a lookup.",
+    expiryDate: "Expiry date column",
+    reviewDate: "Review date column",
+    publishDate: "Publish date column",
+    htmlFields: "Rich text columns",
+    htmlFieldsHint:
+      "Comma separated internal names read for content, image and link audits, on top of anything detected automatically.",
+  },
+  legacy: {
+    title: "Retired hosts",
+    description:
+      "Hosts that have been switched off, one per line. Every link pointing at one is reported as dead without being requested.",
+    label: "Retired hosts and urls",
+  },
   modules: {
     title: "Modules",
     description:

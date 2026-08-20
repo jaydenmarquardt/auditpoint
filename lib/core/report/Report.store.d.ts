@@ -19,6 +19,10 @@ export declare const reportStore: import("../state/Store").Store<Record<string, 
  * without touching the module.
  */
 export declare function setReportDefaults(defaults: Record<string, Record<string, unknown>> | undefined): void;
+/**
+ * What a report starts with: its own defaults, then the host's, then the column
+ * mapping the site itself has filled in, which is the most specific of the three.
+ */
 export declare function reportConfig<TConfig>(definition: ReportDefinition<unknown, TConfig>): TConfig;
 export declare function getReportDefinition(kind: string): ReportDefinition<unknown, unknown> | undefined;
 export declare function resumeSavedEnvelope(envelope: ReportEnvelope): string | undefined;

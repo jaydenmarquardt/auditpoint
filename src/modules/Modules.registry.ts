@@ -169,8 +169,13 @@ export function hostModules(): string[] | undefined {
   return hostAllowed;
 }
 
-/** True when the host allows the module and the site has not switched it off. */
+/**
+ * True when the host allows the module and the site has not switched it off. Keys
+ * that are not modules at all, such as Settings or Reports, are always allowed:
+ * locking a host down must never cost it the page that unlocks it again.
+ */
 export function isModuleEnabled(key: string, disabled: string[] = []): boolean {
+  if (!findModule(key)) return true;
   if (hostAllowed && hostAllowed.indexOf(key) === -1) return false;
   return disabled.indexOf(key) === -1;
 }

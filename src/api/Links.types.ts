@@ -12,6 +12,7 @@ export type LinkSource =
 export type LinkType =
   | "thisSite"
   | "otherSite"
+  | "share"
   | "legacy"
   | "document"
   | "external"

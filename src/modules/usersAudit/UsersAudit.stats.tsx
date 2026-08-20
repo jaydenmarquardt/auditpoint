@@ -70,26 +70,30 @@ export const UsersAuditStats: React.FC<{ view: UsersAuditView; config: UsersAudi
       <StatTile
         iconName="Group"
         label={UsersAuditContent.stats.groups}
-        value={config.readGroups ? formatNumber(totals.groups) : "-"}
+        value={formatNumber(totals.groups)}
+        unavailable={!(config.readGroups)}
         info={UsersAuditContent.tileInfo.groups}
       />
       <StatTile
         iconName="Calculator"
         label={UsersAuditContent.stats.average}
-        value={config.readGroups ? String(totals.averageGroupSize) : "-"}
+        value={String(totals.averageGroupSize)}
+        unavailable={!(config.readGroups)}
         info={UsersAuditContent.tileInfo.average}
       />
       <StatTile
         iconName="UserOptional"
         label={UsersAuditContent.stats.ungrouped}
-        value={config.readGroups ? formatNumber(totals.usersWithoutGroup) : "-"}
+        value={formatNumber(totals.usersWithoutGroup)}
+        unavailable={!(config.readGroups)}
         tone="warning"
         info={UsersAuditContent.tileInfo.ungrouped}
       />
       <StatTile
         iconName="ContactCard"
         label={UsersAuditContent.stats.profiles}
-        value={config.readProfiles ? formatNumber(totals.profilesRead) : "-"}
+        value={formatNumber(totals.profilesRead)}
+        unavailable={!(config.readProfiles)}
         hint={config.readProfiles ? `${formatNumber(totals.withDepartment)} with a department` : undefined}
         info={UsersAuditContent.tileInfo.profiles}
       />

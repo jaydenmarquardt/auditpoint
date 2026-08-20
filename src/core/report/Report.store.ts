@@ -5,6 +5,7 @@ import { ReportEnvelope, StageStatus } from "@/api/Reports.types";
 import { Reports } from "@/api/Reports.api";
 import { getContext } from "@/api/Sp.api";
 import { getSettings } from "@/api/Settings.api";
+import { AppSettings } from "@/api/Settings.types";
 import { ReportDefinition } from "@/core/report/Report.types";
 import { runReport } from "@/core/report/Report.engine";
 
@@ -42,8 +43,34 @@ export function setReportDefaults(defaults: Record<string, Record<string, unknow
   Object.keys(defaults ?? {}).forEach((kind) => hostConfigDefaults.set(kind, (defaults ?? {})[kind]));
 }
 
+/**
+ * What a report starts with: its own defaults, then the host's, then the column
+ * mapping the site itself has filled in, which is the most specific of the three.
+ */
 export function reportConfig<TConfig>(definition: ReportDefinition<unknown, TConfig>): TConfig {
-  return { ...definition.defaultConfig, ...(hostConfigDefaults.get(definition.kind) ?? {}) } as TConfig;
+  return {
+    ...definition.defaultConfig,
+    ...(hostConfigDefaults.get(definition.kind) ?? {}),
+    ...mappedConfig(definition.kind, getSettings()),
+  } as TConfig;
+}
+
+/** Settings the site owner filled in that a report would otherwise have to guess. */
+function mappedConfig(kind: string, settings: AppSettings): Record<string, unknown> {
+  const config: Record<string, unknown> = {};
+  const columns = settings.fields.htmlFields.join(",");
+  const dates = [settings.fields.reviewDate, settings.fields.expiryDate, settings.fields.publishDate]
+    .filter((column) => column.trim().length > 0)
+    .join(",");
+
+  if (columns && ["content-audit", "images-audit", "link-audit"].indexOf(kind) !== -1) {
+    config.columnNames = columns;
+  }
+
+  if (kind === "publishing-audit" && dates) config.dateColumns = dates;
+  if (kind === "link-audit" && settings.legacyUrls.length > 0) config.legacyHosts = settings.legacyUrls.join(",");
+
+  return config;
 }
 
 export function getReportDefinition(kind: string): ReportDefinition<unknown, unknown> | undefined {

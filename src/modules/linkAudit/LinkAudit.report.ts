@@ -55,6 +55,7 @@ export const linkAuditReport: ReportDefinition<LinkAuditData, LinkAuditConfig> =
     maxFilesPerLibrary: 5000,
     scanDocx: false,
     scanPdf: false,
+    scanHtmlFiles: true,
     maxDocumentMb: 12,
     checkBrokenLinks: false,
     legacyHosts: "",
@@ -165,6 +166,13 @@ export const linkAuditReport: ReportDefinition<LinkAuditData, LinkAuditConfig> =
       label: "Read links inside PDF files",
       type: "toggle",
       description: "Downloads each .pdf and reads its link annotations in the browser. Slow on a large library.",
+    },
+    {
+      key: "scanHtmlFiles",
+      label: "Read links inside .html and .htm files",
+      type: "toggle",
+      description:
+        "Reads html files held in libraries or attached to items, which is where a migrated page usually ends up.",
     },
     {
       key: "maxDocumentMb",
@@ -560,7 +568,11 @@ export const linkAuditReport: ReportDefinition<LinkAuditData, LinkAuditConfig> =
       key: "files",
       label: "Read links inside documents",
       async run(context) {
-        const kinds = [context.config.scanDocx ? "docx" : "", context.config.scanPdf ? "pdf" : ""].filter(Boolean);
+        const kinds = [
+          context.config.scanDocx ? "docx" : "",
+          context.config.scanPdf ? "pdf" : "",
+          ...(context.config.scanHtmlFiles ? ["html", "htm"] : []),
+        ].filter(Boolean);
 
         if (kinds.length === 0) {
           context.progress(0, 0);
@@ -725,6 +737,7 @@ function toOutgoing(link: LinkPlacement): OutgoingLink {
   return {
     ...link,
     linkType: "unknown",
+    isDisplayForm: false,
     isIntranet: false,
     isLegacy: false,
     broken: "unsure",

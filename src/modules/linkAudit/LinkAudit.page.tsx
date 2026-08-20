@@ -19,6 +19,7 @@ import { LinksTab } from "@/modules/linkAudit/tabs/Links.tab";
 import { BrokenTab } from "@/modules/linkAudit/tabs/Broken.tab";
 import { ExternalTab } from "@/modules/linkAudit/tabs/External.tab";
 import { ActionsTab } from "@/modules/linkAudit/tabs/Actions.tab";
+import { MegaMenuTab } from "@/modules/linkAudit/tabs/MegaMenu.tab";
 import { ReferenceDialog } from "@/modules/linkAudit/Reference.dialog";
 import { LinkDialog } from "@/modules/linkAudit/Link.dialog";
 
@@ -105,7 +106,14 @@ const LinkAuditPage: React.FC = () => {
               {
                 key: "overview",
                 label: LinkAuditContent.tabs.overview,
-                content: <OverviewTab view={view} hasData={hasData} onRun={() => setConfigOpen(true)} />,
+                content: (
+                  <OverviewTab
+                    view={view}
+                    config={controller.envelope?.config ?? controller.config}
+                    hasData={hasData}
+                    onRun={() => setConfigOpen(true)}
+                  />
+                ),
               },
               {
                 key: "references",
@@ -131,6 +139,16 @@ const LinkAuditPage: React.FC = () => {
                 count: view.external.length,
                 content: <ExternalTab usages={view.external} />,
               },
+              ...(view.megaMenu.length > 0
+                ? [
+                    {
+                      key: "megaMenu",
+                      label: LinkAuditContent.tabs.megaMenu,
+                      count: view.megaMenu.length,
+                      content: <MegaMenuTab usages={view.megaMenu} />,
+                    },
+                  ]
+                : []),
               {
                 key: "actions",
                 label: LinkAuditContent.tabs.actions,

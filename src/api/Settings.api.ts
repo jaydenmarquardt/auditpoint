@@ -1,6 +1,22 @@
 import { createStore, useStore } from "@/core/state/Store";
 import { configureThrottle } from "@/api/Throttle.api";
-import { AppSettings, ConfigCheck, SettingsFile, SettingsWriter, SiteTarget } from "@/api/Settings.types";
+import {
+  AppSettings,
+  ConfigCheck,
+  FieldMapping,
+  SettingsFile,
+  SettingsWriter,
+  SiteTarget,
+} from "@/api/Settings.types";
+
+const NO_FIELDS: FieldMapping = {
+  organisationalUnit: "",
+  organisationalUnitList: "",
+  expiryDate: "",
+  reviewDate: "",
+  publishDate: "",
+  htmlFields: [],
+};
 
 const DEFAULTS: AppSettings = {
   appName: "Site Audit",
@@ -12,6 +28,8 @@ const DEFAULTS: AppSettings = {
   defaultRoute: "dashboard",
   captureReportLogs: true,
   disabledModules: [],
+  fields: NO_FIELDS,
+  legacyUrls: [],
 };
 
 export const settingsStore = createStore<AppSettings>(DEFAULTS);
@@ -79,6 +97,14 @@ export function useConfigCheck(): ConfigCheck {
   return checkConfig(useSettings());
 }
 
+/** Comma, semicolon or newline separated, which is how people paste a list. */
+export function parseList(raw: string): string[] {
+  return raw
+    .split(/[\n,;]+/)
+    .map((value) => value.trim())
+    .filter((value) => value.length > 0);
+}
+
 export function parseSiteList(raw: string): SiteTarget[] {
   return raw
     .split(/[\n,;]+/)
@@ -123,6 +149,8 @@ function fromFile(file: SettingsFile, hostSite: SiteTarget): AppSettings {
     defaultRoute: text(file.defaultRoute, DEFAULTS.defaultRoute),
     captureReportLogs: file.captureReportLogs ?? DEFAULTS.captureReportLogs,
     disabledModules: (file.disabledModules ?? []).filter((key) => typeof key === "string"),
+    fields: { ...NO_FIELDS, ...(file.fields ?? {}) },
+    legacyUrls: (file.legacyUrls ?? []).map((host) => host.trim()).filter((host) => host.length > 0),
   };
 }
 
@@ -138,6 +166,8 @@ function toFile(settings: AppSettings): SettingsFile {
     defaultRoute: settings.defaultRoute,
     captureReportLogs: settings.captureReportLogs,
     disabledModules: settings.disabledModules,
+    fields: settings.fields,
+    legacyUrls: settings.legacyUrls,
   };
 }
 

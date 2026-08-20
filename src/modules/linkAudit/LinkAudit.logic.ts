@@ -17,6 +17,7 @@ import {
 export const LINK_TYPES: LinkType[] = [
   "thisSite",
   "otherSite",
+  "share",
   "legacy",
   "document",
   "external",
@@ -27,6 +28,10 @@ export const LINK_TYPES: LinkType[] = [
 ];
 
 const DOCUMENT_EXTENSION = new RegExp(`\\.(${DOCUMENT_EXTENSIONS.join("|")})(\\?|#|$)`, "i");
+/** The shapes SharePoint hands out when someone presses Share. */
+const SHARE_URL = /(\/:[a-z]:\/[a-z]\/|guestaccess\.aspx|sharing\.aspx|[?&]share=|\/_layouts\/15\/download\.aspx\?share=)/i;
+/** A list item behind its form url, which is a real item rather than a page. */
+const DISPLAY_FORM = /\/(dispform|editform)\.aspx/i;
 
 export interface ClassifyOptions {
   origin: string;
@@ -58,6 +63,26 @@ export function isLegacyUrl(url: string, legacyHosts: string[]): boolean {
 }
 
 /** Same tenancy and inside the audited site, rather than a neighbouring one. */
+export function isShareUrl(url: string): boolean {
+  return SHARE_URL.test(`${url ?? ""}`);
+}
+
+/** `/sites/x/Lists/News/DispForm.aspx?ID=12` is item 12, not a page called DispForm. */
+export function displayFormTarget(url: string): { path: string; itemId: number } | undefined {
+  const value = `${url ?? ""}`;
+  if (!DISPLAY_FORM.test(value)) return undefined;
+
+  const id = /[?&]id=(\d+)/i.exec(value);
+  if (!id) return undefined;
+
+  const path = stripUrlSuffix(value).replace(DISPLAY_FORM, "").replace(/\/forms$/i, "");
+  return { path: path.toLowerCase(), itemId: Number(id[1]) };
+}
+
+export function isRelativeUrl(url: string): boolean {
+  return `${url ?? ""}`.trim().startsWith("/");
+}
+
 export function isThisSiteUrl(url: string, origin: string, sitePath: string): boolean {
   const path = pathOf(url, origin);
   if (path === undefined) return false;
@@ -106,6 +131,8 @@ export function classifyLink(link: OutgoingLink, options: ClassifyOptions): Link
   if (link.isContact) return "contact";
   if (link.isAnchor) return "anchor";
   if (isLegacyUrl(url, options.legacyHosts)) return "legacy";
+  // A share link carries a token, not a path, so it can never be matched to an item.
+  if (SHARE_URL.test(url)) return "share";
   if (DOCUMENT_EXTENSION.test(url)) return "document";
 
   if (isIntranetUrl(url, options.origin)) {
@@ -126,6 +153,7 @@ export function classifyReferences(references: Reference[], options: ClassifyOpt
   references.forEach((reference) => {
     (reference.outgoing ?? []).forEach((link) => {
       link.linkType = classifyLink(link, options);
+      link.isDisplayForm = displayFormTarget(link.url) !== undefined;
       link.isLegacy = isLegacyUrl(link.url, options.legacyHosts);
       link.isIntranet =
         link.linkType === "document"
@@ -152,7 +180,8 @@ function restingBrokenState(link: OutgoingLink): BrokenState {
       // Nothing to request, so nothing to be broken.
       return "no";
     case "external":
-      // Cross origin responses are opaque, so this can never be proven either way.
+    case "share":
+      // Cross origin and tokenised urls are opaque, so neither can be proven.
       return "unsure";
     default:
       return link.isIntranet || link.isExternal ? "unsure" : "no";
@@ -187,13 +216,26 @@ export function indexReferences(references: Reference[]): void {
     });
   });
 
+  // Items also answer to their display form url, which is how most people link to one.
+  const byListItem = new Map<string, Reference>();
+  references.forEach((reference) => {
+    if (!reference.url || !reference.itemId) return;
+    const folder = reference.url.substring(0, reference.url.lastIndexOf("/")).toLowerCase();
+    if (folder) byListItem.set(`${folder}|${reference.itemId}`, reference);
+  });
+
   const linked = new Map<Reference, Set<string>>();
 
   references.forEach((source) => {
     (source.outgoing ?? []).forEach((link) => {
       // Try it as written, then again without any fragment or query.
+      const form = displayFormTarget(link.url);
+      const formTarget = form ? byListItem.get(`${form.path}|${form.itemId}`) : undefined;
+
       const targets =
-        byUrl.get(`${link.url ?? ""}`.toLowerCase()) ?? byUrl.get(stripUrlSuffix(link.url).toLowerCase());
+        byUrl.get(`${link.url ?? ""}`.toLowerCase()) ??
+        byUrl.get(stripUrlSuffix(link.url).toLowerCase()) ??
+        (formTarget ? [formTarget] : undefined);
 
       if (!targets || targets.length === 0) {
         link.targetKey = "";
@@ -362,6 +404,7 @@ export function summariseLinkTypes(references: Reference[]): LinkTypeTotals {
   const totals: LinkTypeTotals = {
     thisSite: 0,
     otherSite: 0,
+    share: 0,
     legacy: 0,
     document: 0,
     external: 0,
@@ -375,6 +418,10 @@ export function summariseLinkTypes(references: Reference[]): LinkTypeTotals {
     unmapped: 0,
     newTab: 0,
     internal: 0,
+    relative: 0,
+    absolute: 0,
+    displayForm: 0,
+    mappable: 0,
   };
 
   references.forEach((reference) =>
@@ -384,6 +431,15 @@ export function summariseLinkTypes(references: Reference[]): LinkTypeTotals {
       if (link.isInsecure) totals.insecure = totals.insecure + 1;
       if (link.newTab) totals.newTab = totals.newTab + 1;
       if (link.isIntranet) totals.internal = totals.internal + 1;
+      if (link.isDisplayForm) totals.displayForm = totals.displayForm + 1;
+
+      if (isRelativeUrl(link.url)) totals.relative = totals.relative + 1;
+      else if (/^https?:\/\//i.test(link.url)) totals.absolute = totals.absolute + 1;
+
+      // Only a link into this site could ever have matched a scanned item, so only
+      // those are counted as mapped or unmapped; the rest are simply out of scope.
+      if (link.linkType !== "thisSite") return;
+      totals.mappable = totals.mappable + 1;
       if (link.targetTitle) totals.matched = totals.matched + 1;
       else totals.unmapped = totals.unmapped + 1;
     })
@@ -459,6 +515,10 @@ export function externalUsages(links: AggregatedLink[]): LinkUsage[] {
   return links.filter((link) => link.linkType === "external").flatMap((link) => link.usages);
 }
 
+export function sourceUsages(links: AggregatedLink[], source: LinkSource): LinkUsage[] {
+  return links.flatMap((link) => link.usages).filter((usage) => usage.link.source === source);
+}
+
 export function buildView(data: Partial<LinkAuditData> | undefined, origin: string): LinkAuditView {
   const references = data?.references ?? [];
   const links = aggregateLinks(references, origin);
@@ -474,6 +534,8 @@ export function buildView(data: Partial<LinkAuditData> | undefined, origin: stri
     broken: brokenUsages(links),
     byType: LINK_TYPES.map((type) => ({ label: type, value: linkTypes[type] })).filter((point) => point.value > 0),
     external: externalUsages(links),
+    megaMenu: sourceUsages(links, "megamenu"),
+    checkedUrls: data?.checkedUrls ?? 0,
     bySource: (["content", "webpart", "navigation", "document", "attachment", "config", "megamenu"] as LinkSource[])
       .map((source) => ({
         label: sourceLabel(source),

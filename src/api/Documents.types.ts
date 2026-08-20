@@ -1,6 +1,6 @@
 import { LinkPlacement } from "@/api/Links.types";
 
-export type DocumentKind = "docx" | "pdf" | "unsupported";
+export type DocumentKind = "docx" | "pdf" | "html" | "unsupported";
 
 export interface DocumentFile {
   siteUrl: string;

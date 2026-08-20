@@ -66,6 +66,9 @@ audit my modules for anything that is similar to make reusability better
 
 audits that run other audits as parent audits?
 
+contact finder in content ie emails and numbers
+- content search
+
 percentages for all pie chart cards
 allow renaming and tagging reports 
 
@@ -75,11 +78,3 @@ set this repo up so other repos can include it as a npm package with branch bein
 
 pre audit report config ui improvements pls
 
-in the app settings allow 
-- mapping fields:
-   - OrganisationalUnit ( and map the list)
-   - ExpiryDate
-   - ReviewDate
-   - PublishDate
-   - HTML body fields on content types for content audits, make it multi
-- setting legacy urls

@@ -30,13 +30,15 @@ export const PermissionsAuditStats: React.FC<{
       <StatTile
         iconName="People"
         label={PermissionsAuditContent.stats.members}
-        value={config.readGroupMembers ? formatNumber(totals.members) : "-"}
+        value={formatNumber(totals.members)}
+        unavailable={!(config.readGroupMembers)}
         info={PermissionsAuditContent.tileInfo.members}
       />
       <StatTile
         iconName="FieldEmpty"
         label={PermissionsAuditContent.stats.empty}
-        value={config.readGroupMembers ? formatNumber(totals.emptyGroups) : "-"}
+        value={formatNumber(totals.emptyGroups)}
+        unavailable={!(config.readGroupMembers)}
         info={PermissionsAuditContent.tileInfo.empty}
       />
       <StatTile
@@ -97,7 +99,8 @@ export const PermissionsAuditStats: React.FC<{
       <StatTile
         iconName="BranchFork2"
         label={PermissionsAuditContent.stats.itemBreaks}
-        value={config.checkItemBreaks ? formatNumber(totals.itemBreaks) : "-"}
+        value={formatNumber(totals.itemBreaks)}
+        unavailable={!(config.checkItemBreaks)}
         hint={config.checkItemBreaks ? `${formatNumber(totals.itemsChecked)} sampled` : undefined}
         info={PermissionsAuditContent.tileInfo.itemBreaks}
       />

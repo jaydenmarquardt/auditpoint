@@ -253,6 +253,8 @@ export interface StatTileSpec {
     badge?: string;
     /** Fluent icon name shown beside the value, so a tile reads at a glance. */
     iconName?: string;
+    /** The run did not measure this. Reads NA and dims, rather than claiming zero. */
+    unavailable?: boolean;
 }
 export interface StatGridProps {
     tiles: StatTileSpec[];
@@ -266,6 +268,7 @@ export interface StatTileProps {
     label: string;
     value: string;
     iconName?: string;
+    unavailable?: boolean;
     hint?: string;
     tone?: BadgeTone;
     badge?: string;

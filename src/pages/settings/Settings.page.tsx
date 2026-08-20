@@ -13,7 +13,7 @@ import { NumberField } from "@/components/inputs/NumberField";
 import { FieldRow } from "@/components/inputs/FieldRow";
 import { Theme } from "@/theme/Theme.api";
 import { useApp } from "@/core/context/App.context";
-import { checkConfig, getSettings, parseSiteList, saveSettings, useSettings } from "@/api/Settings.api";
+import { checkConfig, getSettings, parseList, parseSiteList, saveSettings, useSettings } from "@/api/Settings.api";
 import { AppSettings } from "@/api/Settings.types";
 import { Reports, reportFolderUrl } from "@/api/Reports.api";
 import { ReportFolderAccess } from "@/api/Reports.types";
@@ -166,6 +166,65 @@ const SettingsPage: React.FC = () => {
               {!folder.canView && <Notice tone="error" message={SettingsContent.folder.noView} />}
             </div>
           )}
+        </Card>
+
+        <Card title={SettingsContent.mapping.title} subtitle={SettingsContent.mapping.description}>
+          <FieldRow>
+            <TextField
+              label={SettingsContent.mapping.organisationalUnit}
+              description={SettingsContent.mapping.organisationalUnitHint}
+              value={draft.fields.organisationalUnit}
+              onChange={(value) => set("fields", { ...draft.fields, organisationalUnit: value })}
+              disabled={!editMode}
+            />
+            <TextField
+              label={SettingsContent.mapping.organisationalUnitList}
+              description={SettingsContent.mapping.organisationalUnitListHint}
+              value={draft.fields.organisationalUnitList}
+              onChange={(value) => set("fields", { ...draft.fields, organisationalUnitList: value })}
+              disabled={!editMode}
+            />
+          </FieldRow>
+
+          <FieldRow>
+            <TextField
+              label={SettingsContent.mapping.publishDate}
+              value={draft.fields.publishDate}
+              onChange={(value) => set("fields", { ...draft.fields, publishDate: value })}
+              disabled={!editMode}
+            />
+            <TextField
+              label={SettingsContent.mapping.reviewDate}
+              value={draft.fields.reviewDate}
+              onChange={(value) => set("fields", { ...draft.fields, reviewDate: value })}
+              disabled={!editMode}
+            />
+            <TextField
+              label={SettingsContent.mapping.expiryDate}
+              value={draft.fields.expiryDate}
+              onChange={(value) => set("fields", { ...draft.fields, expiryDate: value })}
+              disabled={!editMode}
+            />
+          </FieldRow>
+
+          <TextArea
+            label={SettingsContent.mapping.htmlFields}
+            description={SettingsContent.mapping.htmlFieldsHint}
+            value={draft.fields.htmlFields.join("\n")}
+            onChange={(value) => set("fields", { ...draft.fields, htmlFields: parseList(value) })}
+            rows={3}
+            disabled={!editMode}
+          />
+        </Card>
+
+        <Card title={SettingsContent.legacy.title} subtitle={SettingsContent.legacy.description}>
+          <TextArea
+            label={SettingsContent.legacy.label}
+            value={draft.legacyUrls.join("\n")}
+            onChange={(value) => set("legacyUrls", parseList(value))}
+            rows={3}
+            disabled={!editMode}
+          />
         </Card>
 
         <Card

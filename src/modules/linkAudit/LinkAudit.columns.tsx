@@ -17,6 +17,7 @@ import { formatNumber } from "@/utils/Format.util";
 const TYPE_TONE: Record<LinkType, BadgeTone> = {
   thisSite: "info",
   otherSite: "accent",
+  share: "warning",
   legacy: "danger",
   document: "accent",
   external: "warning",

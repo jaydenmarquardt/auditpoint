@@ -41,6 +41,7 @@ export const StatGrid: React.FC<StatGridProps> = ({ tiles, minWidth = 190, title
           tone={tile.tone}
           badge={tile.badge}
           iconName={tile.iconName}
+          unavailable={tile.unavailable}
         />
       ))}
     </div>

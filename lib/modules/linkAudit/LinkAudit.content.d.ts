@@ -24,6 +24,7 @@ export declare const LinkAuditContent: {
         readonly links: "Links";
         readonly broken: "Broken";
         readonly external: "External";
+        readonly megaMenu: "Mega menu";
         readonly actions: "Actions";
     };
     readonly search: {
@@ -78,7 +79,7 @@ export declare const LinkAuditContent: {
         readonly external: "External";
         readonly broken: "Broken";
         readonly untested: "Untested";
-        readonly orphans: "Nothing links here";
+        readonly orphans: "No inbound links";
         readonly attachments: "Attachments";
         readonly attachmentLinks: "In attachments";
         readonly configFiles: "Config files";
@@ -86,7 +87,13 @@ export declare const LinkAuditContent: {
         readonly megaMenuLinks: "In mega menu";
         readonly thisSite: "This site";
         readonly otherSite: "Other site";
+        readonly share: "Share links";
         readonly internal: "Internal";
+        readonly relative: "Relative";
+        readonly absolute: "Absolute";
+        readonly displayForm: "To list items";
+        readonly mapped: "Mapped";
+        readonly unmapped: "Unmapped";
         readonly emptyText: "No link text";
         readonly contact: "Contact";
         readonly anchor: "Anchor";
@@ -94,6 +101,7 @@ export declare const LinkAuditContent: {
         readonly insecure: "Insecure";
         readonly legacy: "Legacy";
         readonly documentsLinked: "To documents";
+        readonly checked: "Urls requested";
     };
     readonly tileInfo: {
         readonly items: "Everything scanned: pages, list items, documents and the navigation menus.";
@@ -105,7 +113,7 @@ export declare const LinkAuditContent: {
         readonly scanned: "Items whose content was read for links.";
         readonly documentsRead: "Documents whose file content was parsed for links.";
         readonly outgoing: "Every link found, counted once per placement.";
-        readonly incoming: "Links resolved back to a scanned item.";
+        readonly incoming: "Links from elsewhere that resolved to a scanned item, counted once per place they were written. Not the same as This site, which counts links written towards this site whether or not they found anything.";
         readonly destinations: "Distinct destinations once every spelling of a url is collapsed.";
         readonly webpart: "Links saved in web part properties rather than body text.";
         readonly navigation: "Links held in the quick launch and top navigation menus.";
@@ -113,13 +121,19 @@ export declare const LinkAuditContent: {
         readonly external: "Links pointing off this tenancy. They cannot be tested from the browser.";
         readonly broken: "Links proven dead, either legacy or answered with an error status.";
         readonly untested: "Links that could not be proven either way.";
-        readonly orphans: "Scanned items that nothing else links to.";
+        readonly orphans: "Scanned items that nothing else on the site points at. Often fine for a form or an archive, worth a look for a page.";
+        readonly share: "Links created by the Share button. They carry a token rather than a path, so they cannot be matched to an item or tested.";
+        readonly relative: "Links written as a path, such as /sites/intranet/page.aspx. They survive a rename of the tenant.";
+        readonly absolute: "Links written with the full https address. They break if the host ever changes.";
+        readonly displayForm: "Links to a list item's display form. These are matched back to the item itself.";
+        readonly mapped: "Links into this site that were matched to a scanned item.";
+        readonly unmapped: "Links into this site that matched nothing scanned: a typo, a deleted page, or something outside the scan limits.";
         readonly attachments: "List item attachments found while scanning.";
         readonly attachmentLinks: "Links read out of attachment file content.";
         readonly configFiles: "Configuration JSON files scanned for links.";
         readonly configLinks: "Links held in configuration files rather than content.";
         readonly megaMenuLinks: "Links held in the mega menu configuration.";
-        readonly thisSite: "Links pointing back into the site being audited.";
+        readonly thisSite: "Links written towards the site being audited, resolved or not.";
         readonly otherSite: "Links to another site on this tenancy. Internal, but owned by someone else.";
         readonly internal: "Every link that stays on this tenancy, this site or another.";
         readonly emptyText: "Links with no text on them, which a screen reader announces as the url.";
@@ -129,18 +143,19 @@ export declare const LinkAuditContent: {
         readonly insecure: "Links written as http rather than https.";
         readonly legacy: "Links to a host recorded as retired, which are dead by definition.";
         readonly documentsLinked: "Links whose destination is a file rather than a page.";
+        readonly checked: "Unresolved links on this tenancy that were actually requested during the run.";
     };
     readonly charts: {
-        readonly type: "Links by type";
-        readonly source: "Links by where they were written";
-        readonly status: "Links by status";
+        readonly type: "Link types";
+        readonly source: "Where links are written";
+        readonly status: "Link health";
         readonly brokenByList: "Broken links by list";
-        readonly topTargets: "Most linked destinations";
+        readonly topTargets: "Most linked pages";
     };
     readonly cardInfo: {
-        readonly type: "Classification of every link found, first match wins.";
-        readonly source: "Body content, web part properties, navigation menus or document files.";
-        readonly status: "Broken, working or untested after the index and the broken link check.";
+        readonly type: "What each link points at, counted once per placement.";
+        readonly source: "Body text, web part properties, menus, config files or file content.";
+        readonly status: "Working, broken or untested once the index and the link check have run.";
         readonly brokenByList: "Where the dead links are written, so the fixing can be handed out.";
         readonly topTargets: "Destinations by how many places link to them.";
     };
@@ -148,7 +163,7 @@ export declare const LinkAuditContent: {
         readonly yes: "Broken";
         readonly no: "Working";
         readonly unsure: "Untested";
-        readonly matched: "Matched";
+        readonly matched: "Mapped";
         readonly unmapped: "Unmapped";
     };
     readonly sources: {
@@ -163,6 +178,7 @@ export declare const LinkAuditContent: {
     readonly types: {
         readonly thisSite: "This site";
         readonly otherSite: "Other site";
+        readonly share: "Share link";
         readonly legacy: "Legacy";
         readonly document: "Document";
         readonly external: "External";
@@ -205,6 +221,7 @@ export declare const LinkAuditContent: {
         readonly links: "No links were found in anything that was scanned.";
         readonly broken: "No broken links. Nothing pointed at a legacy host and nothing answered with an error.";
         readonly external: "No links leave this tenancy.";
+        readonly megaMenu: "No mega menu configuration was scanned. Set its path in the run settings.";
     };
     readonly flags: {
         readonly broken: "Broken links";

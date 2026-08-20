@@ -47,6 +47,24 @@ export declare const SettingsContent: {
         readonly resume: "Resume requests";
     };
     readonly configWarning: "Modules stay disabled until these settings are complete:";
+    readonly mapping: {
+        readonly title: "Column mapping";
+        readonly description: "Which columns this site uses for the things the audits look for. Leave one empty and the audits skip that measure rather than guessing at a name.";
+        readonly organisationalUnit: "Organisational unit column";
+        readonly organisationalUnitHint: "Internal name of the column holding the owning area, such as OrgUnit.";
+        readonly organisationalUnitList: "Organisational unit list";
+        readonly organisationalUnitListHint: "Title of the list the column looks up, when it is a lookup.";
+        readonly expiryDate: "Expiry date column";
+        readonly reviewDate: "Review date column";
+        readonly publishDate: "Publish date column";
+        readonly htmlFields: "Rich text columns";
+        readonly htmlFieldsHint: "Comma separated internal names read for content, image and link audits, on top of anything detected automatically.";
+    };
+    readonly legacy: {
+        readonly title: "Retired hosts";
+        readonly description: "Hosts that have been switched off, one per line. Every link pointing at one is reported as dead without being requested.";
+        readonly label: "Retired hosts and urls";
+    };
     readonly modules: {
         readonly title: "Modules";
         readonly description: "Switch off anything this site does not need. A module switched off here is hidden from the sidebar, the dashboard and routing; its saved reports stay readable.";

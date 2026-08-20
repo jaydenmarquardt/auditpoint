@@ -15,5 +15,7 @@ export declare function useSettings<TSlice>(selector: (settings: AppSettings) =>
 /** Modules stay disabled until the report destination is set. */
 export declare function checkConfig(settings?: AppSettings): ConfigCheck;
 export declare function useConfigCheck(): ConfigCheck;
+/** Comma, semicolon or newline separated, which is how people paste a list. */
+export declare function parseList(raw: string): string[];
 export declare function parseSiteList(raw: string): SiteTarget[];
 //# sourceMappingURL=Settings.api.d.ts.map

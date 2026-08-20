@@ -1,7 +1,8 @@
 import * as React from "react";
-import { LinkAuditView } from "../LinkAudit.types";
+import { LinkAuditConfig, LinkAuditView } from "../LinkAudit.types";
 export declare const OverviewTab: React.FC<{
     view: LinkAuditView;
+    config?: LinkAuditConfig;
     hasData: boolean;
     onRun: () => void;
 }>;

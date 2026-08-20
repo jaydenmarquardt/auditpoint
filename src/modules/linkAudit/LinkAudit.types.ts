@@ -16,6 +16,7 @@ export interface LinkAuditConfig {
   maxFilesPerLibrary: number;
   scanDocx: boolean;
   scanPdf: boolean;
+  scanHtmlFiles: boolean;
   maxDocumentMb: number;
   checkBrokenLinks: boolean;
   legacyHosts: string;
@@ -39,6 +40,8 @@ export interface OutgoingLink extends LinkPlacement {
   broken: BrokenState;
   /** Response status from the broken link stage, when one ran. */
   status: number;
+  /** Points at a list item's display form, which is a real item behind a form url. */
+  isDisplayForm: boolean;
   /** Filled in by the index when the link matched a scanned reference. */
   targetKey: string;
   targetTitle: string;
@@ -126,6 +129,7 @@ export interface AggregatedLink {
 export interface LinkTypeTotals {
   thisSite: number;
   otherSite: number;
+  share: number;
   legacy: number;
   document: number;
   external: number;
@@ -139,6 +143,11 @@ export interface LinkTypeTotals {
   unmapped: number;
   newTab: number;
   internal: number;
+  relative: number;
+  absolute: number;
+  displayForm: number;
+  /** Links that should have resolved to a scanned item and did not. */
+  mappable: number;
 }
 
 export interface ReferenceTotals {
@@ -169,6 +178,10 @@ export interface ReferenceTotals {
 
 export interface LinkAuditView {
   totals: ReferenceTotals;
+  /** Mega menu placements, when a menu configuration was scanned. */
+  megaMenu: LinkUsage[];
+  /** Urls the broken link stage actually requested. */
+  checkedUrls: number;
   /** Every link written outside this tenancy, one row per placement. */
   external: LinkUsage[];
   linkTypes: LinkTypeTotals;

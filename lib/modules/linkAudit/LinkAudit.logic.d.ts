@@ -15,6 +15,13 @@ export declare function legacyHostsOf(config: LinkAuditConfig): string[];
 export declare function stripUrlSuffix(url: string): string;
 export declare function isLegacyUrl(url: string, legacyHosts: string[]): boolean;
 /** Same tenancy and inside the audited site, rather than a neighbouring one. */
+export declare function isShareUrl(url: string): boolean;
+/** `/sites/x/Lists/News/DispForm.aspx?ID=12` is item 12, not a page called DispForm. */
+export declare function displayFormTarget(url: string): {
+    path: string;
+    itemId: number;
+} | undefined;
+export declare function isRelativeUrl(url: string): boolean;
 export declare function isThisSiteUrl(url: string, origin: string, sitePath: string): boolean;
 export declare function isIntranetUrl(url: string, origin: string): boolean;
 /**
@@ -55,5 +62,6 @@ export declare function sourceLabel(source: LinkSource): string;
 export declare function flagsFor(reference: Reference): string[];
 export declare function brokenUsages(links: AggregatedLink[]): LinkUsage[];
 export declare function externalUsages(links: AggregatedLink[]): LinkUsage[];
+export declare function sourceUsages(links: AggregatedLink[], source: LinkSource): LinkUsage[];
 export declare function buildView(data: Partial<LinkAuditData> | undefined, origin: string): LinkAuditView;
 //# sourceMappingURL=LinkAudit.logic.d.ts.map

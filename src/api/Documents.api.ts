@@ -3,12 +3,14 @@ import { getSp } from "@/api/Sp.api";
 import { throttled } from "@/api/Throttle.api";
 import { SiteList } from "@/api/Lists.types";
 import { LinkPlacement } from "@/api/Links.types";
-import { originOf, placement } from "@/api/Links.api";
+import { LinkScanner, originOf, placement } from "@/api/Links.api";
 import { DocumentFile, DocumentKind, DocumentScan, DocumentScanOptions } from "@/api/Documents.types";
 
 /** Extensions treated as a document when classifying a link. */
 export const DOCUMENT_EXTENSIONS = [
   "pdf",
+  "html",
+  "htm",
   "doc",
   "docx",
   "xls",
@@ -150,6 +152,7 @@ export function documentKindFromName(name: string): DocumentKind {
   const extension = extensionOf(name);
   if (extension === "docx") return "docx";
   if (extension === "pdf") return "pdf";
+  if (extension === "html" || extension === "htm") return "html";
   return "unsupported";
 }
 
@@ -173,7 +176,7 @@ export async function scanDocumentForLinks(
 
   if (typeof source === "string") {
     if (!isScannableDocument(source)) {
-      result.skipped = "Not a docx or pdf";
+      result.skipped = "Not a docx, pdf or html file";
       return result;
     }
 
@@ -213,11 +216,21 @@ export async function scanDocumentForLinks(
 
   result.kind = documentKind(buffer, url);
   if (result.kind === "unsupported") {
-    result.skipped = "Not a docx or pdf";
+    result.skipped = "Not a docx, pdf or html file";
     return result;
   }
 
   const label = options.fileName ?? url;
+
+  if (result.kind === "html") {
+    // An html file is markup, so it is read with the same anchor scan as a page.
+    result.links = LinkScanner().fromHtml(new TextDecoder().decode(new Uint8Array(buffer)), {
+      source: "document",
+      sourceLabel: label,
+    });
+    return result;
+  }
+
   result.links =
     result.kind === "docx" ? await extractDocxLinks(buffer, label) : await extractPdfLinks(buffer, label);
 

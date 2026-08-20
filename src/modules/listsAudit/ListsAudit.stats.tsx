@@ -33,13 +33,15 @@ export function statTiles({ view, config }: ListsAuditStatsProps): StatTileSpec[
     {
       iconName: "FabricFolder", key: "folders",
       label: ListsAuditContent.stats.folders,
-      value: config.scanItems ? formatNumber(view.totals.folders) : "-",
+      value: formatNumber(view.totals.folders),
+      unavailable: !(config.scanItems),
       info: ListsAuditContent.tileInfo.folders,
     },
     {
       iconName: "Page", key: "files",
       label: ListsAuditContent.stats.files,
-      value: config.scanItems ? formatNumber(view.totals.files) : "-",
+      value: formatNumber(view.totals.files),
+      unavailable: !(config.scanItems),
       info: ListsAuditContent.tileInfo.files,
     },
     {
@@ -51,7 +53,8 @@ export function statTiles({ view, config }: ListsAuditStatsProps): StatTileSpec[
     {
       iconName: "Database", key: "storage",
       label: ListsAuditContent.stats.storage,
-      value: view.storageAvailable ? formatBytes(view.totals.storageBytes) : "-",
+      value: formatBytes(view.totals.storageBytes),
+      unavailable: !(view.storageAvailable),
       hint: view.storageAvailable ? undefined : ListsAuditContent.storageUnavailableShort,
       info: ListsAuditContent.tileInfo.storage,
     },
