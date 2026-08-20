@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Card } from "@/components/layout/Card";
 import { Toggle } from "@/components/inputs/Toggle";
 import { Dropdown } from "@/components/inputs/Dropdown";
 import { Notice } from "@/components/feedback/Notice";
@@ -54,10 +55,12 @@ export const ComparisonBar: React.FC<ComparisonBarProps> = ({ kind, currentId, o
   };
 
   return (
-    <div style={{ display: "grid", gap: Theme.tokens.space.sm, minWidth: 0 }}>
-      <div style={{ display: "flex", gap: Theme.tokens.space.md, alignItems: "flex-end", flexWrap: "wrap" }}>
+    <Card
+      title="Comparison"
+      subtitle="Measure this run against an earlier one. Every tile then shows the change."
+      actions={
         <Toggle
-          label="Comparison"
+          label=""
           checked={on}
           onChange={(next) => {
             setOn(next);
@@ -70,9 +73,11 @@ export const ComparisonBar: React.FC<ComparisonBarProps> = ({ kind, currentId, o
           offText="Off"
           inlineLabel
         />
-
+      }
+    >
+      <div style={{ display: "grid", gap: Theme.tokens.space.sm, minWidth: 0 }}>
         {on && (
-          <div style={{ minWidth: 320 }}>
+          <div style={{ maxWidth: 420 }}>
             <Dropdown
               label="Compare against"
               placeholder={loading ? "Loading run…" : "Pick an earlier run"}
@@ -85,12 +90,17 @@ export const ComparisonBar: React.FC<ComparisonBarProps> = ({ kind, currentId, o
             />
           </div>
         )}
-      </div>
 
-      {on && runs.length === 0 && !error && (
-        <Notice tone="info" message="No earlier runs of this report are saved yet." />
-      )}
-      {error && <Notice tone="error" message={error} onDismiss={() => setError(undefined)} />}
-    </div>
+        {on && runs.length === 0 && !error && (
+          <Notice tone="info" message="No earlier runs of this report are saved yet." />
+        )}
+        {!on && (
+          <p style={{ margin: 0, color: Theme.palette().textMuted }}>
+            Switch this on to pick an earlier run of this report.
+          </p>
+        )}
+        {error && <Notice tone="error" message={error} onDismiss={() => setError(undefined)} />}
+      </div>
+    </Card>
   );
 };

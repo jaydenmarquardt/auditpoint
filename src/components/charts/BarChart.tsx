@@ -64,9 +64,11 @@ export const BarChart: React.FC<BarChartProps> = ({
   }
 
   const bars: IVerticalBarChartDataPoint[] = points.map((point, index) => ({
-    x: point.label,
+    // The axis has one label's width to work with, so the full text lives in the callout.
+    x: shorten(point.label),
     y: point.value,
     color: point.colour ?? colour ?? Theme.seriesColour(index),
+    xAxisCalloutData: point.label,
     yAxisCalloutData: valueFormatter(point.value),
   }));
 
@@ -77,6 +79,8 @@ export const BarChart: React.FC<BarChartProps> = ({
           data={bars}
           width={width}
           height={height}
+          wrapXAxisLables
+          showXAxisLablesTooltip
           hideLegend
           barWidth="auto"
           yAxisTickCount={4}
@@ -86,3 +90,13 @@ export const BarChart: React.FC<BarChartProps> = ({
     </ChartFrame>
   );
 };
+
+/** Enough to recognise a page, short enough that ten of them fit across a card. */
+function shorten(label: string): string {
+  const value = `${label ?? ""}`;
+  if (value.length <= 18) return value;
+
+  const tail = value.split("/").filter(Boolean).pop() ?? value;
+  const chosen = tail.length < value.length ? tail : value;
+  return chosen.length <= 18 ? chosen : `${chosen.substring(0, 17)}…`;
+}

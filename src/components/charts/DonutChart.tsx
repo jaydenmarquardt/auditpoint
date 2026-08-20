@@ -45,8 +45,8 @@ export const DonutChart: React.FC<DonutChartProps> = ({
           innerRadius={Math.round(size / 4)}
           height={size}
           width={width}
-          valueInsideDonut={centreLabel}
-          hideLegend={false}
+          valueInsideDonut={centreLabel ?? total.toLocaleString()}
+          hideLegend
         />
       </div>
     </ChartFrame>

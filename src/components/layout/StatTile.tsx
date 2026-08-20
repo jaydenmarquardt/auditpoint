@@ -88,22 +88,40 @@ export const StatTile: React.FC<StatTileProps> = ({
 const Delta: React.FC<{ current: number; previous: number }> = ({ current, previous }) => {
   const difference = current - previous;
   const percent = previous === 0 ? undefined : Math.round((difference / Math.abs(previous)) * 100);
-  const tone = difference === 0 ? "neutral" : difference > 0 ? "info" : "warning";
+  const tone = difference === 0 ? "neutral" : difference > 0 ? "success" : "danger";
   const palette = Theme.tone(tone);
 
   return (
-    <div style={{ marginTop: 4, display: "flex", alignItems: "center", gap: 4, fontSize: Tokens.font.sm }}>
-      <i
-        className={`ms-Icon ms-Icon--${difference === 0 ? "Remove" : difference > 0 ? "CaretSolidUp" : "CaretSolidDown"}`}
-        aria-hidden="true"
-        style={{ color: palette.fg, fontSize: 10 }}
-      />
-      <span style={{ color: palette.fg, fontWeight: 600 }}>
+    <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+      <span
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 4,
+          padding: "1px 8px",
+          borderRadius: 999,
+          background: palette.bg,
+          border: `1px solid ${palette.border}`,
+          color: palette.fg,
+          fontSize: Tokens.font.sm,
+          fontWeight: 600,
+          fontVariantNumeric: "tabular-nums",
+          whiteSpace: "nowrap",
+        }}
+      >
+        <i
+          className={`ms-Icon ms-Icon--${difference === 0 ? "Remove" : difference > 0 ? "CaretSolidUp" : "CaretSolidDown"}`}
+          aria-hidden="true"
+          style={{ fontSize: 10 }}
+        />
         {difference > 0 ? "+" : ""}
         {difference.toLocaleString()}
-        {percent === undefined ? "" : ` (${percent > 0 ? "+" : ""}${percent}%)`}
+        {percent === undefined ? "" : ` · ${percent > 0 ? "+" : ""}${percent}%`}
       </span>
-      <span style={{ color: Tokens.colour.textMuted }}>was {previous.toLocaleString()}</span>
+
+      <span style={{ color: Tokens.colour.textMuted, fontSize: Tokens.font.sm, whiteSpace: "nowrap" }}>
+        was {previous.toLocaleString()}
+      </span>
     </div>
   );
 };

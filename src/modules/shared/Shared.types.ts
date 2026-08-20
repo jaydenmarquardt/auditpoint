@@ -17,6 +17,8 @@ export interface ReportRunPanelProps {
   controller: ReportController<any, any>;
   runLabel: RunLabels;
   extraControls?: React.ReactNode;
+  /** Module actions folded into the More menu, such as CSV exports. */
+  menuItems?: { key: string; label: string; iconName?: string; disabled?: boolean; onClick: () => void }[];
   /** Blocks the run button until the module reports its config is usable. */
   runDisabled?: boolean;
   /** Rendered inside the run dialog, so config is only asked for on run. */

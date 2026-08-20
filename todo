@@ -3,13 +3,12 @@
 
 to fix:
 
+sec clearance audit
+- find any docs or pages not classified or over classified
 
-images audit
-- find where images are used
-- images quality and format
+images audit 
+- needs checking and fixing
 - tool to reduce/format
-- find duplicate images
-- find unused images
 
 content audit 
  per page and sums
@@ -32,7 +31,7 @@ Analytics Audit
 - 90 days
 - device views
 - file views
-- use the site apis that the sp site uses
+- use the site apis that the sp site uses not search as its shit check the quark app analytics setting tool for its logic on this apis
 - Unique viewers
 - site visits
 - average time spent
@@ -46,13 +45,8 @@ Analytics Audit
     - time spent
     - time of day
     - 
-
-
 *allow merging with other reports
 
-link audit:
-- identify if its a shared link or path link
-- all the other features duh
 
 audit ideas:
 page creators
@@ -101,7 +95,6 @@ audits that run other audits as parent audits?
 contact finder in content ie emails and numbers
 - content search
 
-percentages for all pie chart cards
 allow renaming and tagging reports 
 
 atatachements tracking too

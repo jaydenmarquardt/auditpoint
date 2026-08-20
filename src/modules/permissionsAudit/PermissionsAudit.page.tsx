@@ -1,7 +1,6 @@
 import * as React from "react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Tabs } from "@/components/data/Tabs";
-import { Button } from "@/components/actions/Button";
 import { Badge } from "@/components/feedback/Badge";
 import { Theme } from "@/theme/Theme.api";
 import { SiteGroupSummary } from "@/api/SitePermissions.types";
@@ -95,14 +94,12 @@ const PermissionsAuditPage: React.FC = () => {
             onChange={controller.setConfig}
           />
         }
-        extraControls={
-          hasData ? (
-            <Button
-              label={PermissionsAuditContent.exportCsv}
-              iconName="ExcelDocument"
-              onClick={() => exportPermissionsAudit(data)}
-            />
-          ) : undefined
+        menuItems={
+          hasData
+            ? [
+                { key: "csv", label: PermissionsAuditContent.exportCsv, iconName: "ExcelDocument", onClick: () => exportPermissionsAudit(data) },
+              ]
+            : []
         }
         runLabel={{
           run: PermissionsAuditContent.run,

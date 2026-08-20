@@ -62,15 +62,6 @@ export const ReportDetails: React.FC<ReportDetailsProps> = ({
       description="Settings used for this run, plus the log and issues captured while it ran."
       width="large"
       facts={[
-        {
-          label: "Name",
-          value: (
-            <div style={{ display: "flex", gap: Theme.tokens.space.xs, alignItems: "flex-end" }}>
-              <TextField label="" value={title} onChange={setName} />
-              <Button label="Rename" iconName="Save" busy={saving} disabled={title === run.title} onClick={rename} />
-            </div>
-          ),
-        },
         { label: "Status", value: <StatusBadge status={runStatus(run.status)} /> },
         { label: "Started", value: formatDateTime(run.createdIso) },
         { label: "Updated", value: formatDateTime(run.updatedIso) },
@@ -93,6 +84,28 @@ export const ReportDetails: React.FC<ReportDetailsProps> = ({
         </>
       }
     >
+      <div
+        style={{
+          display: "flex",
+          gap: Theme.tokens.space.sm,
+          alignItems: "flex-end",
+          flexWrap: "wrap",
+          marginBottom: Theme.tokens.space.md,
+        }}
+      >
+        <div style={{ flex: "1 1 320px", minWidth: 240 }}>
+          <TextField label="Report name" value={title} onChange={setName} />
+        </div>
+        <Button
+          label="Rename"
+          iconName="Save"
+          variant="primary"
+          busy={saving}
+          disabled={title.trim().length === 0 || title === run.title}
+          onClick={rename}
+        />
+      </div>
+
       <Tabs
         ariaLabel="Run details"
         selectedKey={tab}

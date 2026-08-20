@@ -38,11 +38,82 @@ export const ChartCard: React.FC<ChartCardProps> = ({
 }) => {
   const charts = React.useMemo(() => [...new Set(requestedCharts)], [requestedCharts]);
   const [kind, setKind] = React.useState<ChartKind>(defaultChart ?? charts[0]);
+  // Dropping a dominant slice is how anyone reads the tail of a distribution.
+  const [dropped, setDropped] = React.useState<string[]>([]);
   const [expanded, setExpanded] = React.useState(false);
   const [full, setFull] = React.useState(false);
 
-  const preview = points.slice(0, previewCount);
-  const hidden = points.length - preview.length;
+  const shown = points.filter((point) => dropped.indexOf(point.label) === -1);
+  const total = shown.reduce((sum, point) => sum + point.value, 0);
+  const preview = shown.slice(0, previewCount);
+  const hidden = shown.length - preview.length;
+
+  const toggle = (label: string): void =>
+    setDropped((current) =>
+      current.indexOf(label) === -1 ? [...current, label] : current.filter((entry) => entry !== label)
+    );
+
+  const legend = (data: ChartPoint[]): React.ReactNode => (
+    <ul
+      style={{
+        listStyle: "none",
+        display: "flex",
+        flexWrap: "wrap",
+        gap: 6,
+        margin: `${Theme.tokens.space.sm} 0 0`,
+        padding: 0,
+      }}
+    >
+      {data.map((point, index) => {
+        const off = dropped.indexOf(point.label) !== -1;
+        const share = total === 0 ? 0 : Math.round((point.value / total) * 100);
+
+        return (
+          <li key={point.label}>
+            <button
+              type="button"
+              onClick={() => toggle(point.label)}
+              aria-pressed={!off}
+              title={`${point.label}: ${valueFormatter ? valueFormatter(point.value) : point.value.toLocaleString()}`}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                maxWidth: 260,
+                padding: "2px 8px",
+                border: `1px solid ${Theme.palette().border}`,
+                borderRadius: 999,
+                background: off ? "transparent" : Theme.palette().surface,
+                color: off ? Theme.palette().textMuted : Theme.palette().text,
+                textDecoration: off ? "line-through" : "none",
+                font: "inherit",
+                fontSize: Theme.tokens.font.sm,
+                cursor: "pointer",
+                minHeight: 28,
+              }}
+            >
+              <span
+                aria-hidden="true"
+                style={{
+                  width: 10,
+                  height: 10,
+                  borderRadius: 2,
+                  flex: "0 0 auto",
+                  background: off ? Theme.palette().border : point.colour ?? Theme.seriesColour(index),
+                }}
+              />
+              <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {point.label}
+              </span>
+              <span style={{ color: Theme.palette().textMuted, flex: "0 0 auto" }}>
+                {point.value.toLocaleString()} · {share}%
+              </span>
+            </button>
+          </li>
+        );
+      })}
+    </ul>
+  );
 
   const chart = (data: ChartPoint[], mode: "card" | "dialog" | "fill"): React.ReactNode => {
     const segments = data.map((point) => ({ key: point.label, label: point.label, value: point.value }));
@@ -154,6 +225,7 @@ export const ChartCard: React.FC<ChartCardProps> = ({
         }}
       >
         {chart(preview, "card")}
+        {legend(preview)}
       </div>
 
       {(hidden > 0 || footer) && (
@@ -201,7 +273,10 @@ export const ChartCard: React.FC<ChartCardProps> = ({
           </>
         }
       >
-        <div style={{ minHeight: full ? "70vh" : undefined }}>{chart(points, full ? "fill" : "dialog")}</div>
+        <div style={{ minHeight: full ? "70vh" : undefined }}>
+          {chart(shown, full ? "fill" : "dialog")}
+          {legend(shown)}
+        </div>
       </PreviewDialog>
     </section>
   );

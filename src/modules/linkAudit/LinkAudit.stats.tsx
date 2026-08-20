@@ -1,6 +1,7 @@
 import * as React from "react";
 import { StatGrid } from "@/components/layout/StatGrid";
 import { compareTiles } from "@/modules/shared/StatSections";
+import { ComparisonCards } from "@/modules/shared/ComparisonCards";
 import { StatTileSpec } from "@/components/Components.types";
 import { Theme } from "@/theme/Theme.api";
 import { LinkAuditContent } from "@/modules/linkAudit/LinkAudit.content";
@@ -142,15 +143,17 @@ export const LinkAuditStats: React.FC<{
 }> = ({ view, config, previous }) => {
   const before = previous ? statSections(previous, config) : undefined;
 
+  const sections = statSections(view, config).map((section, index) => ({
+    ...section,
+    tiles: compareTiles(section.tiles, before?.[index]?.tiles),
+  }));
+
   return (
     <div style={{ display: "grid", gap: Theme.tokens.space.lg, width: "100%", minWidth: 0 }}>
-      {statSections(view, config).map((section, index) => (
-        <StatGrid
-          key={section.key}
-          title={section.title}
-          tiles={compareTiles(section.tiles, before?.[index]?.tiles)}
-          minWidth={180}
-        />
+      <ComparisonCards sections={sections} />
+
+      {sections.map((section) => (
+        <StatGrid key={section.key} title={section.title} tiles={section.tiles} minWidth={180} />
       ))}
     </div>
   );

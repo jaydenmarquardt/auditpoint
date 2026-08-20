@@ -1,7 +1,6 @@
 import * as React from "react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Tabs } from "@/components/data/Tabs";
-import { Button } from "@/components/actions/Button";
 import { Badge } from "@/components/feedback/Badge";
 import { Theme } from "@/theme/Theme.api";
 import { WebPartInstance } from "@/api/WebParts.types";
@@ -112,14 +111,12 @@ const WebPartAuditPage: React.FC = () => {
             onChange={controller.setConfig}
           />
         }
-        extraControls={
-          hasData ? (
-            <Button
-              label={WebPartAuditContent.exportCsv}
-              iconName="ExcelDocument"
-              onClick={() => exportWebPartAudit(data)}
-            />
-          ) : undefined
+        menuItems={
+          hasData
+            ? [
+                { key: "csv", label: WebPartAuditContent.exportCsv, iconName: "ExcelDocument", onClick: () => exportWebPartAudit(data) },
+              ]
+            : []
         }
         runLabel={{
           run: WebPartAuditContent.run,

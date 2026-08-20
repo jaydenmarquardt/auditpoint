@@ -1,7 +1,6 @@
 import * as React from "react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Tabs } from "@/components/data/Tabs";
-import { Button } from "@/components/actions/Button";
 import { Badge } from "@/components/feedback/Badge";
 import { Theme } from "@/theme/Theme.api";
 import { useReport } from "@/core/report/useReport";
@@ -86,14 +85,12 @@ const UsersAuditPage: React.FC = () => {
             onChange={controller.setConfig}
           />
         }
-        extraControls={
-          hasData ? (
-            <Button
-              label={UsersAuditContent.exportCsv}
-              iconName="ExcelDocument"
-              onClick={() => exportUsers(data)}
-            />
-          ) : undefined
+        menuItems={
+          hasData
+            ? [
+                { key: "csv", label: UsersAuditContent.exportCsv, iconName: "ExcelDocument", onClick: () => exportUsers(data) },
+              ]
+            : []
         }
         runLabel={{
           run: UsersAuditContent.run,

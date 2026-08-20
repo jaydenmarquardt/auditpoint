@@ -25,6 +25,7 @@ export const ReportRunPanel: React.FC<ReportRunPanelProps> = ({
   controller,
   runLabel,
   extraControls,
+  menuItems = [],
   runDisabled,
   configPanel,
   configOpen,
@@ -97,6 +98,7 @@ export const ReportRunPanel: React.FC<ReportRunPanelProps> = ({
           <MenuButton
             label="More"
             items={[
+              ...menuItems,
               {
                 key: "details",
                 label: controller.running ? "Live log" : "Run details",
@@ -122,14 +124,34 @@ export const ReportRunPanel: React.FC<ReportRunPanelProps> = ({
 
           {envelope && <StatusBadge status={mapRunStatus(envelope.status)} />}
         </div>
-
-        {envelope && (
-          <span style={{ fontSize: Theme.tokens.font.sm, color: Theme.palette().textMuted }}>
-            {(envelope.sites ?? []).join(", ") || "this site"} · {formatDateTime(envelope.updatedIso)} · v
-            {envelope.version} · {envelope.createdBy}
-          </span>
-        )}
       </Toolbar>
+      )}
+
+      {envelope && (
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: `2px ${Theme.tokens.space.md}`,
+            fontSize: Theme.tokens.font.sm,
+            color: Theme.palette().textMuted,
+            minWidth: 0,
+          }}
+        >
+          <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
+            <i className="ms-Icon ms-Icon--Website" aria-hidden="true" />{" "}
+            {(envelope.sites ?? []).join(", ") || "This site"}
+          </span>
+          <span>
+            <i className="ms-Icon ms-Icon--Clock" aria-hidden="true" /> {formatDateTime(envelope.updatedIso)}
+          </span>
+          <span>
+            <i className="ms-Icon ms-Icon--Contact" aria-hidden="true" /> {envelope.createdBy || "Unknown"}
+          </span>
+          <span>
+            <i className="ms-Icon ms-Icon--Tag" aria-hidden="true" /> v{envelope.version}
+          </span>
+        </div>
       )}
 
       <input

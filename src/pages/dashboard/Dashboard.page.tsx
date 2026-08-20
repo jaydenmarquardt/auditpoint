@@ -111,9 +111,25 @@ const Dashboard: React.FC = () => {
                     title={route.label}
                     subtitle={route.description}
                     onClick={() => navigate(locked ? "settings" : route.key)}
+                    actions={
+                      <span
+                        aria-hidden="true"
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          width: 32,
+                          height: 32,
+                          borderRadius: Tokens.radius.sm,
+                          background: Tokens.colour.accentSoft,
+                          color: Tokens.colour.accent,
+                        }}
+                      >
+                        <i className={`ms-Icon ms-Icon--${locked ? "Lock" : route.iconName}`} />
+                      </span>
+                    }
                   >
                     <span style={{ color: locked ? Tokens.colour.textMuted : Tokens.colour.accent, fontWeight: 600 }}>
-                      <i className={`ms-Icon ms-Icon--${locked ? "Lock" : route.iconName}`} aria-hidden="true" />{" "}
                       {locked ? "Configure to enable" : "Open"}
                     </span>
                   </Card>
