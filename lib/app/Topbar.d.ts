@@ -5,8 +5,6 @@ export interface TopbarProps {
     fullscreen: boolean;
     onToggleFullscreen: () => void;
     fullscreenAllowed: boolean;
-    activeTaskCount: number;
-    onOpenQueue: () => void;
     userName: string;
     siteTitle: string;
 }

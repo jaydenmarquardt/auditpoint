@@ -9,6 +9,7 @@ import {
   exportExternalAudit,
   exportFullAudit,
   exportReferenceList,
+  exportUntestedAudit,
 } from "@/modules/linkAudit/LinkAudit.csv";
 
 interface ActionSpec {
@@ -48,6 +49,14 @@ export const ActionsTab: React.FC<{ view: LinkAuditView }> = ({ view }) => {
       iconName: "RemoveLink",
       disabled: view.totals.broken === 0,
       run: () => exportBrokenAudit(references, links.length),
+    },
+    {
+      key: "untested",
+      label: LinkAuditContent.exportUntested,
+      description: LinkAuditContent.actions.untested,
+      iconName: "Help",
+      disabled: view.untested.length === 0,
+      run: () => exportUntestedAudit(references, links.length),
     },
     {
       key: "references",

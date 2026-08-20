@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StatGrid } from "@/components/layout/StatGrid";
+import { StatSectionSpec, StatSections, compareTiles, sectionsFrom } from "@/modules/shared/StatSections";
 import { StatTileSpec } from "@/components/Components.types";
 import { ListsAuditContent } from "@/modules/listsAudit/ListsAudit.content";
 import { ListsAuditConfig, ListsAuditView } from "@/modules/listsAudit/ListsAudit.types";
@@ -58,14 +58,7 @@ export function statTiles({ view, config }: ListsAuditStatsProps): StatTileSpec[
       hint: view.storageAvailable ? undefined : ListsAuditContent.storageUnavailableShort,
       info: ListsAuditContent.tileInfo.storage,
     },
-    {
-      iconName: "Clock", key: "stale",
-      label: ListsAuditContent.stats.stale,
-      value: formatNumber(view.totals.stale),
-      tone: "warning",
-      badge: view.totals.stale > 0 ? ListsAuditContent.review : undefined,
-      info: ListsAuditContent.tileInfo.stale,
-    },
+    
     {
       iconName: "FieldEmpty", key: "empty",
       label: ListsAuditContent.stats.empty,
@@ -82,6 +75,14 @@ export function statTiles({ view, config }: ListsAuditStatsProps): StatTileSpec[
   ];
 }
 
-export const ListsAuditStats: React.FC<ListsAuditStatsProps> = (props) => (
-  <StatGrid tiles={statTiles(props)} columns={5} />
-);
+export const ListsAuditStats: React.FC<ListsAuditStatsProps & { previousTiles?: StatTileSpec[] }> = ({
+  previousTiles,
+  ...props
+}) => <StatSections sections={sectionsFrom(compareTiles(statTiles(props), previousTiles), STAT_SECTIONS)} />;
+
+/** Grouped so the overview answers one question at a time. */
+export const STAT_SECTIONS: StatSectionSpec[] = [
+  { title: "Inventory", keys: ["lists", "libraries", "items", "folders", "files", "contentTypes"] },
+  { title: "Storage", keys: ["storage"] },
+  { title: "Needs attention", keys: ["empty", "governance"] },
+];

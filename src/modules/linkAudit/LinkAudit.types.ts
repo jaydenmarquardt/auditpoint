@@ -152,6 +152,7 @@ export interface LinkTypeTotals {
 
 export interface ReferenceTotals {
   items: number;
+  lists: number;
   pages: number;
   listItems: number;
   documents: number;
@@ -182,6 +183,8 @@ export interface LinkAuditView {
   megaMenu: LinkUsage[];
   /** Urls the broken link stage actually requested. */
   checkedUrls: number;
+  /** Links that could not be proven either way, one row per placement. */
+  untested: LinkUsage[];
   /** Every link written outside this tenancy, one row per placement. */
   external: LinkUsage[];
   linkTypes: LinkTypeTotals;

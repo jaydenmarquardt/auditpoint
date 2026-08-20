@@ -112,7 +112,7 @@ const StepRow: React.FC<{ step: ProgressStep }> = ({ step }) => {
     <li
       style={{
         display: "grid",
-        gridTemplateColumns: "24px minmax(0, 1fr) auto",
+        gridTemplateColumns: "24px minmax(0, 1fr)",
         alignItems: "center",
         columnGap: Theme.tokens.space.sm,
         padding: `${Theme.tokens.space.md} ${Theme.tokens.space.md}`,
@@ -133,10 +133,24 @@ const StepRow: React.FC<{ step: ProgressStep }> = ({ step }) => {
             fontWeight: 500,
             overflow: "hidden",
             textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
+            whiteSpace: "normal",
           }}
         >
           {step.label}
+
+          <span
+            style={{
+              marginLeft: Theme.tokens.space.sm,
+              fontSize: Theme.tokens.font.sm,
+              fontWeight: 400,
+              color: Theme.palette().textMuted,
+              fontVariantNumeric: "tabular-nums",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {step.countLabel ?? statusText(step.status)}
+          </span>
+
           {step.work && (
             <span
               style={{
@@ -165,16 +179,6 @@ const StepRow: React.FC<{ step: ProgressStep }> = ({ step }) => {
         )}
       </div>
 
-      <span
-        style={{
-          fontSize: Theme.tokens.font.sm,
-          color: Theme.palette().textMuted,
-          fontVariantNumeric: "tabular-nums",
-          whiteSpace: "nowrap",
-        }}
-      >
-        {step.countLabel ?? statusText(step.status)}
-      </span>
     </li>
   );
 };

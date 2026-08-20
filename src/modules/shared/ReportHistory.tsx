@@ -72,6 +72,16 @@ export const ReportHistory: React.FC<ReportHistoryProps> = ({
       ),
     },
     {
+      key: "site",
+      header: "Site",
+      minWidth: 200,
+      sortValue: (entry) => entry.sites[0] ?? "",
+      filterValue: (entry) => siteName(entry.sites[0] ?? ""),
+      render: (entry) => (
+        <span title={entry.sites.join(", ")}>{entry.sites.map(siteName).join(", ") || "-"}</span>
+      ),
+    },
+    {
       key: "status",
       header: "Status",
       minWidth: 130,
@@ -211,6 +221,13 @@ export const ReportHistory: React.FC<ReportHistoryProps> = ({
     </Card>
   );
 };
+
+/** The last path segment is what people call the site; the rest is noise in a table. */
+function siteName(url: string): string {
+  if (!url) return "";
+  const parts = url.replace(/\/$/, "").split("/");
+  return parts[parts.length - 1] || url;
+}
 
 function statusOf(status: ReportIndexEntry["status"]): ProgressStatus {
   if (status === "complete") return "succeeded";

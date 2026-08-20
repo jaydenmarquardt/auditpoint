@@ -1,4 +1,5 @@
 import * as React from "react";
+import { StatTileSpec } from "@/components/Components.types";
 import { ListsAuditStats } from "@/modules/listsAudit/ListsAudit.stats";
 import { Notice } from "@/components/feedback/Notice";
 import { EmptyState } from "@/components/states/Empty.state";
@@ -20,9 +21,11 @@ export interface OverviewTabProps {
   config: ListsAuditConfig;
   hasData: boolean;
   onRun: () => void;
+  comparison?: React.ReactNode;
+  previousTiles?: StatTileSpec[];
 }
 
-export const OverviewTab: React.FC<OverviewTabProps> = ({ view, config, hasData, onRun }) => {
+export const OverviewTab: React.FC<OverviewTabProps> = ({ view, config, hasData, onRun, comparison, previousTiles }) => {
   if (!hasData) {
     return (
       <EmptyState
@@ -37,7 +40,9 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({ view, config, hasData,
 
   return (
     <div style={{ display: "grid", gap: Theme.tokens.space.lg, minWidth: 0 }}>
-      <ListsAuditStats view={view} config={config} />
+      {comparison}
+
+      <ListsAuditStats view={view} config={config} previousTiles={previousTiles} />
 
       {!config.scanItems && <Notice tone="info" message={ListsAuditContent.scanOff} />}
       {config.scanItems && !view.storageAvailable && (

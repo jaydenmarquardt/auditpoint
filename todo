@@ -11,9 +11,44 @@ images audit
 - find duplicate images
 - find unused images
 
+content audit 
+ per page and sums
+    - comments
+    - likes
+    - ratings
+    - follows??
+    - version count
+    - char count
+    - word counts
+    - all time editors for it
+ custom reports for content types
+ - ie job descs position or classification stats
+ - categories
+ - dates ie event date
+ - classifieds by price
+ - Executive messages by title
+
+Analytics Audit
+- 90 days
+- device views
+- file views
+- use the site apis that the sp site uses
+- Unique viewers
+- site visits
+- average time spent
+- page views,
+    - Views by folder
+    - Views by Org unit
+    - views by other props????
+    - unique, visits, % change,
+    - today, 7d,30d,90d, all
+    - get daily and graphs
+    - time spent
+    - time of day
+    - 
 
 
-
+*allow merging with other reports
 
 link audit:
 - identify if its a shared link or path link
@@ -22,10 +57,6 @@ link audit:
 audit ideas:
 page creators
 page editors
-user audit
-staleness report
-permissions audit
-webpart audit
 wcag audit
 image audit files and in content
 page views
@@ -46,7 +77,7 @@ update all webpart props
 - tool to reduce/format
 
 
-
+list audit, include attachment counts
 
 
 random :
@@ -82,8 +113,4 @@ pre audit report config ui improvements pls
 hide from webpart list only manual adding
 
 
-1. link audit 
-- What was scanned include how many lists
-2. new fun feature, on overview tabs of reports, have a toggle that says "Comparison" if they toggle it will show a field to select a a previous report for this audit, 
-- if enabled make a new o stat variant that shows the prev vs now and percentage up or down and or diff amount
-- also check each audit that exists and think of other o cards that are usefull for when comparing these
+wcag/aaa/document cag

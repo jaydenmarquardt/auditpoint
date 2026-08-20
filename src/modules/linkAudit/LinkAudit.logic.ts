@@ -472,6 +472,7 @@ export function summariseReferences(references: Reference[], destinations: numbe
 
   return {
     items: references.length,
+    lists: new Set(references.map((reference) => reference.listTitle).filter(Boolean)).size,
     pages: references.filter((reference) => reference.kind === "page").length,
     listItems: references.filter((reference) => reference.kind === "item").length,
     documents: documents.length,
@@ -529,6 +530,20 @@ export function brokenUsages(links: AggregatedLink[]): LinkUsage[] {
   return links.filter((link) => link.broken === "yes").flatMap((link) => link.usages);
 }
 
+/** Why a link is still unproven, which is the first thing anyone asks of the count. */
+export function untestedReason(link: OutgoingLink, checked: boolean): string {
+  if (link.broken !== "unsure") return "";
+  if (link.linkType === "external") return LinkAuditContent.reasons.external;
+  if (link.linkType === "share") return LinkAuditContent.reasons.share;
+  if (!checked) return LinkAuditContent.reasons.notChecked;
+  if (link.status === 0) return LinkAuditContent.reasons.noAnswer;
+  return LinkAuditContent.reasons.unknown;
+}
+
+export function untestedUsages(links: AggregatedLink[]): LinkUsage[] {
+  return links.filter((link) => link.broken === "unsure").flatMap((link) => link.usages);
+}
+
 export function externalUsages(links: AggregatedLink[]): LinkUsage[] {
   return links.filter((link) => link.linkType === "external").flatMap((link) => link.usages);
 }
@@ -554,6 +569,7 @@ export function buildView(data: Partial<LinkAuditData> | undefined, origin: stri
     external: externalUsages(links),
     megaMenu: sourceUsages(links, "megamenu"),
     checkedUrls: data?.checkedUrls ?? 0,
+    untested: untestedUsages(links),
     bySource: (["content", "webpart", "navigation", "document", "attachment", "config", "megamenu"] as LinkSource[])
       .map((source) => ({
         label: sourceLabel(source),

@@ -1,5 +1,6 @@
 export * from "./Components.types";
 export * from "./actions/Button";
+export * from "./actions/MenuButton";
 export * from "./actions/Drawer";
 export * from "./actions/IconButton";
 export * from "./actions/Modal";

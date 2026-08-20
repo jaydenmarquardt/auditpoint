@@ -1,7 +1,6 @@
 import * as React from "react";
 import { AppContent } from "@/app/App.content";
 import { AppStyles } from "@/app/App.styles";
-import { Badge } from "@/components/feedback/Badge";
 import { IconButton } from "@/components/actions/IconButton";
 import { Tokens } from "@/theme/Tokens";
 import { useSettings } from "@/api/Settings.api";
@@ -12,8 +11,6 @@ export interface TopbarProps {
   fullscreen: boolean;
   onToggleFullscreen: () => void;
   fullscreenAllowed: boolean;
-  activeTaskCount: number;
-  onOpenQueue: () => void;
   userName: string;
   siteTitle: string;
 }
@@ -24,8 +21,6 @@ export const Topbar: React.FC<TopbarProps> = ({
   fullscreen,
   onToggleFullscreen,
   fullscreenAllowed,
-  activeTaskCount,
-  onOpenQueue,
   userName,
   siteTitle,
 }) => {
@@ -57,26 +52,6 @@ export const Topbar: React.FC<TopbarProps> = ({
     </div>
 
     <div style={{ flex: "1 1 auto" }} />
-
-    <button
-      type="button"
-      onClick={onOpenQueue}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: Tokens.space.xs,
-        minHeight: Tokens.hitTarget,
-        padding: `0 ${Tokens.space.sm}`,
-        border: "none",
-        background: "transparent",
-        font: "inherit",
-        cursor: "pointer",
-      }}
-    >
-      <i className="ms-Icon ms-Icon--TaskManager" aria-hidden="true" />
-      <span>{AppContent.topbar.queue}</span>
-      <Badge label={String(activeTaskCount)} tone={activeTaskCount > 0 ? "info" : "neutral"} />
-    </button>
 
     <IconButton
       iconName={fullscreen ? "BackToWindow" : "FullScreen"}

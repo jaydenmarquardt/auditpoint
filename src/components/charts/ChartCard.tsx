@@ -34,6 +34,7 @@ export const ChartCard: React.FC<ChartCardProps> = ({
   footer,
   previewCount = 10,
   height = 410,
+  span = 1,
 }) => {
   const charts = React.useMemo(() => [...new Set(requestedCharts)], [requestedCharts]);
   const [kind, setKind] = React.useState<ChartKind>(defaultChart ?? charts[0]);
@@ -81,6 +82,8 @@ export const ChartCard: React.FC<ChartCardProps> = ({
   return (
     <section
       style={{
+        // A card with long labels earns more of the row rather than truncating.
+        gridColumn: `span ${span}`,
         display: "flex",
         flexDirection: "column",
         background: Theme.palette().surface,

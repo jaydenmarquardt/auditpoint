@@ -18,7 +18,9 @@ import { ReferencesTab } from "@/modules/linkAudit/tabs/References.tab";
 import { LinksTab } from "@/modules/linkAudit/tabs/Links.tab";
 import { BrokenTab } from "@/modules/linkAudit/tabs/Broken.tab";
 import { ExternalTab } from "@/modules/linkAudit/tabs/External.tab";
+import { UntestedTab } from "@/modules/linkAudit/tabs/Untested.tab";
 import { ActionsTab } from "@/modules/linkAudit/tabs/Actions.tab";
+import { ComparisonBar } from "@/modules/shared/ComparisonBar";
 import { MegaMenuTab } from "@/modules/linkAudit/tabs/MegaMenu.tab";
 import { ReferenceDialog } from "@/modules/linkAudit/Reference.dialog";
 import { LinkDialog } from "@/modules/linkAudit/Link.dialog";
@@ -29,6 +31,7 @@ const LinkAuditPage: React.FC = () => {
   const [configOpen, setConfigOpen] = React.useState(false);
   const [reference, setReference] = React.useState<Reference | undefined>(undefined);
   const [link, setLink] = React.useState<AggregatedLink | undefined>(undefined);
+  const [previousData, setPreviousData] = React.useState<Partial<LinkAuditData> | undefined>(undefined);
 
   const module = findModule("link-audit");
   const data = controller.envelope?.data;
@@ -38,6 +41,11 @@ const LinkAuditPage: React.FC = () => {
   // Stages mutate data in place, so the envelope timestamp is what changes.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const view = React.useMemo(() => buildView(data, origin), [data, origin, updatedIso]);
+
+  const previous = React.useMemo(
+    () => (previousData ? buildView(previousData, origin) : undefined),
+    [previousData, origin]
+  );
 
   const references = data?.references ?? [];
   const hasData = references.length > 0;
@@ -112,6 +120,16 @@ const LinkAuditPage: React.FC = () => {
                     config={controller.envelope?.config ?? controller.config}
                     hasData={hasData}
                     onRun={() => setConfigOpen(true)}
+                    previous={previous}
+                    comparison={
+                      hasData ? (
+                        <ComparisonBar
+                          kind={linkAuditReport.kind}
+                          currentId={controller.envelope?.id}
+                          onChange={(next) => setPreviousData(next as Partial<LinkAuditData> | undefined)}
+                        />
+                      ) : undefined
+                    }
                   />
                 ),
               },
@@ -132,6 +150,17 @@ const LinkAuditPage: React.FC = () => {
                 label: LinkAuditContent.tabs.broken,
                 count: view.broken.length,
                 content: <BrokenTab usages={view.broken} />,
+              },
+              {
+                key: "untested",
+                label: LinkAuditContent.tabs.untested,
+                count: view.untested.length,
+                content: (
+                  <UntestedTab
+                    usages={view.untested}
+                    checked={Boolean((controller.envelope?.config ?? controller.config).checkBrokenLinks)}
+                  />
+                ),
               },
               {
                 key: "external",

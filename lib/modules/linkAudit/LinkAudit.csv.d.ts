@@ -5,6 +5,7 @@ export declare function referenceRows(references: Reference[]): Record<string, u
 export declare function exportFullAudit(references: Reference[], destinations: number): void;
 export declare function exportExternalAudit(references: Reference[], destinations: number): void;
 export declare function exportBrokenAudit(references: Reference[], destinations: number): void;
+export declare function exportUntestedAudit(references: Reference[], destinations: number): void;
 export declare function exportReferenceList(references: Reference[]): void;
 /** The links on one item, for the export button inside its dialog. */
 export declare function exportReferenceLinks(reference: Reference): void;

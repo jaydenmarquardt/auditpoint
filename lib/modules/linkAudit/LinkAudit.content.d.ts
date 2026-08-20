@@ -14,6 +14,7 @@ export declare const LinkAuditContent: {
     readonly exportExternal: "Export external only";
     readonly exportBroken: "Export broken only";
     readonly exportReferences: "Export items";
+    readonly exportUntested: "Export untested only";
     readonly exportLinks: "Export links";
     readonly exportUsages: "Export usages";
     readonly openLink: "Open link";
@@ -24,6 +25,7 @@ export declare const LinkAuditContent: {
         readonly links: "Links";
         readonly broken: "Broken";
         readonly external: "External";
+        readonly untested: "Untested";
         readonly megaMenu: "Mega menu";
         readonly actions: "Actions";
     };
@@ -47,6 +49,8 @@ export declare const LinkAuditContent: {
         readonly uses: "Uses";
         readonly spellings: "Spellings";
         readonly resolvesTo: "Resolves to";
+        readonly reason: "Why untested";
+        readonly open: "Open";
         readonly text: "Text";
         readonly url: "URL";
         readonly item: "Item";
@@ -54,6 +58,13 @@ export declare const LinkAuditContent: {
         readonly usedIn: "Used in";
         readonly modified: "Modified";
         readonly flags: "Flags";
+    };
+    readonly reasons: {
+        readonly external: "Off this tenancy: the browser cannot read a cross origin response.";
+        readonly share: "A share link carries a token rather than a path, so there is nothing to look up.";
+        readonly notChecked: "The link check was switched off for this run.";
+        readonly noAnswer: "The request failed before a status came back, which proves nothing either way.";
+        readonly unknown: "Matched nothing scanned and could not be requested.";
     };
     readonly sections: {
         readonly scanned: "What was scanned";
@@ -79,6 +90,7 @@ export declare const LinkAuditContent: {
         readonly external: "External";
         readonly broken: "Broken";
         readonly untested: "Untested";
+        readonly lists: "Lists and libraries";
         readonly orphans: "No inbound links";
         readonly attachments: "Attachments";
         readonly attachmentLinks: "In attachments";
@@ -120,7 +132,8 @@ export declare const LinkAuditContent: {
         readonly documentLinks: "Links read out of docx and pdf file content.";
         readonly external: "Links pointing off this tenancy. They cannot be tested from the browser.";
         readonly broken: "Links proven dead, either legacy or answered with an error status.";
-        readonly untested: "Links that could not be proven either way.";
+        readonly untested: "Links that could not be proven either way. The Untested tab says why for each one.";
+        readonly lists: "Distinct lists and libraries the scanned items came from.";
         readonly orphans: "Scanned items that nothing else on the site points at. Often fine for a form or an archive, worth a look for a page.";
         readonly share: "Links created by the Share button. They carry a token rather than a path, so they cannot be matched to an item or tested.";
         readonly relative: "Links written as a path, such as /sites/intranet/page.aspx. They survive a rename of the tenant.";
@@ -212,6 +225,7 @@ export declare const LinkAuditContent: {
         readonly external: "Only links leaving this tenancy, for a review of who you send people to.";
         readonly broken: "Only links proven dead: a retired host, or an error status from the server.";
         readonly references: "One row per scanned item with its incoming, outgoing and broken counts.";
+        readonly untested: "Only links that could not be proven, with the reason for each.";
         readonly disabled: "Nothing to export yet.";
     };
     readonly empty: {
@@ -221,6 +235,7 @@ export declare const LinkAuditContent: {
         readonly links: "No links were found in anything that was scanned.";
         readonly broken: "No broken links. Nothing pointed at a legacy host and nothing answered with an error.";
         readonly external: "No links leave this tenancy.";
+        readonly untested: "Every link was proven one way or the other.";
         readonly megaMenu: "No mega menu configuration was scanned. Set its path in the run settings.";
     };
     readonly flags: {

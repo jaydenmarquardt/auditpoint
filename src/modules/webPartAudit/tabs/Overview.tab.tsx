@@ -1,4 +1,5 @@
 import * as React from "react";
+import { StatTileSpec } from "@/components/Components.types";
 import { WebPartAuditStats } from "@/modules/webPartAudit/WebPartAudit.stats";
 import { EmptyState } from "@/components/states/Empty.state";
 import { ErrorBoundary } from "@/components/states/ErrorBoundary";
@@ -15,9 +16,11 @@ export interface OverviewTabProps {
   view: WebPartAuditView;
   hasData: boolean;
   onRun: () => void;
+  comparison?: React.ReactNode;
+  previousTiles?: StatTileSpec[];
 }
 
-export const OverviewTab: React.FC<OverviewTabProps> = ({ view, hasData, onRun }) => {
+export const OverviewTab: React.FC<OverviewTabProps> = ({ view, hasData, onRun, comparison, previousTiles }) => {
   if (!hasData) {
     return (
       <EmptyState
@@ -32,7 +35,9 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({ view, hasData, onRun }
 
   return (
     <div style={{ display: "grid", gap: Theme.tokens.space.lg, minWidth: 0 }}>
-      <WebPartAuditStats view={view} />
+      {comparison}
+
+      <WebPartAuditStats view={view} previousTiles={previousTiles} />
 
       <ErrorBoundary>
         <div

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StatGrid } from "@/components/layout/StatGrid";
+import { StatSectionSpec, StatSections, compareTiles, sectionsFrom } from "@/modules/shared/StatSections";
 import { StatTileSpec } from "@/components/Components.types";
 import { ContentAuditContent } from "@/modules/contentAudit/ContentAudit.content";
 import { ContentAuditView } from "@/modules/contentAudit/ContentAudit.types";
@@ -56,6 +56,13 @@ export function statTiles(view: ContentAuditView): StatTileSpec[] {
   ];
 }
 
-export const ContentAuditStats: React.FC<{ view: ContentAuditView }> = ({ view }) => (
-  <StatGrid tiles={statTiles(view)} columns={5} />
+export const ContentAuditStats: React.FC<{ view: ContentAuditView; previousTiles?: StatTileSpec[] }> = ({ view , previousTiles}) => (
+  <StatSections sections={sectionsFrom(compareTiles(statTiles(view), previousTiles), STAT_SECTIONS)} />
 );
+
+/** Grouped so the overview answers one question at a time. */
+export const STAT_SECTIONS: StatSectionSpec[] = [
+  { title: "What was measured", keys: ["entries", "pages", "items", "words", "average", "reading", "averageReading"] },
+  { title: "Structure", keys: ["headings", "images", "links", "external", "tables", "embeds"] },
+  { title: "Needs attention", keys: ["thin", "noHeadings", "empty"] },
+];

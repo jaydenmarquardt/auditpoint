@@ -12,15 +12,29 @@ export const UsersAuditStats: React.FC<{ view: UsersAuditView; config: UsersAudi
   const { totals } = view;
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexWrap: "wrap",
-        gap: Theme.tokens.space.md,
-        width: "100%",
-        minWidth: 0,
-      }}
-    >
+    <div style={{ display: "grid", gap: Theme.tokens.space.lg, width: "100%", minWidth: 0 }}>
+      <section style={{ width: "100%", minWidth: 0 }}>
+        <h3
+          style={{
+            margin: `0 0 ${Theme.tokens.space.sm}`,
+            fontSize: Theme.tokens.font.md,
+            color: Theme.palette().textMuted,
+            textTransform: "uppercase",
+            letterSpacing: "0.06em",
+          }}
+        >
+          People
+        </h3>
+
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: Theme.tokens.space.md,
+          width: "100%",
+          minWidth: 0,
+        }}
+      >
       <StatTile
         iconName="People" label={UsersAuditContent.stats.people} value={formatNumber(totals.people)} info={UsersAuditContent.tileInfo.people} />
       <StatTile
@@ -40,25 +54,16 @@ export const UsersAuditStats: React.FC<{ view: UsersAuditView; config: UsersAudi
         info={UsersAuditContent.tileInfo.external}
       />
       <StatTile
-        iconName="Admin"
-        label={UsersAuditContent.stats.admins}
-        value={formatNumber(totals.siteAdmins)}
-        tone="warning"
-        info={UsersAuditContent.tileInfo.admins}
+        iconName="UserFollowed"
+        label={`${UsersAuditContent.stats.active} (${config.recentDays}d)`}
+        value={formatNumber(totals.activeRecently)}
+        info={UsersAuditContent.tileInfo.active}
       />
-      <StatTile
-        iconName="System" label={UsersAuditContent.stats.system} value={formatNumber(totals.system)} info={UsersAuditContent.tileInfo.system} />
       <StatTile
         iconName="AddFriend"
         label={`${UsersAuditContent.stats.added} (${config.months}m)`}
         value={formatNumber(totals.addedInWindow)}
         info={UsersAuditContent.tileInfo.added}
-      />
-      <StatTile
-        iconName="UserFollowed"
-        label={`${UsersAuditContent.stats.active} (${config.recentDays}d)`}
-        value={formatNumber(totals.activeRecently)}
-        info={UsersAuditContent.tileInfo.active}
       />
       <StatTile
         iconName="UserPause"
@@ -68,18 +73,43 @@ export const UsersAuditStats: React.FC<{ view: UsersAuditView; config: UsersAudi
         info={UsersAuditContent.tileInfo.dormant}
       />
       <StatTile
+        iconName="Admin"
+        label={UsersAuditContent.stats.admins}
+        value={formatNumber(totals.siteAdmins)}
+        tone="warning"
+        info={UsersAuditContent.tileInfo.admins}
+      />
+      </div>
+      </section>
+
+      <section style={{ width: "100%", minWidth: 0 }}>
+        <h3
+          style={{
+            margin: `0 0 ${Theme.tokens.space.sm}`,
+            fontSize: Theme.tokens.font.md,
+            color: Theme.palette().textMuted,
+            textTransform: "uppercase",
+            letterSpacing: "0.06em",
+          }}
+        >
+          Groups
+        </h3>
+
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: Theme.tokens.space.md,
+          width: "100%",
+          minWidth: 0,
+        }}
+      >
+      <StatTile
         iconName="Group"
         label={UsersAuditContent.stats.groups}
         value={formatNumber(totals.groups)}
         unavailable={!(config.readGroups)}
         info={UsersAuditContent.tileInfo.groups}
-      />
-      <StatTile
-        iconName="Calculator"
-        label={UsersAuditContent.stats.average}
-        value={String(totals.averageGroupSize)}
-        unavailable={!(config.readGroups)}
-        info={UsersAuditContent.tileInfo.average}
       />
       <StatTile
         iconName="UserOptional"
@@ -90,6 +120,38 @@ export const UsersAuditStats: React.FC<{ view: UsersAuditView; config: UsersAudi
         info={UsersAuditContent.tileInfo.ungrouped}
       />
       <StatTile
+        iconName="Calculator"
+        label={UsersAuditContent.stats.average}
+        value={String(totals.averageGroupSize)}
+        unavailable={!(config.readGroups)}
+        info={UsersAuditContent.tileInfo.average}
+      />
+      </div>
+      </section>
+
+      <section style={{ width: "100%", minWidth: 0 }}>
+        <h3
+          style={{
+            margin: `0 0 ${Theme.tokens.space.sm}`,
+            fontSize: Theme.tokens.font.md,
+            color: Theme.palette().textMuted,
+            textTransform: "uppercase",
+            letterSpacing: "0.06em",
+          }}
+        >
+          Profiles
+        </h3>
+
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: Theme.tokens.space.md,
+          width: "100%",
+          minWidth: 0,
+        }}
+      >
+      <StatTile
         iconName="ContactCard"
         label={UsersAuditContent.stats.profiles}
         value={formatNumber(totals.profilesRead)}
@@ -97,6 +159,10 @@ export const UsersAuditStats: React.FC<{ view: UsersAuditView; config: UsersAudi
         hint={config.readProfiles ? `${formatNumber(totals.withDepartment)} with a department` : undefined}
         info={UsersAuditContent.tileInfo.profiles}
       />
+      <StatTile
+        iconName="System" label={UsersAuditContent.stats.system} value={formatNumber(totals.system)} info={UsersAuditContent.tileInfo.system} />
+      </div>
+      </section>
     </div>
   );
 };

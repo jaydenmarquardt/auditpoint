@@ -49,6 +49,8 @@ export interface ReportHistoryProps {
 export interface ReportDetailsProps {
   open: boolean;
   onDismiss: () => void;
+  /** Opens straight onto a tab, so a running report can go to its log. */
+  initialTab?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   envelope?: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

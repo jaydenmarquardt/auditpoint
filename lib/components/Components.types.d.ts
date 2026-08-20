@@ -22,6 +22,19 @@ export interface ButtonProps {
     newTab?: boolean;
     title?: string;
 }
+export interface MenuButtonItem {
+    key: string;
+    label: string;
+    iconName?: string;
+    disabled?: boolean;
+    onClick: () => void;
+}
+export interface MenuButtonProps {
+    label: string;
+    iconName?: string;
+    items: MenuButtonItem[];
+    disabled?: boolean;
+}
 export interface AccordionProps {
     title: string;
     subtitle?: string;
@@ -257,6 +270,10 @@ export interface StatTileSpec {
     iconName?: string;
     /** The run did not measure this. Reads NA and dims, rather than claiming zero. */
     unavailable?: boolean;
+    /** Same measure from the run being compared against, if one was chosen. */
+    previousValue?: number;
+    /** This run's measure as a number, so a change can be worked out. */
+    currentValue?: number;
 }
 export interface StatGridProps {
     tiles: StatTileSpec[];
@@ -271,6 +288,8 @@ export interface StatTileProps {
     value: string;
     iconName?: string;
     unavailable?: boolean;
+    previousValue?: number;
+    currentValue?: number;
     hint?: string;
     tone?: BadgeTone;
     badge?: string;

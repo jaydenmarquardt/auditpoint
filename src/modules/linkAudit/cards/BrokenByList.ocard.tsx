@@ -9,6 +9,7 @@ export const BrokenByListCard: React.FC<{ view: LinkAuditView }> = ({ view }) =>
     info={LinkAuditContent.cardInfo.brokenByList}
     defaultChart="hbar"
     charts={["donut", "hbar", "bar"]}
+    span={2}
     points={view.brokenByList}
   />
 );

@@ -9,6 +9,8 @@ import { ReportRunPanel } from "@/modules/shared/ReportRunPanel";
 import { ReportConfigPanel } from "@/modules/shared/ReportConfigPanel";
 import { ReportHistory } from "@/modules/shared/ReportHistory";
 import { findModule } from "@/modules/Modules.registry";
+import { statTiles } from "@/modules/publishingAudit/PublishingAudit.stats";
+import { ComparisonBar } from "@/modules/shared/ComparisonBar";
 import { publishingAuditReport } from "@/modules/publishingAudit/PublishingAudit.report";
 import { PublishingAuditContent } from "@/modules/publishingAudit/PublishingAudit.content";
 import { buildView } from "@/modules/publishingAudit/PublishingAudit.logic";
@@ -34,6 +36,18 @@ const PublishingAuditPage: React.FC = () => {
   // Stages mutate data in place, so the envelope timestamp is what changes.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const view = React.useMemo(() => buildView(data, config), [data, config, updatedIso]);
+
+  const [previousData, setPreviousData] = React.useState<Partial<PublishingAuditData> | undefined>(undefined);
+
+  // The earlier run is rebuilt through the same view, so every tile compares like for like.
+  const previousTiles = React.useMemo(
+    () => {
+      if (!previousData) return undefined;
+      const previousView = buildView(previousData, config);
+      return statTiles(previousView, config);
+    },
+    [previousData, config]
+  );
 
   const items = data?.items ?? [];
   const hasData = items.length > 0;
@@ -116,7 +130,17 @@ const PublishingAuditPage: React.FC = () => {
                 key: "overview",
                 label: PublishingAuditContent.tabs.overview,
                 content: (
-                  <OverviewTab view={view} config={config} hasData={hasData} onRun={() => setConfigOpen(true)} />
+                  <OverviewTab view={view} config={config} hasData={hasData} onRun={() => setConfigOpen(true)} previousTiles={previousTiles}
+                    comparison={
+                      hasData ? (
+                        <ComparisonBar
+                          kind={publishingAuditReport.kind}
+                          currentId={controller.envelope?.id}
+                          onChange={(next) => setPreviousData(next as Partial<PublishingAuditData> | undefined)}
+                        />
+                      ) : undefined
+                    }
+                  />
                 ),
               },
               {

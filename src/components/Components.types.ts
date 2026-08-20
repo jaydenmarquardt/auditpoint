@@ -29,6 +29,22 @@ export interface ButtonProps {
   title?: string;
 }
 
+// MenuButton.tsx
+export interface MenuButtonItem {
+  key: string;
+  label: string;
+  iconName?: string;
+  disabled?: boolean;
+  onClick: () => void;
+}
+
+export interface MenuButtonProps {
+  label: string;
+  iconName?: string;
+  items: MenuButtonItem[];
+  disabled?: boolean;
+}
+
 // Card.tsx
 export interface AccordionProps {
   title: string;
@@ -315,6 +331,10 @@ export interface StatTileSpec {
   iconName?: string;
   /** The run did not measure this. Reads NA and dims, rather than claiming zero. */
   unavailable?: boolean;
+  /** Same measure from the run being compared against, if one was chosen. */
+  previousValue?: number;
+  /** This run's measure as a number, so a change can be worked out. */
+  currentValue?: number;
 }
 
 export interface StatGridProps {
@@ -331,6 +351,8 @@ export interface StatTileProps {
   value: string;
   iconName?: string;
   unavailable?: boolean;
+  previousValue?: number;
+  currentValue?: number;
   hint?: string;
   tone?: BadgeTone;
   badge?: string;

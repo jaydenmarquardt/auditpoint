@@ -4,7 +4,9 @@ import { BadgeTone, TableColumn } from "@/components/Components.types";
 import { Theme } from "@/theme/Theme.api";
 import { BrokenState, LinkSource, LinkType } from "@/api/Links.types";
 import { LinkAuditContent } from "@/modules/linkAudit/LinkAudit.content";
-import { flagsFor, sourceLabel, statusLabel } from "@/modules/linkAudit/LinkAudit.logic";
+import { Button } from "@/components/actions/Button";
+import { flagsFor, sourceLabel, statusLabel, untestedReason } from "@/modules/linkAudit/LinkAudit.logic";
+import { absoluteFromServerRelative } from "@/utils/Url.util";
 import {
   AggregatedLink,
   LinkUsage,
@@ -232,6 +234,7 @@ export const linkColumns: TableColumn<AggregatedLink>[] = [
 ];
 
 /** One row per place a link is written: the broken tab and the link dialog share it. */
+/** Where a link was written, with a way to go straight there. */
 export const usageColumns: TableColumn<LinkUsage>[] = [
   {
     key: "link",
@@ -279,7 +282,41 @@ export const usageColumns: TableColumn<LinkUsage>[] = [
     sortValue: (usage) => usage.link.status,
     render: (usage) => <StatusTag broken={usage.link.broken} status={usage.link.status} />,
   },
+  {
+    key: "open",
+    header: LinkAuditContent.columns.open,
+    minWidth: 110,
+    render: (usage) =>
+      usage.reference.url ? (
+        <Button
+          label={LinkAuditContent.columns.open}
+          variant="subtle"
+          iconName="OpenInNewWindow"
+          newTab
+          href={absoluteFromServerRelative(usage.reference.url, usage.reference.siteUrl || window.location.href)}
+        />
+      ) : (
+        <span>-</span>
+      ),
+  },
 ];
+
+/** The untested view adds the one column that view exists to answer. */
+export function untestedColumns(checked: boolean): TableColumn<LinkUsage>[] {
+  return [
+    ...usageColumns.filter((column) => column.key !== "open"),
+    {
+      key: "reason",
+      header: LinkAuditContent.columns.reason,
+      minWidth: 280,
+      maxWidth: 420,
+      sortValue: (usage) => untestedReason(usage.link, checked),
+      filterValue: (usage) => untestedReason(usage.link, checked),
+      render: (usage) => <span>{untestedReason(usage.link, checked)}</span>,
+    },
+    ...usageColumns.filter((column) => column.key === "open"),
+  ];
+}
 
 export const outgoingColumns: TableColumn<OutgoingLink>[] = [
   {

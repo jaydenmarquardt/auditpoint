@@ -11,6 +11,8 @@ import { Theme } from "@/theme/Theme.api";
 import { ReportEnvelope, ReportIssue, ReportLogEntry } from "@/api/Reports.types";
 import { ConfigField } from "@/core/report/Report.types";
 import { durationBetween, formatDateTime } from "@/utils/Format.util";
+import { TextField } from "@/components/inputs/TextField";
+import { Reports } from "@/api/Reports.api";
 import { downloadJson } from "@/utils/Export.util";
 import { ReportDetailsProps } from "@/modules/shared/Shared.types";
 
@@ -20,11 +22,30 @@ export const ReportDetails: React.FC<ReportDetailsProps> = ({
   envelope,
   definition,
   logsEnabled,
+  initialTab,
 }) => {
-  const [tab, setTab] = React.useState("settings");
+  const [tab, setTab] = React.useState(initialTab ?? "settings");
+  const [name, setName] = React.useState<string | undefined>(undefined);
+  const [saving, setSaving] = React.useState(false);
+
+  React.useEffect(() => {
+    if (open) setTab(initialTab ?? "settings");
+  }, [open, initialTab]);
+
   if (!envelope) return null;
 
   const run = envelope as ReportEnvelope;
+  const title = name ?? run.title;
+
+  /** The file keeps its id, so renaming is only ever a label change. */
+  const rename = (): void => {
+    setSaving(true);
+    run.title = title;
+    Reports()
+      .save(run)
+      .then(() => setSaving(false))
+      .catch(() => setSaving(false));
+  };
   const config = (run.config ?? {}) as Record<string, unknown>;
 
   const settings = definition.configFields.map((field: ConfigField<unknown>) => ({
@@ -41,6 +62,15 @@ export const ReportDetails: React.FC<ReportDetailsProps> = ({
       description="Settings used for this run, plus the log and issues captured while it ran."
       width="large"
       facts={[
+        {
+          label: "Name",
+          value: (
+            <div style={{ display: "flex", gap: Theme.tokens.space.xs, alignItems: "flex-end" }}>
+              <TextField label="" value={title} onChange={setName} />
+              <Button label="Rename" iconName="Save" busy={saving} disabled={title === run.title} onClick={rename} />
+            </div>
+          ),
+        },
         { label: "Status", value: <StatusBadge status={runStatus(run.status)} /> },
         { label: "Started", value: formatDateTime(run.createdIso) },
         { label: "Updated", value: formatDateTime(run.updatedIso) },

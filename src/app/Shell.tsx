@@ -5,8 +5,7 @@ import { RouteView } from "@/app/RouteView";
 import { Sidebar } from "@/app/Sidebar";
 import { Topbar } from "@/app/Topbar";
 import { QueueBar } from "@/app/QueueBar";
-import { navigate, toggleQueueBar, toggleSidebar, useAppState } from "@/core/state/App.store";
-import { useActiveTaskCount } from "@/core/queue/Queue.store";
+import { navigate, toggleSidebar, useAppState } from "@/core/state/App.store";
 import { useFullscreen } from "@/core/hooks/useFullscreen";
 import { useMediaQuery } from "@/core/hooks/useMediaQuery";
 import { useApp } from "@/core/context/App.context";
@@ -16,7 +15,6 @@ export const Shell: React.FC = () => {
   const { route, sidebarOpen } = useAppState();
   const { access, webTitle, editMode } = useApp();
   const { fullscreen, toggle: toggleFullscreenView } = useFullscreen(!editMode);
-  const activeTaskCount = useActiveTaskCount();
   const isNarrow = useMediaQuery("(max-width: 900px)");
 
   // Deep links land on the right dashboard; an unknown key falls back rather than 404s.
@@ -33,8 +31,6 @@ export const Shell: React.FC = () => {
         fullscreen={fullscreen}
         onToggleFullscreen={toggleFullscreenView}
         fullscreenAllowed={!editMode}
-        activeTaskCount={activeTaskCount}
-        onOpenQueue={toggleQueueBar}
         userName={access.user.title}
         siteTitle={webTitle}
       />

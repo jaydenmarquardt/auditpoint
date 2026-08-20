@@ -9,6 +9,7 @@ export const WordsByListCard: React.FC<{ view: ContentAuditView }> = ({ view }) 
     info={ContentAuditContent.cardInfo.list}
     defaultChart="hbar"
     charts={["hbar", "donut", "bar"]}
+    span={2}
     points={view.wordsByList}
   />
 );

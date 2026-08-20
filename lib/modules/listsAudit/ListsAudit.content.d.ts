@@ -1,6 +1,6 @@
 export declare const ListsAuditContent: {
     readonly title: "Lists and libraries";
-    readonly description: "Inventory of every list and library on the selected sites: item counts, storage, versioning, permissions and staleness.";
+    readonly description: "Inventory of every list and library on the site: item counts, storage, versioning, content types and permissions. Staleness lives in the publishing audit.";
     readonly run: "Run audit";
     readonly rerun: "Run again";
     readonly resume: "Resume";
@@ -18,7 +18,6 @@ export declare const ListsAuditContent: {
         readonly files: "Files counted while scanning libraries.";
         readonly contentTypes: "Distinct visible content types attached across all scanned lists.";
         readonly storage: "Total size of the files counted during the scan.";
-        readonly stale: "Lists with no item changed inside the stale window set for this run.";
         readonly empty: "Lists holding no items at all.";
         readonly governance: "Lists with versioning off or unique permissions.";
     };
@@ -27,7 +26,6 @@ export declare const ListsAuditContent: {
     readonly backToRuns: "All runs";
     readonly moduleVersion: "Module";
     readonly review: "Review";
-    readonly staleLabel: "Stale";
     readonly activeLabel: "Active";
     readonly storageUnavailable: "Storage metrics were not returned for these lists. The tenant may block StorageMetrics, or the audit ran with storage measurement off.";
     readonly storageUnavailableShort: "Storage unavailable";
@@ -46,7 +44,6 @@ export declare const ListsAuditContent: {
         readonly folders: "Folders";
         readonly storage: "Storage";
         readonly contentTypes: "Content types";
-        readonly stale: "Stale";
         readonly empty: "Empty";
         readonly governance: "Governance flags";
     };

@@ -10,6 +10,8 @@ import { ReportRunPanel } from "@/modules/shared/ReportRunPanel";
 import { ReportConfigPanel } from "@/modules/shared/ReportConfigPanel";
 import { ReportHistory } from "@/modules/shared/ReportHistory";
 import { findModule } from "@/modules/Modules.registry";
+import { statTiles } from "@/modules/listsAudit/ListsAudit.stats";
+import { ComparisonBar } from "@/modules/shared/ComparisonBar";
 import { listsAuditReport } from "@/modules/listsAudit/ListsAudit.report";
 import { ListsAuditContent } from "@/modules/listsAudit/ListsAudit.content";
 import { buildView } from "@/modules/listsAudit/ListsAudit.logic";
@@ -33,7 +35,19 @@ const ListsAuditPage: React.FC = () => {
 
   // Stages mutate data in place, so the envelope timestamp is what changes.
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const view = React.useMemo(() => buildView(data, config), [data, config, updatedIso]);
+  const view = React.useMemo(() => buildView(data), [data, config, updatedIso]);
+
+  const [previousData, setPreviousData] = React.useState<Partial<ListsAuditData> | undefined>(undefined);
+
+  // The earlier run is rebuilt through the same view, so every tile compares like for like.
+  const previousTiles = React.useMemo(
+    () => {
+      if (!previousData) return undefined;
+      const previousView = buildView(previousData);
+      return statTiles({ view: previousView, config });
+    },
+    [previousData, config]
+  );
 
   const rows = data?.lists ?? [];
   const hasData = rows.length > 0;
@@ -113,7 +127,17 @@ const ListsAuditPage: React.FC = () => {
                 key: "overview",
                 label: ListsAuditContent.tabs.overview,
                 content: (
-                  <OverviewTab view={view} config={config} hasData={hasData} onRun={() => setConfigOpen(true)} />
+                  <OverviewTab view={view} config={config} hasData={hasData} onRun={() => setConfigOpen(true)} previousTiles={previousTiles}
+                    comparison={
+                      hasData ? (
+                        <ComparisonBar
+                          kind={listsAuditReport.kind}
+                          currentId={controller.envelope?.id}
+                          onChange={(next) => setPreviousData(next as Partial<ListsAuditData> | undefined)}
+                        />
+                      ) : undefined
+                    }
+                  />
                 ),
               },
               {

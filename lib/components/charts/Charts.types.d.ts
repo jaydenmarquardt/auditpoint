@@ -84,6 +84,8 @@ export interface ChartCardProps {
     footer?: React.ReactNode;
     /** Points shown before the card offers "open larger". */
     previewCount?: number;
+    /** Columns of the overview grid this card should cover. */
+    span?: 1 | 2 | 3;
     height?: number;
 }
 export interface LegendItem {

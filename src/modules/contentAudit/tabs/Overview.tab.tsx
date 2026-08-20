@@ -1,4 +1,5 @@
 import * as React from "react";
+import { StatTileSpec } from "@/components/Components.types";
 import { EmptyState } from "@/components/states/Empty.state";
 import { ErrorBoundary } from "@/components/states/ErrorBoundary";
 import { Theme } from "@/theme/Theme.api";
@@ -11,11 +12,10 @@ import { BlocksByContentTypeCard } from "@/modules/contentAudit/cards/BlocksByCo
 import { WordsByListCard } from "@/modules/contentAudit/cards/WordsByList.ocard";
 import { BlocksBySourceCard } from "@/modules/contentAudit/cards/BlocksBySource.ocard";
 
-export const OverviewTab: React.FC<{ view: ContentAuditView; hasData: boolean; onRun: () => void }> = ({
+export const OverviewTab: React.FC<{ view: ContentAuditView; hasData: boolean; onRun: () => void; comparison?: React.ReactNode; previousTiles?: StatTileSpec[] }> = ({
   view,
   hasData,
-  onRun,
-}) => {
+  onRun, comparison, previousTiles }) => {
   if (!hasData) {
     return (
       <EmptyState
@@ -30,7 +30,9 @@ export const OverviewTab: React.FC<{ view: ContentAuditView; hasData: boolean; o
 
   return (
     <div style={{ display: "grid", gap: Theme.tokens.space.lg, minWidth: 0 }}>
-      <ContentAuditStats view={view} />
+      {comparison}
+
+      <ContentAuditStats view={view} previousTiles={previousTiles} />
 
       <ErrorBoundary>
         <div

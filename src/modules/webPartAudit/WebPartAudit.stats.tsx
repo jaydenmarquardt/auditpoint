@@ -1,6 +1,6 @@
 import * as React from "react";
-import { StatTile } from "@/components/layout/StatTile";
-import { Theme } from "@/theme/Theme.api";
+import { StatTileSpec } from "@/components/Components.types";
+import { StatSectionSpec, StatSections, compareTiles, sectionsFrom } from "@/modules/shared/StatSections";
 import { WebPartAuditContent } from "@/modules/webPartAudit/WebPartAudit.content";
 import { WebPartAuditView } from "@/modules/webPartAudit/WebPartAudit.types";
 import { formatNumber } from "@/utils/Format.util";
@@ -64,26 +64,12 @@ export function statTiles(view: WebPartAuditView): Tile[] {
   ];
 }
 
-export const WebPartAuditStats: React.FC<{ view: WebPartAuditView }> = ({ view }) => (
-  <div
-      style={{
-        display: "flex",
-        flexWrap: "wrap",
-        gap: Theme.tokens.space.md,
-        width: "100%",
-        minWidth: 0,
-      }}
-    >
-    {statTiles(view).map((tile) => (
-      <StatTile
-        key={tile.key}
-        iconName={tile.iconName}
-        label={tile.label}
-        value={tile.value}
-        info={tile.info}
-        tone={tile.tone}
-        badge={tile.badge}
-      />
-    ))}
-  </div>
+export const WebPartAuditStats: React.FC<{ view: WebPartAuditView; previousTiles?: StatTileSpec[] }> = ({ view , previousTiles}) => (
+  <StatSections sections={sectionsFrom(compareTiles(statTiles(view), previousTiles), STAT_SECTIONS)} />
 );
+
+/** Grouped so the overview answers one question at a time. */
+export const STAT_SECTIONS: StatSectionSpec[] = [
+  { title: "Placement", keys: ["pages", "instances", "types", "average"] },
+  { title: "Needs attention", keys: ["thirdParty", "empty", "text"] },
+];

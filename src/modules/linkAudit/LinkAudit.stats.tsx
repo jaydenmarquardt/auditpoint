@@ -1,5 +1,6 @@
 import * as React from "react";
 import { StatGrid } from "@/components/layout/StatGrid";
+import { compareTiles } from "@/modules/shared/StatSections";
 import { StatTileSpec } from "@/components/Components.types";
 import { Theme } from "@/theme/Theme.api";
 import { LinkAuditContent } from "@/modules/linkAudit/LinkAudit.content";
@@ -27,6 +28,7 @@ export function statSections(view: LinkAuditView, config?: LinkAuditConfig): Sta
       title: LinkAuditContent.sections.scanned,
       tiles: [
         { key: "items", label: LinkAuditContent.stats.items, value: formatNumber(totals.items), iconName: "Documentation", info: LinkAuditContent.tileInfo.items },
+        { key: "lists", label: LinkAuditContent.stats.lists, value: formatNumber(totals.lists), iconName: "BulletedList", info: LinkAuditContent.tileInfo.lists },
         { key: "pages", label: LinkAuditContent.stats.pages, value: formatNumber(totals.pages), iconName: "Page", info: LinkAuditContent.tileInfo.pages },
         { key: "listItems", label: LinkAuditContent.stats.listItems, value: formatNumber(totals.listItems), iconName: "BulletedList", info: LinkAuditContent.tileInfo.listItems },
         { key: "documents", label: LinkAuditContent.stats.documents, value: formatNumber(totals.documents), iconName: "TextDocument", unavailable: off(config?.includeDocuments), info: LinkAuditContent.tileInfo.documents },
@@ -133,10 +135,23 @@ export function statSections(view: LinkAuditView, config?: LinkAuditConfig): Sta
   ];
 }
 
-export const LinkAuditStats: React.FC<{ view: LinkAuditView; config?: LinkAuditConfig }> = ({ view, config }) => (
-  <div style={{ display: "grid", gap: Theme.tokens.space.lg, width: "100%", minWidth: 0 }}>
-    {statSections(view, config).map((section) => (
-      <StatGrid key={section.key} title={section.title} tiles={section.tiles} minWidth={180} />
-    ))}
-  </div>
-);
+export const LinkAuditStats: React.FC<{
+  view: LinkAuditView;
+  config?: LinkAuditConfig;
+  previous?: LinkAuditView;
+}> = ({ view, config, previous }) => {
+  const before = previous ? statSections(previous, config) : undefined;
+
+  return (
+    <div style={{ display: "grid", gap: Theme.tokens.space.lg, width: "100%", minWidth: 0 }}>
+      {statSections(view, config).map((section, index) => (
+        <StatGrid
+          key={section.key}
+          title={section.title}
+          tiles={compareTiles(section.tiles, before?.[index]?.tiles)}
+          minWidth={180}
+        />
+      ))}
+    </div>
+  );
+};

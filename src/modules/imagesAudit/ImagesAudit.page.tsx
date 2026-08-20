@@ -9,6 +9,8 @@ import { ReportRunPanel } from "@/modules/shared/ReportRunPanel";
 import { ReportConfigPanel } from "@/modules/shared/ReportConfigPanel";
 import { ReportHistory } from "@/modules/shared/ReportHistory";
 import { findModule } from "@/modules/Modules.registry";
+import { statTiles } from "@/modules/imagesAudit/ImagesAudit.stats";
+import { ComparisonBar } from "@/modules/shared/ComparisonBar";
 import { imagesAuditReport } from "@/modules/imagesAudit/ImagesAudit.report";
 import { ImagesAuditContent } from "@/modules/imagesAudit/ImagesAudit.content";
 import { buildView } from "@/modules/imagesAudit/ImagesAudit.logic";
@@ -31,6 +33,18 @@ const ImagesAuditPage: React.FC = () => {
   // Stages mutate data in place, so the envelope timestamp is what changes.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const view = React.useMemo(() => buildView(data, config), [data, config, updatedIso]);
+
+  const [previousData, setPreviousData] = React.useState<Partial<ImagesAuditData> | undefined>(undefined);
+
+  // The earlier run is rebuilt through the same view, so every tile compares like for like.
+  const previousTiles = React.useMemo(
+    () => {
+      if (!previousData) return undefined;
+      const previousView = buildView(previousData, config);
+      return statTiles(previousView);
+    },
+    [previousData, config]
+  );
 
   const usages = data?.usages ?? [];
   const hasData = view.files.length > 0 || usages.length > 0;
@@ -108,7 +122,17 @@ const ImagesAuditPage: React.FC = () => {
               {
                 key: "overview",
                 label: ImagesAuditContent.tabs.overview,
-                content: <OverviewTab view={view} hasData={hasData} onRun={() => setConfigOpen(true)} />,
+                content: <OverviewTab view={view} hasData={hasData} onRun={() => setConfigOpen(true)} previousTiles={previousTiles}
+                    comparison={
+                      hasData ? (
+                        <ComparisonBar
+                          kind={imagesAuditReport.kind}
+                          currentId={controller.envelope?.id}
+                          onChange={(next) => setPreviousData(next as Partial<ImagesAuditData> | undefined)}
+                        />
+                      ) : undefined
+                    }
+                  />,
               },
               {
                 key: "files",

@@ -5,7 +5,6 @@ export interface ListsAuditConfig {
   scanItems: boolean;
   readContentTypes: boolean;
   maxItemsPerList: number;
-  staleDays: number;
   maxLists: number;
 }
 
@@ -26,7 +25,6 @@ export interface ListsAuditTotals {
   contentTypes: number;
   noVersioning: number;
   uniquePermissions: number;
-  stale: number;
   empty: number;
 }
 
@@ -38,7 +36,6 @@ export interface ListsAuditView {
   byExtensionSize: { key: string; label: string; value: number }[];
   largestByItems: SiteList[];
   largest: SiteList[];
-  stale: SiteList[];
   empty: SiteList[];
   risky: SiteList[];
   storageAvailable: boolean;

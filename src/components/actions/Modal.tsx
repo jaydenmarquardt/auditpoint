@@ -22,6 +22,12 @@ export const Modal: React.FC<ModalProps> = ({
     modalProps={{ isBlocking: true }}
   >
     {children}
-    {footer ? <DialogFooter>{footer}</DialogFooter> : undefined}
+    {footer ? (
+      <DialogFooter
+        styles={{ actions: { marginTop: 20 }, actionsRight: { display: "flex", gap: 8, justifyContent: "flex-end" } }}
+      >
+        {footer}
+      </DialogFooter>
+    ) : undefined}
   </Dialog>
 );

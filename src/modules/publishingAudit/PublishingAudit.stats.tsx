@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StatGrid } from "@/components/layout/StatGrid";
+import { StatSectionSpec, StatSections, compareTiles, sectionsFrom } from "@/modules/shared/StatSections";
 import { StatTileSpec } from "@/components/Components.types";
 import { PublishingAuditContent } from "@/modules/publishingAudit/PublishingAudit.content";
 import { PublishingAuditConfig, PublishingAuditView } from "@/modules/publishingAudit/PublishingAudit.types";
@@ -85,4 +85,15 @@ export function statTiles(view: PublishingAuditView, config: PublishingAuditConf
 export const PublishingAuditStats: React.FC<{
   view: PublishingAuditView;
   config: PublishingAuditConfig;
-}> = ({ view, config }) => <StatGrid tiles={statTiles(view, config)} columns={5} />;
+  previousTiles?: StatTileSpec[];
+}> = ({ view, config, previousTiles }) => (
+  <StatSections sections={sectionsFrom(compareTiles(statTiles(view, config), previousTiles), STAT_SECTIONS)} />
+);
+
+/** Grouped so the overview answers one question at a time. */
+export const STAT_SECTIONS: StatSectionSpec[] = [
+  { title: "Approval", keys: ["items", "lists", "approved", "pending", "draft", "rejected"] },
+  { title: "Freshness", keys: ["created", "modified", "stale", "never"] },
+  { title: "Dates and versions", keys: ["due", "expired", "versionsScanned", "versions"] },
+  { title: "Audience", keys: ["editors", "views", "unviewed"] },
+];

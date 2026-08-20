@@ -42,6 +42,8 @@ export const StatGrid: React.FC<StatGridProps> = ({ tiles, minWidth = 190, title
           badge={tile.badge}
           iconName={tile.iconName}
           unavailable={tile.unavailable}
+          previousValue={tile.previousValue}
+          currentValue={tile.currentValue}
         />
       ))}
     </div>

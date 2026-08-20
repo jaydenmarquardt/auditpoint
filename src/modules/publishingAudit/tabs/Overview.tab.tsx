@@ -1,4 +1,5 @@
 import * as React from "react";
+import { StatTileSpec } from "@/components/Components.types";
 import { Notice } from "@/components/feedback/Notice";
 import { EmptyState } from "@/components/states/Empty.state";
 import { ErrorBoundary } from "@/components/states/ErrorBoundary";
@@ -19,7 +20,9 @@ export const OverviewTab: React.FC<{
   config: PublishingAuditConfig;
   hasData: boolean;
   onRun: () => void;
-}> = ({ view, config, hasData, onRun }) => {
+  comparison?: React.ReactNode;
+  previousTiles?: StatTileSpec[];
+}> = ({ view, config, hasData, onRun, comparison, previousTiles }) => {
   if (!hasData) {
     return (
       <EmptyState
@@ -34,7 +37,9 @@ export const OverviewTab: React.FC<{
 
   return (
     <div style={{ display: "grid", gap: Theme.tokens.space.lg, minWidth: 0 }}>
-      <PublishingAuditStats view={view} config={config} />
+      {comparison}
+
+      <PublishingAuditStats view={view} config={config} previousTiles={previousTiles} />
 
       {config.readPopularity && <Notice tone="info" message={PublishingAuditContent.popularityNote} />}
       {config.readVersions && <Notice tone="info" message={PublishingAuditContent.versionsNote} />}

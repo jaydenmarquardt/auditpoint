@@ -10,6 +10,7 @@ export const StorageByListCard: React.FC<{ view: ListsAuditView }> = ({ view }) 
     info={ListsAuditContent.cardInfo.largest}
     valueFormatter={formatBytes}
     emptyLabel={ListsAuditContent.storageUnavailableShort}
+    span={2}
     points={view.largest.map((list) => ({ label: list.title, value: list.storageBytes ?? 0 }))}
     charts={["hbar", "donut"]}
   />

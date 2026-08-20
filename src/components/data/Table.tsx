@@ -45,6 +45,8 @@ export function Table<TRow>({
   const [filters, setFilters] = React.useState<Record<string, string>>({});
   const [search, setSearch] = React.useState("");
   const [limit, setLimit] = React.useState(PAGE_SIZE);
+  // Fixed layout means a drag has to be remembered, or the column springs back.
+  const [widths, setWidths] = React.useState<Record<string, number>>({});
 
   const filterable = columns.filter((column) => column.filterValue);
 
@@ -77,8 +79,10 @@ export function Table<TRow>({
     name: column.header,
     fieldName: column.key,
     minWidth: column.minWidth ?? 100,
-    maxWidth: column.maxWidth ?? column.minWidth ?? 100,
-    isResizable: false,
+    // A url or a title routinely outgrows its column, so every column can be dragged
+    // wider; the cap only decides where it starts.
+    maxWidth: widths[column.key] ?? column.maxWidth ?? column.minWidth ?? 100,
+    isResizable: true,
     isMultiline: false,
     isPadded: true,
     isSorted: Boolean(column.sortValue) && sortKey === column.key,
@@ -180,6 +184,10 @@ export function Table<TRow>({
           constrainMode={ConstrainMode.horizontalConstrained}
           compact={compact}
           onShouldVirtualize={() => false}
+          onColumnResize={(column?: IColumn, newWidth?: number) => {
+            if (!column || newWidth === undefined) return;
+            setWidths((current) => ({ ...current, [column.key]: newWidth }));
+          }}
           onRenderRow={(props?: IDetailsRowProps) => {
             if (!props) return null;
             if (!onRowClick) return <DetailsRow {...props} />;

@@ -22,7 +22,6 @@ export const listsAuditReport: ReportDefinition<ListsAuditData, ListsAuditConfig
     scanItems: true,
     readContentTypes: true,
     maxItemsPerList: 5000,
-    staleDays: 365,
     maxLists: 500,
   },
 
@@ -58,16 +57,7 @@ export const listsAuditReport: ReportDefinition<ListsAuditData, ListsAuditConfig
       step: 100,
       description: "Stops the scan on very large lists. Lists that hit the cap are flagged as partial.",
     },
-    {
-      key: "staleDays",
-      label: "Stale after (days)",
-      type: "number",
-      group: "Thresholds",
-      min: 30,
-      max: 3650,
-      step: 30,
-      description: "A list with no item changed in this many days counts as stale.",
-    },
+    
     {
       key: "maxLists",
       label: "Maximum lists per site",

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { StatTileSpec } from "@/components/Components.types";
 import { Notice } from "@/components/feedback/Notice";
 import { EmptyState } from "@/components/states/Empty.state";
 import { ErrorBoundary } from "@/components/states/ErrorBoundary";
@@ -13,11 +14,10 @@ import { PlacementsByAltTextCard } from "@/modules/imagesAudit/cards/PlacementsB
 import { FilesBySizeCard } from "@/modules/imagesAudit/cards/FilesBySize.ocard";
 import { FilesByUseCard } from "@/modules/imagesAudit/cards/FilesByUse.ocard";
 
-export const OverviewTab: React.FC<{ view: ImagesAuditView; hasData: boolean; onRun: () => void }> = ({
+export const OverviewTab: React.FC<{ view: ImagesAuditView; hasData: boolean; onRun: () => void; comparison?: React.ReactNode; previousTiles?: StatTileSpec[] }> = ({
   view,
   hasData,
-  onRun,
-}) => {
+  onRun, comparison, previousTiles }) => {
   if (!hasData) {
     return (
       <EmptyState
@@ -32,7 +32,9 @@ export const OverviewTab: React.FC<{ view: ImagesAuditView; hasData: boolean; on
 
   return (
     <div style={{ display: "grid", gap: Theme.tokens.space.lg, minWidth: 0 }}>
-      <ImagesAuditStats view={view} />
+      {comparison}
+
+      <ImagesAuditStats view={view} previousTiles={previousTiles} />
 
       <Notice tone="info" message={ImagesAuditContent.matchNote} />
 

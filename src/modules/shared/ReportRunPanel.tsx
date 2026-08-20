@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Button } from "@/components/actions/Button";
+import { MenuButton } from "@/components/actions/MenuButton";
 import { ProgressGroup } from "@/components/feedback/ProgressGroup";
 import { StatusBadge } from "@/components/feedback/StatusBadge";
 import { Notice } from "@/components/feedback/Notice";
@@ -90,24 +91,42 @@ export const ReportRunPanel: React.FC<ReportRunPanelProps> = ({
         {envelope && envelope.status === "failed" && (
           <Button label={runLabel.resume} variant="primary" iconName="Refresh" onClick={controller.resume} />
         )}
-        {envelope && (
-          <Button
-            label="Export JSON"
-            iconName="Download"
-            onClick={() => downloadJson(`${envelope.kind}-${envelope.id}`, envelope)}
-          />
-        )}
-        <Button label="Import JSON" iconName="Upload" onClick={() => fileInput.current?.click()} />
         {extraControls}
-        {envelope && definition && (
-          <Button label="Run details" iconName="Info" onClick={() => setDetailsOpen(true)} />
-        )}
 
-        {envelope && <StatusBadge status={mapRunStatus(envelope.status)} />}
+        <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: Theme.tokens.space.sm }}>
+          <MenuButton
+            label="More"
+            items={[
+              {
+                key: "details",
+                label: controller.running ? "Live log" : "Run details",
+                iconName: controller.running ? "TimeEntry" : "Info",
+                disabled: !envelope || !definition,
+                onClick: () => setDetailsOpen(true),
+              },
+              {
+                key: "export",
+                label: "Export JSON",
+                iconName: "Download",
+                disabled: !envelope,
+                onClick: () => (envelope ? downloadJson(`${envelope.kind}-${envelope.id}`, envelope) : undefined),
+              },
+              {
+                key: "import",
+                label: "Import JSON",
+                iconName: "Upload",
+                onClick: () => fileInput.current?.click(),
+              },
+            ]}
+          />
+
+          {envelope && <StatusBadge status={mapRunStatus(envelope.status)} />}
+        </div>
 
         {envelope && (
           <span style={{ fontSize: Theme.tokens.font.sm, color: Theme.palette().textMuted }}>
-            {formatDateTime(envelope.updatedIso)} · v{envelope.version} · {envelope.createdBy}
+            {(envelope.sites ?? []).join(", ") || "this site"} · {formatDateTime(envelope.updatedIso)} · v
+            {envelope.version} · {envelope.createdBy}
           </span>
         )}
       </Toolbar>
@@ -137,6 +156,7 @@ export const ReportRunPanel: React.FC<ReportRunPanelProps> = ({
       {definition && (
         <ReportDetails
           open={detailsOpen}
+          initialTab={controller.running ? "log" : "settings"}
           onDismiss={() => setDetailsOpen(false)}
           envelope={envelope}
           definition={definition}

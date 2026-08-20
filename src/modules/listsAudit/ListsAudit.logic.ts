@@ -1,21 +1,16 @@
 import { SiteList } from "@/api/Lists.types";
 import {
-  ListsAuditConfig,
   ListsAuditData,
   ListsAuditTotals,
   ListsAuditView,
 } from "@/modules/listsAudit/ListsAudit.types";
 
-export function buildView(
-  data: Partial<ListsAuditData> | undefined,
-  config: ListsAuditConfig
-): ListsAuditView {
+export function buildView(data: Partial<ListsAuditData> | undefined): ListsAuditView {
   const lists = data?.lists ?? [];
   const visible = lists.filter((list) => !list.hidden);
-  const stale = (list: SiteList): boolean => isStale(list, config.staleDays);
 
   return {
-    totals: totalsOf(lists, config.staleDays),
+    totals: totalsOf(lists),
     byTemplate: countBy(visible.map((list) => list.templateName)),
     byContentType: countBy(visible.flatMap((list) => list.contentTypes ?? [])).slice(0, 12),
     byExtension: extensionCounts(visible, "count").slice(0, 12),
@@ -25,7 +20,6 @@ export function buildView(
       .filter((list) => (list.storageBytes ?? 0) > 0)
       .sort((a, b) => (b.storageBytes ?? 0) - (a.storageBytes ?? 0))
       .slice(0, 10),
-    stale: visible.filter(stale).sort((a, b) => a.lastItemModified.localeCompare(b.lastItemModified)),
     empty: visible.filter((list) => list.itemCount === 0),
     risky: visible.filter((list) => !list.versioningEnabled || list.hasUniquePermissions),
     storageAvailable: data?.storageAvailable ?? visible.some((list) => (list.storageBytes ?? 0) > 0),
@@ -33,7 +27,7 @@ export function buildView(
   };
 }
 
-export function totalsOf(lists: SiteList[], staleDays: number): ListsAuditTotals {
+export function totalsOf(lists: SiteList[]): ListsAuditTotals {
   const visible = lists.filter((list) => !list.hidden);
   const contentTypes = new Set(visible.flatMap((list) => list.contentTypes ?? []));
 
@@ -48,7 +42,6 @@ export function totalsOf(lists: SiteList[], staleDays: number): ListsAuditTotals
     contentTypes: contentTypes.size,
     noVersioning: visible.filter((list) => !list.versioningEnabled).length,
     uniquePermissions: visible.filter((list) => list.hasUniquePermissions).length,
-    stale: visible.filter((list) => isStale(list, staleDays)).length,
     empty: visible.filter((list) => list.itemCount === 0).length,
   };
 }

@@ -67,6 +67,9 @@ export declare function sourceLabel(source: LinkSource): string;
 /** Everything worth flagging on one scanned item, used by the table and the dialog. */
 export declare function flagsFor(reference: Reference): string[];
 export declare function brokenUsages(links: AggregatedLink[]): LinkUsage[];
+/** Why a link is still unproven, which is the first thing anyone asks of the count. */
+export declare function untestedReason(link: OutgoingLink, checked: boolean): string;
+export declare function untestedUsages(links: AggregatedLink[]): LinkUsage[];
 export declare function externalUsages(links: AggregatedLink[]): LinkUsage[];
 export declare function sourceUsages(links: AggregatedLink[], source: LinkSource): LinkUsage[];
 export declare function buildView(data: Partial<LinkAuditData> | undefined, origin: string): LinkAuditView;

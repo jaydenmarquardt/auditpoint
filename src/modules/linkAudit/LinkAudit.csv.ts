@@ -118,6 +118,10 @@ export function exportBrokenAudit(references: Reference[], destinations: number)
   exportAudit("broken-link-audit", references, destinations, (row) => row.isBroken === LinkAuditContent.status.yes);
 }
 
+export function exportUntestedAudit(references: Reference[], destinations: number): void {
+  exportAudit("untested-link-audit", references, destinations, (row) => row.isBroken === LinkAuditContent.status.unsure);
+}
+
 export function exportReferenceList(references: Reference[]): void {
   downloadCsv(`link-audit-items-${stamp()}`, referenceRows(references));
 }

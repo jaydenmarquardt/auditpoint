@@ -23,7 +23,10 @@ export declare const UrlCell: React.FC<{
 export declare const referenceColumns: TableColumn<Reference>[];
 export declare const linkColumns: TableColumn<AggregatedLink>[];
 /** One row per place a link is written: the broken tab and the link dialog share it. */
+/** Where a link was written, with a way to go straight there. */
 export declare const usageColumns: TableColumn<LinkUsage>[];
+/** The untested view adds the one column that view exists to answer. */
+export declare function untestedColumns(checked: boolean): TableColumn<LinkUsage>[];
 export declare const outgoingColumns: TableColumn<OutgoingLink>[];
 export declare const incomingColumns: TableColumn<ReferenceSummary>[];
 //# sourceMappingURL=LinkAudit.columns.d.ts.map

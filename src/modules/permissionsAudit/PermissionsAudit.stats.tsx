@@ -12,15 +12,29 @@ export const PermissionsAuditStats: React.FC<{
   const { totals } = view;
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexWrap: "wrap",
-        gap: Theme.tokens.space.md,
-        width: "100%",
-        minWidth: 0,
-      }}
-    >
+    <div style={{ display: "grid", gap: Theme.tokens.space.lg, width: "100%", minWidth: 0 }}>
+      <section style={{ width: "100%", minWidth: 0 }}>
+        <h3
+          style={{
+            margin: `0 0 ${Theme.tokens.space.sm}`,
+            fontSize: Theme.tokens.font.md,
+            color: Theme.palette().textMuted,
+            textTransform: "uppercase",
+            letterSpacing: "0.06em",
+          }}
+        >
+          Groups and levels
+        </h3>
+
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: Theme.tokens.space.md,
+          width: "100%",
+          minWidth: 0,
+        }}
+      >
       <StatTile
         iconName="Group"
         label={PermissionsAuditContent.stats.groups}
@@ -48,6 +62,31 @@ export const PermissionsAuditStats: React.FC<{
         hint={`${formatNumber(totals.customLevels)} custom`}
         info={PermissionsAuditContent.tileInfo.levels}
       />
+      </div>
+      </section>
+
+      <section style={{ width: "100%", minWidth: 0 }}>
+        <h3
+          style={{
+            margin: `0 0 ${Theme.tokens.space.sm}`,
+            fontSize: Theme.tokens.font.md,
+            color: Theme.palette().textMuted,
+            textTransform: "uppercase",
+            letterSpacing: "0.06em",
+          }}
+        >
+          Grants
+        </h3>
+
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: Theme.tokens.space.md,
+          width: "100%",
+          minWidth: 0,
+        }}
+      >
       <StatTile
         iconName="Permissions"
         label={PermissionsAuditContent.stats.grants}
@@ -63,21 +102,6 @@ export const PermissionsAuditStats: React.FC<{
         info={PermissionsAuditContent.tileInfo.direct}
       />
       <StatTile
-        iconName="Permissions"
-        label={PermissionsAuditContent.stats.fullControl}
-        value={formatNumber(totals.fullControlGrants)}
-        tone="warning"
-        info={PermissionsAuditContent.tileInfo.fullControl}
-      />
-      <StatTile
-        iconName="Globe"
-        label={PermissionsAuditContent.stats.external}
-        value={formatNumber(totals.externalPrincipals)}
-        tone="warning"
-        badge={totals.externalPrincipals > 0 ? PermissionsAuditContent.review : undefined}
-        info={PermissionsAuditContent.tileInfo.external}
-      />
-      <StatTile
         iconName="People"
         label={PermissionsAuditContent.stats.everyone}
         value={formatNumber(totals.everyoneGrants)}
@@ -85,11 +109,37 @@ export const PermissionsAuditStats: React.FC<{
         info={PermissionsAuditContent.tileInfo.everyone}
       />
       <StatTile
-        iconName="Share"
-        label={PermissionsAuditContent.stats.sharing}
-        value={formatNumber(totals.sharingLinks)}
-        info={PermissionsAuditContent.tileInfo.sharing}
+        iconName="Permissions"
+        label={PermissionsAuditContent.stats.fullControl}
+        value={formatNumber(totals.fullControlGrants)}
+        tone="warning"
+        info={PermissionsAuditContent.tileInfo.fullControl}
       />
+      </div>
+      </section>
+
+      <section style={{ width: "100%", minWidth: 0 }}>
+        <h3
+          style={{
+            margin: `0 0 ${Theme.tokens.space.sm}`,
+            fontSize: Theme.tokens.font.md,
+            color: Theme.palette().textMuted,
+            textTransform: "uppercase",
+            letterSpacing: "0.06em",
+          }}
+        >
+          Inheritance and sharing
+        </h3>
+
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: Theme.tokens.space.md,
+          width: "100%",
+          minWidth: 0,
+        }}
+      >
       <StatTile
         iconName="BranchFork2"
         label={PermissionsAuditContent.stats.unique}
@@ -104,6 +154,22 @@ export const PermissionsAuditStats: React.FC<{
         hint={config.checkItemBreaks ? `${formatNumber(totals.itemsChecked)} sampled` : undefined}
         info={PermissionsAuditContent.tileInfo.itemBreaks}
       />
+      <StatTile
+        iconName="Share"
+        label={PermissionsAuditContent.stats.sharing}
+        value={formatNumber(totals.sharingLinks)}
+        info={PermissionsAuditContent.tileInfo.sharing}
+      />
+      <StatTile
+        iconName="Globe"
+        label={PermissionsAuditContent.stats.external}
+        value={formatNumber(totals.externalPrincipals)}
+        tone="warning"
+        badge={totals.externalPrincipals > 0 ? PermissionsAuditContent.review : undefined}
+        info={PermissionsAuditContent.tileInfo.external}
+      />
+      </div>
+      </section>
     </div>
   );
 };

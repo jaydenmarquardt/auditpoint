@@ -9,6 +9,7 @@ export const PlacementsByPageCard: React.FC<{ view: ImagesAuditView }> = ({ view
     info={ImagesAuditContent.cardInfo.usage}
     defaultChart="hbar"
     charts={["hbar", "hbar", "bar"]}
+    span={2}
     points={view.usageByPage}
   />
 );

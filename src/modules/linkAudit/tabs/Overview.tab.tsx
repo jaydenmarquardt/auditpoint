@@ -17,7 +17,9 @@ export const OverviewTab: React.FC<{
   config?: LinkAuditConfig;
   hasData: boolean;
   onRun: () => void;
-}> = ({ view, config, hasData, onRun }) => {
+  comparison?: React.ReactNode;
+  previous?: LinkAuditView;
+}> = ({ view, config, hasData, onRun, comparison, previous }) => {
   if (!hasData) {
     return (
       <EmptyState
@@ -32,7 +34,9 @@ export const OverviewTab: React.FC<{
 
   return (
     <div style={{ display: "grid", gap: Theme.tokens.space.lg, minWidth: 0 }}>
-      <LinkAuditStats view={view} config={config} />
+      {comparison}
+
+      <LinkAuditStats view={view} config={config} previous={previous} />
 
       <Notice tone="info" message={LinkAuditContent.notes.external} />
 

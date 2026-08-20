@@ -4,7 +4,6 @@ export interface ListsAuditConfig {
     scanItems: boolean;
     readContentTypes: boolean;
     maxItemsPerList: number;
-    staleDays: number;
     maxLists: number;
 }
 export interface ListsAuditData {
@@ -23,7 +22,6 @@ export interface ListsAuditTotals {
     contentTypes: number;
     noVersioning: number;
     uniquePermissions: number;
-    stale: number;
     empty: number;
 }
 export interface ListsAuditView {
@@ -50,7 +48,6 @@ export interface ListsAuditView {
     }[];
     largestByItems: SiteList[];
     largest: SiteList[];
-    stale: SiteList[];
     empty: SiteList[];
     risky: SiteList[];
     storageAvailable: boolean;

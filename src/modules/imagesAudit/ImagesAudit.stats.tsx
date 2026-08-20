@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StatGrid } from "@/components/layout/StatGrid";
+import { StatSectionSpec, StatSections, compareTiles, sectionsFrom } from "@/modules/shared/StatSections";
 import { StatTileSpec } from "@/components/Components.types";
 import { ImagesAuditContent } from "@/modules/imagesAudit/ImagesAudit.content";
 import { ImagesAuditView } from "@/modules/imagesAudit/ImagesAudit.types";
@@ -46,6 +46,13 @@ export function statTiles(view: ImagesAuditView): StatTileSpec[] {
   ];
 }
 
-export const ImagesAuditStats: React.FC<{ view: ImagesAuditView }> = ({ view }) => (
-  <StatGrid tiles={statTiles(view)} columns={5} />
+export const ImagesAuditStats: React.FC<{ view: ImagesAuditView; previousTiles?: StatTileSpec[] }> = ({ view , previousTiles}) => (
+  <StatSections sections={sectionsFrom(compareTiles(statTiles(view), previousTiles), STAT_SECTIONS)} />
 );
+
+/** Grouped so the overview answers one question at a time. */
+export const STAT_SECTIONS: StatSectionSpec[] = [
+  { title: "Files", keys: ["files", "storage", "average", "formats"] },
+  { title: "Use", keys: ["usages", "used", "unused", "unusedBytes"] },
+  { title: "Needs attention", keys: ["alt", "duplicates", "duplicateBytes", "oversized", "external", "legacy"] },
+];

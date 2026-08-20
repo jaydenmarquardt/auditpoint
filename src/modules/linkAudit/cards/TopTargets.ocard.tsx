@@ -9,6 +9,7 @@ export const TopTargetsCard: React.FC<{ view: LinkAuditView }> = ({ view }) => (
     info={LinkAuditContent.cardInfo.topTargets}
     defaultChart="hbar"
     charts={["donut", "hbar", "bar"]}
+    span={2}
     points={view.topTargets}
   />
 );

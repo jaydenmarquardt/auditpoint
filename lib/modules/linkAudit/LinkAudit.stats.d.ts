@@ -14,5 +14,6 @@ export declare function statSections(view: LinkAuditView, config?: LinkAuditConf
 export declare const LinkAuditStats: React.FC<{
     view: LinkAuditView;
     config?: LinkAuditConfig;
+    previous?: LinkAuditView;
 }>;
 //# sourceMappingURL=LinkAudit.stats.d.ts.map

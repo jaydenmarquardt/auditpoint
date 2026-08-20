@@ -16,6 +16,7 @@ export const LinkAuditContent = {
   exportExternal: "Export external only",
   exportBroken: "Export broken only",
   exportReferences: "Export items",
+  exportUntested: "Export untested only",
   exportLinks: "Export links",
   exportUsages: "Export usages",
   openLink: "Open link",
@@ -27,6 +28,7 @@ export const LinkAuditContent = {
     links: "Links",
     broken: "Broken",
     external: "External",
+    untested: "Untested",
     megaMenu: "Mega menu",
     actions: "Actions",
   },
@@ -52,6 +54,8 @@ export const LinkAuditContent = {
     uses: "Uses",
     spellings: "Spellings",
     resolvesTo: "Resolves to",
+    reason: "Why untested",
+    open: "Open",
     text: "Text",
     url: "URL",
     item: "Item",
@@ -59,6 +63,14 @@ export const LinkAuditContent = {
     usedIn: "Used in",
     modified: "Modified",
     flags: "Flags",
+  },
+
+  reasons: {
+    external: "Off this tenancy: the browser cannot read a cross origin response.",
+    share: "A share link carries a token rather than a path, so there is nothing to look up.",
+    notChecked: "The link check was switched off for this run.",
+    noAnswer: "The request failed before a status came back, which proves nothing either way.",
+    unknown: "Matched nothing scanned and could not be requested.",
   },
 
   sections: {
@@ -86,6 +98,7 @@ export const LinkAuditContent = {
     external: "External",
     broken: "Broken",
     untested: "Untested",
+    lists: "Lists and libraries",
     orphans: "No inbound links",
     attachments: "Attachments",
     attachmentLinks: "In attachments",
@@ -128,7 +141,8 @@ export const LinkAuditContent = {
     documentLinks: "Links read out of docx and pdf file content.",
     external: "Links pointing off this tenancy. They cannot be tested from the browser.",
     broken: "Links proven dead, either legacy or answered with an error status.",
-    untested: "Links that could not be proven either way.",
+    untested: "Links that could not be proven either way. The Untested tab says why for each one.",
+    lists: "Distinct lists and libraries the scanned items came from.",
     orphans: "Scanned items that nothing else on the site points at. Often fine for a form or an archive, worth a look for a page.",
     share: "Links created by the Share button. They carry a token rather than a path, so they cannot be matched to an item or tested.",
     relative: "Links written as a path, such as /sites/intranet/page.aspx. They survive a rename of the tenant.",
@@ -229,6 +243,7 @@ export const LinkAuditContent = {
     external: "Only links leaving this tenancy, for a review of who you send people to.",
     broken: "Only links proven dead: a retired host, or an error status from the server.",
     references: "One row per scanned item with its incoming, outgoing and broken counts.",
+    untested: "Only links that could not be proven, with the reason for each.",
     disabled: "Nothing to export yet.",
   },
 
@@ -239,6 +254,7 @@ export const LinkAuditContent = {
     links: "No links were found in anything that was scanned.",
     broken: "No broken links. Nothing pointed at a legacy host and nothing answered with an error.",
     external: "No links leave this tenancy.",
+    untested: "Every link was proven one way or the other.",
     megaMenu: "No mega menu configuration was scanned. Set its path in the run settings.",
   },
 

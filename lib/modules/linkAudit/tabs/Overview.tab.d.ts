@@ -5,5 +5,7 @@ export declare const OverviewTab: React.FC<{
     config?: LinkAuditConfig;
     hasData: boolean;
     onRun: () => void;
+    comparison?: React.ReactNode;
+    previous?: LinkAuditView;
 }>;
 //# sourceMappingURL=Overview.tab.d.ts.map

@@ -9,6 +9,7 @@ export const ItemsByListCard: React.FC<{ view: PublishingAuditView }> = ({ view 
     info={PublishingAuditContent.cardInfo.list}
     defaultChart="hbar"
     charts={["hbar", "donut", "bar"]}
+    span={2}
     points={view.itemsByList}
   />
 );
