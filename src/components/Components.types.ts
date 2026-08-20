@@ -309,18 +309,23 @@ export interface StatTileSpec {
   info?: string;
   tone?: BadgeTone;
   badge?: string;
+  /** Fluent icon name shown beside the value, so a tile reads at a glance. */
+  iconName?: string;
 }
 
 export interface StatGridProps {
   tiles: StatTileSpec[];
-  /** Widest the grid grows before tiles wrap onto another row. */
+  /** Tiles per row before wrapping. The grid always fills its container. */
   columns?: number;
   minWidth?: number;
+  /** Groups the tiles under a heading, for a grid that covers several subjects. */
+  title?: string;
 }
 
 export interface StatTileProps {
   label: string;
   value: string;
+  iconName?: string;
   hint?: string;
   tone?: BadgeTone;
   badge?: string;

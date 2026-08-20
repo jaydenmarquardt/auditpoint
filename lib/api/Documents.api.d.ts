@@ -1,3 +1,4 @@
+import "@pnp/sp/attachments";
 import { SiteList } from "./Lists.types";
 import { LinkPlacement } from "./Links.types";
 import { DocumentFile, DocumentKind, DocumentScan, DocumentScanOptions } from "./Documents.types";
@@ -5,6 +6,9 @@ import { DocumentFile, DocumentKind, DocumentScan, DocumentScanOptions } from ".
 export declare const DOCUMENT_EXTENSIONS: string[];
 export declare function DocumentFiles(webUrl?: string): {
     inLibrary(list: SiteList, max: number): Promise<DocumentFile[]>;
+};
+export declare function ItemAttachments(webUrl?: string): {
+    inList(list: SiteList, max: number): Promise<DocumentFile[]>;
 };
 export declare function extensionOf(name: string): string;
 export declare function documentKindFromName(name: string): DocumentKind;

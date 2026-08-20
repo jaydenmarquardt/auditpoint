@@ -1,7 +1,7 @@
 /** Where in a thing the link was written. */
-export type LinkSource = "content" | "webpart" | "navigation" | "document";
+export type LinkSource = "content" | "webpart" | "navigation" | "document" | "attachment" | "config" | "megamenu";
 /** What the link points at. Drives the type column and whether it is worth testing. */
-export type LinkType = "intranet" | "legacy" | "document" | "external" | "anchor" | "contact" | "script" | "unknown";
+export type LinkType = "thisSite" | "otherSite" | "legacy" | "document" | "external" | "anchor" | "contact" | "script" | "unknown";
 /**
  * Cross origin responses cannot be read back, so anything off this tenancy stays
  * unsure however many times it is checked.
@@ -20,6 +20,8 @@ export interface LinkPlacement {
     isAnchor: boolean;
     isContact: boolean;
     isJS: boolean;
+    /** Written to open in a new tab, which is a decision an editor made. */
+    newTab: boolean;
 }
 export interface LinkContext {
     source: LinkSource;

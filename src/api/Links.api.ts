@@ -11,7 +11,7 @@ const MAX_PROPERTY_DEPTH = 6;
 
 export function LinkScanner(webUrl?: string): {
   fromHtml(html: string, context: LinkContext): LinkPlacement[];
-  fromUrl(url: string, text: string, context: LinkContext): LinkPlacement;
+  fromUrl(url: string, text: string, context: LinkContext, newTab?: boolean): LinkPlacement;
   fromProperties(properties: Record<string, unknown>, context: LinkContext): LinkPlacement[];
 } {
   const origin = originOf(webUrl);
@@ -23,18 +23,19 @@ export function LinkScanner(webUrl?: string): {
 
       const document = new DOMParser().parseFromString(html, "text/html");
 
-      return Array.from(document.querySelectorAll("a")).map((anchor) =>
-        placement(
+      return Array.from(document.querySelectorAll("a")).map((anchor) => ({
+        ...placement(
           (anchor.getAttribute("href") ?? "").trim(),
           (anchor.textContent ?? "").replace(/\s+/g, " ").trim(),
           context,
           origin
-        )
-      );
+        ),
+        newTab: (anchor.getAttribute("target") ?? "").toLowerCase() === "_blank",
+      }));
     },
 
-    fromUrl(url: string, text: string, context: LinkContext): LinkPlacement {
-      return placement(url, text, context, origin);
+    fromUrl(url: string, text: string, context: LinkContext, newTab = false): LinkPlacement {
+      return placement(url, text, context, origin, newTab);
     },
 
     /**
@@ -58,7 +59,12 @@ export function LinkScanner(webUrl?: string): {
               .forEach((anchor) => {
                 const href = (anchor.getAttribute("href") ?? "").trim();
                 const label = (anchor.textContent ?? "").replace(/\s+/g, " ").trim();
-                if (href) found.set(`${href}|${label}`, placement(href, label, context, origin));
+                if (href) {
+                  found.set(`${href}|${label}`, {
+                    ...placement(href, label, context, origin),
+                    newTab: (anchor.getAttribute("target") ?? "").toLowerCase() === "_blank",
+                  });
+                }
               });
             return;
           }
@@ -122,7 +128,13 @@ export function LinkChecker(): { check(url: string): Promise<LinkCheck> } {
   };
 }
 
-export function placement(url: string, text: string, context: LinkContext, origin: string): LinkPlacement {
+export function placement(
+  url: string,
+  text: string,
+  context: LinkContext,
+  origin: string,
+  newTab = false
+): LinkPlacement {
   const value = `${url ?? ""}`.trim();
   const isAnchor = value.startsWith("#");
   const isContact = /^(mailto:|tel:)/i.test(value);
@@ -140,6 +152,7 @@ export function placement(url: string, text: string, context: LinkContext, origi
     isAnchor,
     isContact,
     isJS,
+    newTab,
   };
 }
 

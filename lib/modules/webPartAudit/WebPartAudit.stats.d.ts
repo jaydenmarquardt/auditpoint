@@ -7,6 +7,7 @@ interface Tile {
     info: string;
     tone?: "warning";
     badge?: string;
+    iconName?: string;
 }
 export declare function statTiles(view: WebPartAuditView): Tile[];
 export declare const WebPartAuditStats: React.FC<{

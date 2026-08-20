@@ -30,6 +30,21 @@ interface ReportPayload<TData, TConfig> {
 export const reportStore = createStore<Record<string, ReportRunState>>({});
 
 const definitions = new Map<string, ReportDefinition<unknown, unknown>>();
+const hostConfigDefaults = new Map<string, Record<string, unknown>>();
+
+/**
+ * Config a host wants a report to start with, keyed by report kind. Merged over the
+ * report's own defaults, so a solution can raise a limit or switch a stage on
+ * without touching the module.
+ */
+export function setReportDefaults(defaults: Record<string, Record<string, unknown>> | undefined): void {
+  hostConfigDefaults.clear();
+  Object.keys(defaults ?? {}).forEach((kind) => hostConfigDefaults.set(kind, (defaults ?? {})[kind]));
+}
+
+export function reportConfig<TConfig>(definition: ReportDefinition<unknown, TConfig>): TConfig {
+  return { ...definition.defaultConfig, ...(hostConfigDefaults.get(definition.kind) ?? {}) } as TConfig;
+}
 
 export function getReportDefinition(kind: string): ReportDefinition<unknown, unknown> | undefined {
   return definitions.get(kind);
@@ -89,7 +104,7 @@ export function startReport<TData, TConfig>(
   input: StartReportInput<TData, TConfig> = {}
 ): string {
   const sites = input.sites ?? getSettings().sites.map((site) => site.url);
-  const config = input.config ?? input.resumeFrom?.config ?? definition.defaultConfig;
+  const config = input.config ?? input.resumeFrom?.config ?? reportConfig(definition as ReportDefinition<unknown, TConfig>);
 
   const taskId = enqueue<ReportPayload<TData, TConfig>>({
     kind: taskKind(definition.kind),

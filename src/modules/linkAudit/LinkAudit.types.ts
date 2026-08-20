@@ -9,6 +9,9 @@ export interface LinkAuditConfig {
   maxItemsPerList: number;
   maxLists: number;
   scanNavigation: boolean;
+  scanAttachments: boolean;
+  configPaths: string;
+  megaMenuPath: string;
   includeDocuments: boolean;
   maxFilesPerLibrary: number;
   scanDocx: boolean;
@@ -19,7 +22,14 @@ export interface LinkAuditConfig {
 }
 
 /** What a scanned thing is, which decides how it was read and how it is counted. */
-export type ReferenceKind = "page" | "item" | "document" | "navigation";
+export type ReferenceKind =
+  | "page"
+  | "item"
+  | "document"
+  | "navigation"
+  | "attachment"
+  | "config"
+  | "megamenu";
 
 /** One link found inside a reference, with everything the audit later decides about it. */
 export interface OutgoingLink extends LinkPlacement {
@@ -114,7 +124,8 @@ export interface AggregatedLink {
 }
 
 export interface LinkTypeTotals {
-  intranet: number;
+  thisSite: number;
+  otherSite: number;
   legacy: number;
   document: number;
   external: number;
@@ -126,6 +137,8 @@ export interface LinkTypeTotals {
   insecure: number;
   matched: number;
   unmapped: number;
+  newTab: number;
+  internal: number;
 }
 
 export interface ReferenceTotals {
@@ -142,6 +155,11 @@ export interface ReferenceTotals {
   webpart: number;
   navigation: number;
   documentLinks: number;
+  attachments: number;
+  attachmentLinks: number;
+  configFiles: number;
+  configLinks: number;
+  megaMenuLinks: number;
   external: number;
   broken: number;
   untested: number;
@@ -151,6 +169,8 @@ export interface ReferenceTotals {
 
 export interface LinkAuditView {
   totals: ReferenceTotals;
+  /** Every link written outside this tenancy, one row per placement. */
+  external: LinkUsage[];
   linkTypes: LinkTypeTotals;
   references: Reference[];
   links: AggregatedLink[];

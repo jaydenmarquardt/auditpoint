@@ -23,6 +23,8 @@ export declare const LinkAuditContent: {
         readonly references: "Items";
         readonly links: "Links";
         readonly broken: "Broken";
+        readonly external: "External";
+        readonly actions: "Actions";
     };
     readonly search: {
         readonly references: "Search items, urls and links";
@@ -52,6 +54,12 @@ export declare const LinkAuditContent: {
         readonly modified: "Modified";
         readonly flags: "Flags";
     };
+    readonly sections: {
+        readonly scanned: "What was scanned";
+        readonly destinations: "Where links point";
+        readonly written: "How links are written";
+        readonly health: "Link health";
+    };
     readonly stats: {
         readonly items: "Items";
         readonly pages: "Pages";
@@ -71,6 +79,21 @@ export declare const LinkAuditContent: {
         readonly broken: "Broken";
         readonly untested: "Untested";
         readonly orphans: "Nothing links here";
+        readonly attachments: "Attachments";
+        readonly attachmentLinks: "In attachments";
+        readonly configFiles: "Config files";
+        readonly configLinks: "In config files";
+        readonly megaMenuLinks: "In mega menu";
+        readonly thisSite: "This site";
+        readonly otherSite: "Other site";
+        readonly internal: "Internal";
+        readonly emptyText: "No link text";
+        readonly contact: "Contact";
+        readonly anchor: "Anchor";
+        readonly newTab: "Open in new tab";
+        readonly insecure: "Insecure";
+        readonly legacy: "Legacy";
+        readonly documentsLinked: "To documents";
     };
     readonly tileInfo: {
         readonly items: "Everything scanned: pages, list items, documents and the navigation menus.";
@@ -91,6 +114,21 @@ export declare const LinkAuditContent: {
         readonly broken: "Links proven dead, either legacy or answered with an error status.";
         readonly untested: "Links that could not be proven either way.";
         readonly orphans: "Scanned items that nothing else links to.";
+        readonly attachments: "List item attachments found while scanning.";
+        readonly attachmentLinks: "Links read out of attachment file content.";
+        readonly configFiles: "Configuration JSON files scanned for links.";
+        readonly configLinks: "Links held in configuration files rather than content.";
+        readonly megaMenuLinks: "Links held in the mega menu configuration.";
+        readonly thisSite: "Links pointing back into the site being audited.";
+        readonly otherSite: "Links to another site on this tenancy. Internal, but owned by someone else.";
+        readonly internal: "Every link that stays on this tenancy, this site or another.";
+        readonly emptyText: "Links with no text on them, which a screen reader announces as the url.";
+        readonly contact: "mailto: and tel: links.";
+        readonly anchor: "Links to a position on the same page.";
+        readonly newTab: "Links written to open in a new tab.";
+        readonly insecure: "Links written as http rather than https.";
+        readonly legacy: "Links to a host recorded as retired, which are dead by definition.";
+        readonly documentsLinked: "Links whose destination is a file rather than a page.";
     };
     readonly charts: {
         readonly type: "Links by type";
@@ -118,19 +156,47 @@ export declare const LinkAuditContent: {
         readonly webpart: "Web part";
         readonly navigation: "Navigation";
         readonly document: "Document";
+        readonly attachment: "Attachment";
+        readonly config: "Config file";
+        readonly megamenu: "Mega menu";
+    };
+    readonly types: {
+        readonly thisSite: "This site";
+        readonly otherSite: "Other site";
+        readonly legacy: "Legacy";
+        readonly document: "Document";
+        readonly external: "External";
+        readonly anchor: "Anchor";
+        readonly contact: "Contact";
+        readonly script: "Script";
+        readonly unknown: "Unknown";
     };
     readonly kinds: {
         readonly page: "Page";
         readonly item: "List item";
         readonly document: "Document";
         readonly navigation: "Navigation";
+        readonly attachment: "Attachment";
+        readonly config: "Config file";
+        readonly megamenu: "Mega menu";
     };
     readonly navigationTitle: "Navigation menus";
     readonly navigationList: "Navigation";
+    readonly configList: "Config files";
+    readonly megaMenuList: "Mega menu";
     readonly notes: {
         readonly external: "External links cannot be tested from the browser, so they stay untested however often they are checked.";
         readonly documents: "Document content is downloaded and parsed in the browser, two files at a time, and files over the size limit are skipped.";
         readonly broken: "Only unresolved links on this tenancy are requested. Everything that matched a scanned item is already known good.";
+    };
+    readonly actions: {
+        readonly title: "Exports";
+        readonly description: "Everything the audit can hand to a spreadsheet. Each file opens on a summary block of the same counts shown on the overview.";
+        readonly fullAudit: "One row per link found, across every item, menu, config file and document.";
+        readonly external: "Only links leaving this tenancy, for a review of who you send people to.";
+        readonly broken: "Only links proven dead: a retired host, or an error status from the server.";
+        readonly references: "One row per scanned item with its incoming, outgoing and broken counts.";
+        readonly disabled: "Nothing to export yet.";
     };
     readonly empty: {
         readonly title: "No link audit yet";
@@ -138,6 +204,7 @@ export declare const LinkAuditContent: {
         readonly references: "Nothing was scanned. Check the site list and the page and item limits.";
         readonly links: "No links were found in anything that was scanned.";
         readonly broken: "No broken links. Nothing pointed at a legacy host and nothing answered with an error.";
+        readonly external: "No links leave this tenancy.";
     };
     readonly flags: {
         readonly broken: "Broken links";

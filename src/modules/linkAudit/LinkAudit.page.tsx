@@ -1,7 +1,6 @@
 import * as React from "react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Tabs } from "@/components/data/Tabs";
-import { Button } from "@/components/actions/Button";
 import { Badge } from "@/components/feedback/Badge";
 import { Theme } from "@/theme/Theme.api";
 import { originOf } from "@/api/Links.api";
@@ -14,16 +13,12 @@ import { linkAuditReport } from "@/modules/linkAudit/LinkAudit.report";
 import { LinkAuditContent } from "@/modules/linkAudit/LinkAudit.content";
 import { buildView } from "@/modules/linkAudit/LinkAudit.logic";
 import { AggregatedLink, LinkAuditConfig, LinkAuditData, Reference } from "@/modules/linkAudit/LinkAudit.types";
-import {
-  exportBrokenAudit,
-  exportExternalAudit,
-  exportFullAudit,
-  exportReferenceList,
-} from "@/modules/linkAudit/LinkAudit.csv";
 import { OverviewTab } from "@/modules/linkAudit/tabs/Overview.tab";
 import { ReferencesTab } from "@/modules/linkAudit/tabs/References.tab";
 import { LinksTab } from "@/modules/linkAudit/tabs/Links.tab";
 import { BrokenTab } from "@/modules/linkAudit/tabs/Broken.tab";
+import { ExternalTab } from "@/modules/linkAudit/tabs/External.tab";
+import { ActionsTab } from "@/modules/linkAudit/tabs/Actions.tab";
 import { ReferenceDialog } from "@/modules/linkAudit/Reference.dialog";
 import { LinkDialog } from "@/modules/linkAudit/Link.dialog";
 
@@ -90,34 +85,6 @@ const LinkAuditPage: React.FC = () => {
             onChange={controller.setConfig}
           />
         }
-        extraControls={
-          hasData ? (
-            <>
-              <Button
-                label={LinkAuditContent.exportCsv}
-                iconName="ExcelDocument"
-                onClick={() => exportFullAudit(references, view.links.length)}
-              />
-              <Button
-                label={LinkAuditContent.exportExternal}
-                iconName="ExcelDocument"
-                disabled={view.totals.external === 0}
-                onClick={() => exportExternalAudit(references, view.links.length)}
-              />
-              <Button
-                label={LinkAuditContent.exportBroken}
-                iconName="ExcelDocument"
-                disabled={view.totals.broken === 0}
-                onClick={() => exportBrokenAudit(references, view.links.length)}
-              />
-              <Button
-                label={LinkAuditContent.exportReferences}
-                iconName="ExcelDocument"
-                onClick={() => exportReferenceList(references)}
-              />
-            </>
-          ) : undefined
-        }
         runLabel={{
           run: LinkAuditContent.run,
           rerun: LinkAuditContent.rerun,
@@ -157,6 +124,17 @@ const LinkAuditPage: React.FC = () => {
                 label: LinkAuditContent.tabs.broken,
                 count: view.broken.length,
                 content: <BrokenTab usages={view.broken} />,
+              },
+              {
+                key: "external",
+                label: LinkAuditContent.tabs.external,
+                count: view.external.length,
+                content: <ExternalTab usages={view.external} />,
+              },
+              {
+                key: "actions",
+                label: LinkAuditContent.tabs.actions,
+                content: <ActionsTab view={view} />,
               },
             ]}
           />

@@ -4,7 +4,7 @@ import { TaskStatus } from "@/core/queue/Queue.types";
 import { ReportEnvelope } from "@/api/Reports.types";
 import { Reports } from "@/api/Reports.api";
 import { ReportDefinition } from "@/core/report/Report.types";
-import { clearRun, openEnvelope, startReport, useReportRun } from "@/core/report/Report.store";
+import { clearRun, openEnvelope, reportConfig, startReport, useReportRun } from "@/core/report/Report.store";
 import { toErrorMessage } from "@/utils/Guard.util";
 
 const MISSING_REPORT = "That report could not be opened. It may have been deleted or you may not have access.";
@@ -37,7 +37,9 @@ export function useReport<TData, TConfig>(
   const run = useReportRun(definition.kind);
   const status = run.taskStatus ?? "idle";
   const envelope = run.envelope as ReportEnvelope<TData, TConfig> | undefined;
-  const [config, setConfig] = useState<TConfig>(definition.defaultConfig);
+  const [config, setConfig] = useState<TConfig>(() =>
+    reportConfig(definition as unknown as ReportDefinition<unknown, TConfig>)
+  );
   const [error, setError] = useState<string | undefined>(undefined);
 
   const start = useCallback(

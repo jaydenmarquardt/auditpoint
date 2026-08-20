@@ -12,30 +12,31 @@ interface Tile {
   info: string;
   tone?: "warning";
   badge?: string;
+  iconName?: string;
 }
 
 export function statTiles(view: WebPartAuditView): Tile[] {
   return [
     {
-      key: "pages",
+      iconName: "Page", key: "pages",
       label: WebPartAuditContent.stats.pages,
       value: formatNumber(view.totals.pages),
       info: WebPartAuditContent.tileInfo.pages,
     },
     {
-      key: "instances",
+      iconName: "Puzzle", key: "instances",
       label: WebPartAuditContent.stats.instances,
       value: formatNumber(view.totals.instances),
       info: WebPartAuditContent.tileInfo.instances,
     },
     {
-      key: "types",
+      iconName: "ContextMenu", key: "types",
       label: WebPartAuditContent.stats.types,
       value: formatNumber(view.totals.types),
       info: WebPartAuditContent.tileInfo.types,
     },
     {
-      key: "thirdParty",
+      iconName: "Package", key: "thirdParty",
       label: WebPartAuditContent.stats.thirdParty,
       value: formatNumber(view.totals.thirdParty),
       info: WebPartAuditContent.tileInfo.thirdParty,
@@ -43,19 +44,19 @@ export function statTiles(view: WebPartAuditView): Tile[] {
       badge: view.totals.thirdParty > 0 ? "Review" : undefined,
     },
     {
-      key: "average",
+      iconName: "Calculator", key: "average",
       label: WebPartAuditContent.stats.average,
       value: String(view.totals.averagePerPage),
       info: WebPartAuditContent.tileInfo.average,
     },
     {
-      key: "empty",
+      iconName: "FieldEmpty", key: "empty",
       label: WebPartAuditContent.stats.empty,
       value: formatNumber(view.totals.emptyPages),
       info: WebPartAuditContent.tileInfo.empty,
     },
     {
-      key: "text",
+      iconName: "TextField", key: "text",
       label: WebPartAuditContent.stats.text,
       value: formatNumber(view.totals.textBlocks),
       info: WebPartAuditContent.tileInfo.text,
@@ -69,13 +70,14 @@ export const WebPartAuditStats: React.FC<{ view: WebPartAuditView }> = ({ view }
         display: "flex",
         flexWrap: "wrap",
         gap: Theme.tokens.space.md,
-        maxWidth: 1240,
+        width: "100%",
         minWidth: 0,
       }}
     >
     {statTiles(view).map((tile) => (
       <StatTile
         key={tile.key}
+        iconName={tile.iconName}
         label={tile.label}
         value={tile.value}
         info={tile.info}

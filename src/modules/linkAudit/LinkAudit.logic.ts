@@ -15,7 +15,8 @@ import {
 } from "@/modules/linkAudit/LinkAudit.types";
 
 export const LINK_TYPES: LinkType[] = [
-  "intranet",
+  "thisSite",
+  "otherSite",
   "legacy",
   "document",
   "external",
@@ -29,6 +30,8 @@ const DOCUMENT_EXTENSION = new RegExp(`\\.(${DOCUMENT_EXTENSIONS.join("|")})(\\?
 
 export interface ClassifyOptions {
   origin: string;
+  /** Server relative path of the site being audited, which separates it from its neighbours. */
+  sitePath: string;
   legacyHosts: string[];
 }
 
@@ -52,6 +55,31 @@ export function stripUrlSuffix(url: string): string {
 export function isLegacyUrl(url: string, legacyHosts: string[]): boolean {
   const value = `${url ?? ""}`.toLowerCase();
   return legacyHosts.some((host) => value.indexOf(host) !== -1);
+}
+
+/** Same tenancy and inside the audited site, rather than a neighbouring one. */
+export function isThisSiteUrl(url: string, origin: string, sitePath: string): boolean {
+  const path = pathOf(url, origin);
+  if (path === undefined) return false;
+
+  const site = `${sitePath || "/"}`.toLowerCase().replace(/\/$/, "");
+  if (!site || site === "") return true;
+
+  const value = path.toLowerCase();
+  return value === site || value.startsWith(`${site}/`);
+}
+
+function pathOf(url: string, origin: string): string | undefined {
+  const trimmed = `${url ?? ""}`.trim();
+  if (trimmed.length === 0) return undefined;
+  if (trimmed.startsWith("/")) return trimmed;
+
+  try {
+    const parsed = new URL(trimmed);
+    return parsed.origin.toLowerCase() === origin.toLowerCase() ? parsed.pathname : undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 export function isIntranetUrl(url: string, origin: string): boolean {
@@ -79,7 +107,12 @@ export function classifyLink(link: OutgoingLink, options: ClassifyOptions): Link
   if (link.isAnchor) return "anchor";
   if (isLegacyUrl(url, options.legacyHosts)) return "legacy";
   if (DOCUMENT_EXTENSION.test(url)) return "document";
-  if (isIntranetUrl(url, options.origin)) return "intranet";
+
+  if (isIntranetUrl(url, options.origin)) {
+    // Both are internal; the split is only about who owns the page at the other end.
+    return isThisSiteUrl(url, options.origin, options.sitePath) ? "thisSite" : "otherSite";
+  }
+
   if (link.isExternal) return "external";
   return "unknown";
 }
@@ -95,7 +128,9 @@ export function classifyReferences(references: Reference[], options: ClassifyOpt
       link.linkType = classifyLink(link, options);
       link.isLegacy = isLegacyUrl(link.url, options.legacyHosts);
       link.isIntranet =
-        link.linkType === "document" ? isIntranetUrl(link.url, options.origin) : link.linkType === "intranet";
+        link.linkType === "document"
+          ? isIntranetUrl(link.url, options.origin)
+          : link.linkType === "thisSite" || link.linkType === "otherSite";
       link.broken = restingBrokenState(link);
     });
 
@@ -325,7 +360,8 @@ export function aggregateLinks(references: Reference[], origin: string): Aggrega
 /** Counts every link by kind, including the ones with no text on them. */
 export function summariseLinkTypes(references: Reference[]): LinkTypeTotals {
   const totals: LinkTypeTotals = {
-    intranet: 0,
+    thisSite: 0,
+    otherSite: 0,
     legacy: 0,
     document: 0,
     external: 0,
@@ -337,6 +373,8 @@ export function summariseLinkTypes(references: Reference[]): LinkTypeTotals {
     insecure: 0,
     matched: 0,
     unmapped: 0,
+    newTab: 0,
+    internal: 0,
   };
 
   references.forEach((reference) =>
@@ -344,6 +382,8 @@ export function summariseLinkTypes(references: Reference[]): LinkTypeTotals {
       totals[link.linkType ?? "unknown"] = totals[link.linkType ?? "unknown"] + 1;
       if (`${link.text ?? ""}`.trim().length === 0) totals.emptyText = totals.emptyText + 1;
       if (link.isInsecure) totals.insecure = totals.insecure + 1;
+      if (link.newTab) totals.newTab = totals.newTab + 1;
+      if (link.isIntranet) totals.internal = totals.internal + 1;
       if (link.targetTitle) totals.matched = totals.matched + 1;
       else totals.unmapped = totals.unmapped + 1;
     })
@@ -370,6 +410,11 @@ export function summariseReferences(references: Reference[], destinations: numbe
     webpart: links.filter((link) => link.source === "webpart").length,
     navigation: links.filter((link) => link.source === "navigation").length,
     documentLinks: links.filter((link) => link.source === "document").length,
+    attachments: references.filter((reference) => reference.kind === "attachment").length,
+    attachmentLinks: links.filter((link) => link.source === "attachment").length,
+    configFiles: references.filter((reference) => reference.kind === "config").length,
+    configLinks: links.filter((link) => link.source === "config").length,
+    megaMenuLinks: links.filter((link) => link.source === "megamenu").length,
     external: links.filter((link) => link.isExternal).length,
     broken: links.filter((link) => link.broken === "yes").length,
     untested: links.filter((link) => link.broken === "unsure").length,
@@ -410,6 +455,10 @@ export function brokenUsages(links: AggregatedLink[]): LinkUsage[] {
   return links.filter((link) => link.broken === "yes").flatMap((link) => link.usages);
 }
 
+export function externalUsages(links: AggregatedLink[]): LinkUsage[] {
+  return links.filter((link) => link.linkType === "external").flatMap((link) => link.usages);
+}
+
 export function buildView(data: Partial<LinkAuditData> | undefined, origin: string): LinkAuditView {
   const references = data?.references ?? [];
   const links = aggregateLinks(references, origin);
@@ -424,7 +473,8 @@ export function buildView(data: Partial<LinkAuditData> | undefined, origin: stri
     links,
     broken: brokenUsages(links),
     byType: LINK_TYPES.map((type) => ({ label: type, value: linkTypes[type] })).filter((point) => point.value > 0),
-    bySource: (["content", "webpart", "navigation", "document"] as LinkSource[])
+    external: externalUsages(links),
+    bySource: (["content", "webpart", "navigation", "document", "attachment", "config", "megamenu"] as LinkSource[])
       .map((source) => ({
         label: sourceLabel(source),
         value: flat.filter((link) => link.source === source).length,

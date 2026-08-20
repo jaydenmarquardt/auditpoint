@@ -1,9 +1,17 @@
 /** Where in a thing the link was written. */
-export type LinkSource = "content" | "webpart" | "navigation" | "document";
+export type LinkSource =
+  | "content"
+  | "webpart"
+  | "navigation"
+  | "document"
+  | "attachment"
+  | "config"
+  | "megamenu";
 
 /** What the link points at. Drives the type column and whether it is worth testing. */
 export type LinkType =
-  | "intranet"
+  | "thisSite"
+  | "otherSite"
   | "legacy"
   | "document"
   | "external"
@@ -31,6 +39,8 @@ export interface LinkPlacement {
   isAnchor: boolean;
   isContact: boolean;
   isJS: boolean;
+  /** Written to open in a new tab, which is a decision an editor made. */
+  newTab: boolean;
 }
 
 export interface LinkContext {

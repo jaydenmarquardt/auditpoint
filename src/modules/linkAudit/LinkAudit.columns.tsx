@@ -15,7 +15,8 @@ import {
 import { formatNumber } from "@/utils/Format.util";
 
 const TYPE_TONE: Record<LinkType, BadgeTone> = {
-  intranet: "info",
+  thisSite: "info",
+  otherSite: "accent",
   legacy: "danger",
   document: "accent",
   external: "warning",
@@ -36,10 +37,13 @@ const SOURCE_TONE: Record<LinkSource, BadgeTone> = {
   webpart: "accent",
   navigation: "neutral",
   document: "success",
+  attachment: "success",
+  config: "warning",
+  megamenu: "neutral",
 };
 
 export const TypeTag: React.FC<{ type: LinkType }> = ({ type }) => (
-  <Badge label={type} tone={TYPE_TONE[type]} showIcon={false} />
+  <Badge label={LinkAuditContent.types[type]} tone={TYPE_TONE[type]} showIcon={false} />
 );
 
 export const StatusTag: React.FC<{ broken: BrokenState; status?: number; matched?: string }> = ({
@@ -191,7 +195,7 @@ export const linkColumns: TableColumn<AggregatedLink>[] = [
     header: LinkAuditContent.columns.type,
     minWidth: 120,
     sortValue: (link) => link.linkType,
-    filterValue: (link) => link.linkType,
+    filterValue: (link) => LinkAuditContent.types[link.linkType],
     render: (link) => <TypeTag type={link.linkType} />,
   },
   {
@@ -264,7 +268,7 @@ export const usageColumns: TableColumn<LinkUsage>[] = [
     header: LinkAuditContent.columns.type,
     minWidth: 120,
     sortValue: (usage) => usage.link.linkType,
-    filterValue: (usage) => usage.link.linkType,
+    filterValue: (usage) => LinkAuditContent.types[usage.link.linkType],
     render: (usage) => <TypeTag type={usage.link.linkType} />,
   },
   {
@@ -298,7 +302,7 @@ export const outgoingColumns: TableColumn<OutgoingLink>[] = [
     header: LinkAuditContent.columns.type,
     minWidth: 120,
     sortValue: (link) => link.linkType,
-    filterValue: (link) => link.linkType,
+    filterValue: (link) => LinkAuditContent.types[link.linkType],
     render: (link) => <TypeTag type={link.linkType} />,
   },
   {

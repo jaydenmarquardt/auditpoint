@@ -13,11 +13,25 @@ import { setupSp } from "@/api/Sp.api";
 import { initSettings, registerSettingsWriter } from "@/api/Settings.api";
 import { appStore } from "@/core/state/App.store";
 import { MODULES, setHostModules } from "@/modules/Modules.registry";
+import { setReportDefaults } from "@/core/report/Report.store";
+import { SettingsFile } from "@/api/Settings.types";
 import { APP_VERSION } from "@/version";
 
 export interface IAuditPointWebPartProps {
   /** The whole app configuration, edited in the app and written back here. */
   settingsJson: string;
+}
+
+/** Everything a host can decide, returned from one `setup()` in the host web part. */
+export interface AuditPointSetup {
+  /** Module keys this host offers at all. Omit to offer every module. */
+  modules?: string[];
+  /** Offered but switched off until someone turns them on for the site. */
+  disabledModules?: string[];
+  /** Fills in anything the stored settings do not say: name, report location, sites. */
+  settings?: Partial<SettingsFile>;
+  /** Starting config per report kind, merged over that report's own defaults. */
+  reportDefaults?: Record<string, Record<string, unknown>>;
 }
 
 /** Per module switch, stored as `module_<key>` so the property pane can bind to it. */
@@ -31,16 +45,27 @@ export function modulePropertyKey(key: string): string {
  *
  * ```ts
  * export default class SiteAuditWebPart extends AuditPointBaseWebPart {
- *   protected get modules(): string[] { return ["lists-audit", "link-audit"]; }
+ *   protected async setup(): Promise<AuditPointSetup> {
+ *     return {
+ *       modules: ["lists-audit", "link-audit"],
+ *       settings: { appName: "Site audit", reportLibrary: "SiteAssets" },
+ *       reportDefaults: { "link-audit": { checkBrokenLinks: true } },
+ *     };
+ *   }
  * }
  * ```
  */
 export abstract class AuditPointBaseWebPart<
   TProps extends IAuditPointWebPartProps = IAuditPointWebPartProps,
 > extends BaseClientSideWebPart<TProps> {
-  /** Modules this host offers at all. Undefined offers every registered module. */
-  protected get modules(): string[] | undefined {
-    return undefined;
+  private host: AuditPointSetup = {};
+
+  /**
+   * The one thing a host overrides. Runs once before the first render, so it can
+   * read a config file or the page context before deciding.
+   */
+  protected async setup(): Promise<AuditPointSetup> {
+    return {};
   }
 
   /** Shown at the top of the property pane, above the settings JSON. */
@@ -49,6 +74,7 @@ export abstract class AuditPointBaseWebPart<
   }
 
   protected async onInit(): Promise<void> {
+    this.host = (await this.setup()) ?? {};
     this.configure();
     await super.onInit();
   }
@@ -111,7 +137,7 @@ export abstract class AuditPointBaseWebPart<
   }
 
   private offered(): { key: string; label: string }[] {
-    const allowed = this.modules;
+    const allowed = this.host.modules;
     return MODULES.filter((module) => !allowed || allowed.indexOf(module.key) !== -1).map((module) => ({
       key: module.key,
       label: module.label,
@@ -131,6 +157,7 @@ export abstract class AuditPointBaseWebPart<
   private configure(): void {
     setupSp(this.context);
     setHostModules(this.offered().filter((module) => this.moduleEnabled(module.key)).map((module) => module.key));
+    setReportDefaults(this.host.reportDefaults);
 
     // The app edits its own settings, so it writes back onto this web part.
     registerSettingsWriter((json: string) => {
@@ -138,10 +165,11 @@ export abstract class AuditPointBaseWebPart<
       this.context.propertyPane.refresh();
     });
 
-    const settings = initSettings(this.properties.settingsJson, {
-      url: this.context.pageContext.web.absoluteUrl,
-      title: this.context.pageContext.web.title,
-    });
+    const settings = initSettings(
+      this.properties.settingsJson,
+      { url: this.context.pageContext.web.absoluteUrl, title: this.context.pageContext.web.title },
+      { ...this.host.settings, disabledModules: this.host.settings?.disabledModules ?? this.host.disabledModules }
+    );
 
     appStore.setState((state) => ({ ...state, route: settings.defaultRoute || state.route }));
   }

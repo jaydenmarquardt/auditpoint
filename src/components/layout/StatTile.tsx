@@ -11,6 +11,7 @@ export const StatTile: React.FC<StatTileProps> = ({
   tone = "neutral",
   badge,
   info,
+  iconName,
   width = 160,
 }) => (
   <div
@@ -34,7 +35,25 @@ export const StatTile: React.FC<StatTileProps> = ({
       </span>
       {badge ? <Badge label={badge} tone={tone} /> : undefined}
     </div>
-    <div style={{ fontSize: Tokens.font.xl, fontWeight: 600, marginTop: Tokens.space.xs }}>{value}</div>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: Tokens.space.xs,
+        fontSize: Tokens.font.xl,
+        fontWeight: 600,
+        marginTop: Tokens.space.xs,
+      }}
+    >
+      {iconName && (
+        <i
+          className={`ms-Icon ms-Icon--${iconName}`}
+          aria-hidden="true"
+          style={{ fontSize: Tokens.font.lg, color: Tokens.colour.textMuted }}
+        />
+      )}
+      {value}
+    </div>
     {hint && (
       <div style={{ fontSize: Tokens.font.sm, color: Tokens.colour.textMuted, marginTop: 2 }}>{hint}</div>
     )}

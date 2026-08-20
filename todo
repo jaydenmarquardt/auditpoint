@@ -73,8 +73,13 @@ atatachements tracking too
 
 set this repo up so other repos can include it as a npm package with branch being the version
 
-when including the webpart allow settings
-- ie in 
+pre audit report config ui improvements pls
 
-run each audit and send the log for efficiency and error check
-1. the audit report grid stats, make them 100w% width
+in the app settings allow 
+- mapping fields:
+   - OrganisationalUnit ( and map the list)
+   - ExpiryDate
+   - ReviewDate
+   - PublishDate
+   - HTML body fields on content types for content audits, make it multi
+- setting legacy urls

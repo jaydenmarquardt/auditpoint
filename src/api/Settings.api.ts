@@ -17,6 +17,7 @@ const DEFAULTS: AppSettings = {
 export const settingsStore = createStore<AppSettings>(DEFAULTS);
 
 let host: SiteTarget = { url: "", title: "" };
+let hostDefaults: Partial<SettingsFile> = {};
 let writer: SettingsWriter | undefined;
 
 export function registerSettingsWriter(next: SettingsWriter | undefined): void {
@@ -27,16 +28,25 @@ export function canPersistSettings(): boolean {
   return writer !== undefined;
 }
 
-export function initSettings(json: string | undefined, hostSite: SiteTarget): AppSettings {
+/**
+ * `defaults` are the host's opinion: they fill in anything the stored settings do
+ * not say, so a solution can ship a ready configured app without hard coding it.
+ */
+export function initSettings(
+  json: string | undefined,
+  hostSite: SiteTarget,
+  defaults: Partial<SettingsFile> = {}
+): AppSettings {
   host = hostSite;
-  const settings = fromFile(parse(json), hostSite);
+  hostDefaults = defaults;
+  const settings = fromFile({ ...defaults, ...stripEmpty(parse(json)) }, hostSite);
   settingsStore.setState(settings);
   configureThrottle({ concurrency: settings.concurrency });
   return settings;
 }
 
 export function saveSettings(next: AppSettings): void {
-  const settings = fromFile(toFile(next), host);
+  const settings = fromFile({ ...hostDefaults, ...toFile(next) }, host);
   settingsStore.setState(settings);
   configureThrottle({ concurrency: settings.concurrency });
   if (writer) writer(JSON.stringify(toFile(settings), null, 2));
@@ -84,6 +94,18 @@ function parse(json: string | undefined): SettingsFile {
   } catch {
     return { version: 1 };
   }
+}
+
+/** An absent value defers to the host default; an empty string is still a value. */
+function stripEmpty(file: SettingsFile): SettingsFile {
+  const kept: Record<string, unknown> = {};
+
+  Object.keys(file).forEach((key) => {
+    const value = (file as unknown as Record<string, unknown>)[key];
+    if (value !== undefined && value !== null) kept[key] = value;
+  });
+
+  return kept as unknown as SettingsFile;
 }
 
 function fromFile(file: SettingsFile, hostSite: SiteTarget): AppSettings {

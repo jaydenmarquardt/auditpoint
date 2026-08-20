@@ -210,15 +210,19 @@ export function Table<TRow>({
         )}
       </div>
 
-      {visible.length > page.length && (
-        <div style={{ display: "flex", alignItems: "center", gap: Theme.tokens.space.sm }}>
-          <span style={{ fontSize: Theme.tokens.font.sm, color: Theme.palette().textMuted }}>
-            Showing {page.length.toLocaleString()} of {visible.length.toLocaleString()}
-          </span>
-          <Button label="Show more" iconName="ChevronDown" onClick={() => setLimit(limit + PAGE_SIZE)} />
-          <Button label="Show all" variant="subtle" onClick={() => setLimit(visible.length)} />
-        </div>
-      )}
+      <div style={{ display: "flex", alignItems: "center", gap: Theme.tokens.space.sm, flexWrap: "wrap" }}>
+        <span style={{ fontSize: Theme.tokens.font.sm, color: Theme.palette().textMuted }}>
+          Showing {page.length.toLocaleString()} of {visible.length.toLocaleString()}
+          {visible.length === rows.length ? "" : ` (filtered from ${rows.length.toLocaleString()})`}
+        </span>
+
+        {visible.length > page.length && (
+          <>
+            <Button label="Show more" iconName="ChevronDown" onClick={() => setLimit(limit + PAGE_SIZE)} />
+            <Button label="Show all" variant="subtle" onClick={() => setLimit(visible.length)} />
+          </>
+        )}
+      </div>
     </div>
   );
 }

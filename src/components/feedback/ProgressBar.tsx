@@ -4,6 +4,8 @@ import { ProgressBarProps, ProgressStatus } from "@/components/Components.types"
 import { statusTone, statusText } from "@/components/feedback/StatusBadge";
 
 const INDETERMINATE: ProgressStatus[] = ["running"];
+/** Statuses where work is still happening, so the bar should not look settled. */
+const ACTIVE: ProgressStatus[] = ["running", "throttled", "waiting", "queued"];
 
 export const ProgressBar: React.FC<ProgressBarProps> = ({
   label,
@@ -16,6 +18,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   const palette = Theme.tone(statusTone(status));
   const height = compact ? 6 : 12;
   const indeterminate = ratio === undefined && INDETERMINATE.indexOf(status) !== -1;
+  const active = ACTIVE.indexOf(status) !== -1;
   const width = ratio === undefined ? (indeterminate ? 40 : 0) : Math.round(ratio * 100);
 
   return (
@@ -62,7 +65,23 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
             transition: "width 200ms ease",
             animation: indeterminate ? "auditpoint-indeterminate 1.4s ease-in-out infinite" : undefined,
           }}
-        />
+        >
+          {/* The stripes are painted on the fill and slid across, so a slow stage
+              still reads as working rather than stalled. */}
+          {active && (
+            <span
+              aria-hidden="true"
+              style={{
+                position: "absolute",
+                inset: 0,
+                backgroundImage:
+                  "linear-gradient(115deg, rgba(255,255,255,0.35) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.35) 50%, rgba(255,255,255,0.35) 75%, transparent 75%)",
+                backgroundSize: "36px 36px",
+                animation: "auditpoint-stripes 1s linear infinite",
+              }}
+            />
+          )}
+        </div>
       </div>
 
       {description && (

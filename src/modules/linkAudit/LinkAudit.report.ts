@@ -1,7 +1,8 @@
 import { SiteLists } from "@/api/Lists.api";
 import { PageCanvas } from "@/api/WebParts.api";
 import { ContentSource } from "@/api/Content.api";
-import { DocumentFiles, scanDocumentForLinks } from "@/api/Documents.api";
+import { DocumentFiles, ItemAttachments, scanDocumentForLinks } from "@/api/Documents.api";
+import { ConfigFiles, splitPaths } from "@/api/ConfigFiles.api";
 import { LinkChecker, LinkScanner, originOf } from "@/api/Links.api";
 import { SiteNavigation } from "@/api/Navigation.api";
 import { LinkPlacement } from "@/api/Links.types";
@@ -47,6 +48,9 @@ export const linkAuditReport: ReportDefinition<LinkAuditData, LinkAuditConfig> =
     maxItemsPerList: 5000,
     maxLists: 100,
     scanNavigation: true,
+    scanAttachments: false,
+    configPaths: "",
+    megaMenuPath: "",
     includeDocuments: true,
     maxFilesPerLibrary: 5000,
     scanDocx: false,
@@ -113,6 +117,27 @@ export const linkAuditReport: ReportDefinition<LinkAuditData, LinkAuditConfig> =
       label: "Scan navigation menus",
       type: "toggle",
       description: "Adds the quick launch and top navigation as one item, so menu links resolve like any other.",
+    },
+    {
+      key: "scanAttachments",
+      label: "Scan list item attachments",
+      type: "toggle",
+      description:
+        "Reads the attachments hanging off list items, so a link inside an attached document counts like any other.",
+    },
+    {
+      key: "configPaths",
+      label: "Configuration files to scan",
+      type: "text",
+      description:
+        "Comma separated server relative paths to JSON files, such as /sites/intranet/SiteAssets/config.json. Every url shaped value inside is read as a link.",
+    },
+    {
+      key: "megaMenuPath",
+      label: "Mega menu configuration file",
+      type: "text",
+      description:
+        "Server relative path to a config file holding a megamenu.items tree. Its links are read with the trail through the menu as the label.",
     },
     {
       key: "includeDocuments",
@@ -348,6 +373,125 @@ export const linkAuditReport: ReportDefinition<LinkAuditData, LinkAuditConfig> =
     },
 
     {
+      key: "config",
+      label: "Read links in configuration files",
+      async run(context) {
+        const paths = splitPaths(context.config.configPaths);
+        const menuPath = context.config.megaMenuPath.trim();
+        const all = [...paths, ...(menuPath ? [menuPath] : [])];
+
+        if (all.length === 0) {
+          context.progress(0, 0);
+          return;
+        }
+
+        const files = ConfigFiles(context.siteUrl);
+        const references = keep(context, "config").filter(
+          (reference) => !(reference.siteUrl === context.siteUrl && reference.kind === "megamenu")
+        );
+
+        for (let index = 0; index < all.length; index = index + 1) {
+          await context.waitIfPaused();
+          if (context.isCancelled()) break;
+
+          const path = all[index];
+          const name = path.split("/").pop() ?? path;
+
+          try {
+            const json = await files.read(path);
+            const isMenu = path === menuPath;
+            const menuLinks = isMenu ? files.megaMenuLinks(json, name) : [];
+
+            references.push({
+              key: `${context.siteUrl}|config|${path}`,
+              siteUrl: context.siteUrl,
+              // A menu is its own kind of source, so it reads as one in the table.
+              kind: isMenu && menuLinks.length > 0 ? "megamenu" : "config",
+              listTitle: isMenu && menuLinks.length > 0 ? LinkAuditContent.megaMenuList : LinkAuditContent.configList,
+              title: name,
+              // The file has a url of its own, so a link to it still resolves.
+              url: path,
+              itemId: 0,
+              modified: "",
+              fileUrl: path,
+              scanned: true,
+              outgoing: [...menuLinks, ...files.links(json, name)].map(toOutgoing),
+              incoming: [],
+              brokenCount: 0,
+            });
+          } catch (error) {
+            context.issue({ target: path, code: statusOf(error) ?? "error", message: toErrorMessage(error) });
+          }
+
+          context.progress(index + 1, all.length);
+        }
+
+        context.data.references = references;
+      },
+    },
+
+    {
+      key: "attachments",
+      label: "Inventory item attachments",
+      async run(context) {
+        if (!context.config.scanAttachments) {
+          context.progress(0, 0);
+          return;
+        }
+
+        const lists = (await SiteLists(context.siteUrl).getAll(false))
+          .filter((list) => list.kind === "list" && list.itemCount > 0)
+          .slice(0, context.config.maxLists);
+
+        const start = typeof context.cursor === "number" ? context.cursor : 0;
+        const references = start === 0 ? keep(context, "attachment") : context.data.references ?? [];
+
+        for (let index = start; index < lists.length; index = index + 1) {
+          await context.waitIfPaused();
+          if (context.isCancelled()) {
+            context.setCursor(index);
+            context.data.references = references;
+            return;
+          }
+
+          const list = lists[index];
+
+          try {
+            const files = await ItemAttachments(context.siteUrl).inList(list, context.config.maxItemsPerList);
+
+            files.forEach((file) =>
+              references.push({
+                key: `${context.siteUrl}|${file.listTitle}|${file.itemId}|${file.name}`,
+                siteUrl: context.siteUrl,
+                kind: "attachment",
+                listTitle: file.listTitle,
+                title: file.name,
+                url: file.url,
+                itemId: file.itemId,
+                modified: file.modified,
+                fileUrl: file.url,
+                extension: file.extension,
+                sizeBytes: file.sizeBytes,
+                // An attachment is a link target until its content has been read.
+                scanned: false,
+                outgoing: [],
+                incoming: [],
+                brokenCount: 0,
+              })
+            );
+          } catch (error) {
+            context.issue({ target: list.title, code: statusOf(error) ?? "error", message: toErrorMessage(error) });
+          }
+
+          context.setCursor(index + 1);
+          context.progress(index + 1, lists.length);
+        }
+
+        context.data.references = references;
+      },
+    },
+
+    {
       key: "documents",
       label: "Inventory documents",
       async run(context) {
@@ -427,7 +571,7 @@ export const linkAuditReport: ReportDefinition<LinkAuditData, LinkAuditConfig> =
         const targets = references.filter(
           (reference) =>
             reference.siteUrl === context.siteUrl &&
-            reference.kind === "document" &&
+            (reference.kind === "document" || reference.kind === "attachment") &&
             kinds.indexOf(reference.extension ?? "") !== -1 &&
             !reference.documentScanned
         );
@@ -456,7 +600,16 @@ export const linkAuditReport: ReportDefinition<LinkAuditData, LinkAuditConfig> =
                 reference.documentScanned = true;
                 reference.scanned = true;
                 reference.skipped = scan.skipped;
-                reference.outgoing.push(...scan.links.map(toOutgoing));
+                reference.outgoing.push(
+                  ...scan.links
+                    .map((link) => ({
+                      ...link,
+                      // The placement says where it came from, and an attachment is
+                      // not the same thing as a document in a library.
+                      source: reference.kind === "attachment" ? ("attachment" as const) : link.source,
+                    }))
+                    .map(toOutgoing)
+                );
               } catch (error) {
                 context.issue({
                   target: reference.title,
@@ -489,6 +642,7 @@ export const linkAuditReport: ReportDefinition<LinkAuditData, LinkAuditConfig> =
         indexReferences(references);
         classifyReferences(references, {
           origin: originOf(context.siteUrl),
+          sitePath: sitePathOf(context.siteUrl),
           legacyHosts: legacyHostsOf(context.config),
         });
 
@@ -581,6 +735,15 @@ function toOutgoing(link: LinkPlacement): OutgoingLink {
     targetUrl: "",
     targetId: 0,
   };
+}
+
+/** Server relative path of the audited site, which separates it from its neighbours. */
+function sitePathOf(siteUrl: string): string {
+  try {
+    return new URL(siteUrl || window.location.href).pathname.replace(/\/$/, "");
+  } catch {
+    return "";
+  }
 }
 
 function splitNames(value: string): string[] {

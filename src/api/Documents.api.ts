@@ -1,3 +1,4 @@
+import "@pnp/sp/attachments";
 import { getSp } from "@/api/Sp.api";
 import { throttled } from "@/api/Throttle.api";
 import { SiteList } from "@/api/Lists.types";
@@ -78,6 +79,65 @@ export function DocumentFiles(webUrl?: string): {
           modified: String(row.Modified ?? ""),
         }))
         .filter((file) => file.name.length > 0 && DOCUMENT_EXTENSIONS.indexOf(file.extension) !== -1);
+    },
+  };
+}
+
+interface AttachmentRow {
+  FileName: string;
+  ServerRelativeUrl: string;
+}
+
+interface AttachmentItemRow {
+  Id: number;
+  Title?: string;
+  FileRef?: string;
+  Modified?: string;
+}
+
+export function ItemAttachments(webUrl?: string): {
+  inList(list: SiteList, max: number): Promise<DocumentFile[]>;
+} {
+  const site = webUrl ?? "";
+
+  return {
+    /**
+     * Attachments hang off list items rather than a library, so they are read per
+     * item. Only items flagged as having one are asked for, which keeps a list of
+     * thousands to a handful of requests.
+     */
+    async inList(list: SiteList, max: number): Promise<DocumentFile[]> {
+      const items = (await throttled(
+        () =>
+          getSp(webUrl)
+            .web.lists.getById(list.id)
+            .items.select("Id", "Title", "FileRef", "Modified")
+            .filter("Attachments eq 1")
+            .top(max)(),
+        { label: "Attachments.items" }
+      )) as AttachmentItemRow[];
+
+      const files = await Promise.all(
+        items.map(async (item) => {
+          const attachments = (await throttled(
+            () => getSp(webUrl).web.lists.getById(list.id).items.getById(item.Id).attachmentFiles(),
+            { label: "Attachments.files" }
+          )) as AttachmentRow[];
+
+          return attachments.map((attachment) => ({
+            siteUrl: site,
+            listTitle: list.title,
+            itemId: item.Id,
+            name: attachment.FileName,
+            url: attachment.ServerRelativeUrl,
+            extension: extensionOf(attachment.FileName),
+            sizeBytes: 0,
+            modified: String(item.Modified ?? ""),
+          }));
+        })
+      );
+
+      return files.flat();
     },
   };
 }
