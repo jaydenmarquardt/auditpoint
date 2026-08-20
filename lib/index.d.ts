@@ -8,7 +8,7 @@ import { WebPartContext } from "@microsoft/sp-webpart-base";
 import { AppSettings } from "./api/Settings.types";
 export { App as AuditPointApp, default as AuditPoint } from "./app/App";
 export { AuditPointBaseWebPart, modulePropertyKey, default as AuditPointWebPartBase, } from "./webparts/AuditPointBaseWebPart";
-export type { IAuditPointWebPartProps } from "./webparts/AuditPointBaseWebPart";
+export type { AuditPointSetup, IAuditPointWebPartProps } from "./webparts/AuditPointBaseWebPart";
 export type { AppProps as AuditPointAppProps } from "./app/App";
 export { setupSp } from "./api/Sp.api";
 export { canPersistSettings, getSettings, initSettings, registerSettingsWriter, saveSettings, settingsJson, useSettings, } from "./api/Settings.api";
@@ -17,7 +17,7 @@ export { appStore, navigate } from "./core/state/App.store";
 export { MODULES, enabledModules, findModule, hostModules, isModuleEnabled, offeredModules, setHostModules, } from "./modules/Modules.registry";
 export type { Module, ModuleGroup } from "./modules/Modules.types";
 export { APP_VERSION } from "./version";
-export interface AuditPointSetup {
+export interface AuditPointBootstrap {
     context: WebPartContext;
     /** The host web part property holding the settings blob the app edits in place. */
     settingsJson?: string;
@@ -28,7 +28,7 @@ export interface AuditPointSetup {
  * Wires PnP, settings and the default route. Call once from the host's `onInit`,
  * and again whenever the stored settings change, before rendering the app.
  */
-export declare function configureAuditPoint(setup: AuditPointSetup): AppSettings;
+export declare function configureAuditPoint(setup: AuditPointBootstrap): AppSettings;
 /** Drops the settings writer, so a disposed host stops being written to. */
 export declare function disposeAuditPoint(): void;
 //# sourceMappingURL=index.d.ts.map

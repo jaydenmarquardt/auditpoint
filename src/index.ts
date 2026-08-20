@@ -16,7 +16,7 @@ export {
   modulePropertyKey,
   default as AuditPointWebPartBase,
 } from "@/webparts/AuditPointBaseWebPart";
-export type { IAuditPointWebPartProps } from "@/webparts/AuditPointBaseWebPart";
+export type { AuditPointSetup, IAuditPointWebPartProps } from "@/webparts/AuditPointBaseWebPart";
 export type { AppProps as AuditPointAppProps } from "@/app/App";
 export { setupSp } from "@/api/Sp.api";
 export {
@@ -42,7 +42,7 @@ export {
 export type { Module, ModuleGroup } from "@/modules/Modules.types";
 export { APP_VERSION } from "@/version";
 
-export interface AuditPointSetup {
+export interface AuditPointBootstrap {
   context: WebPartContext;
   /** The host web part property holding the settings blob the app edits in place. */
   settingsJson?: string;
@@ -54,7 +54,7 @@ export interface AuditPointSetup {
  * Wires PnP, settings and the default route. Call once from the host's `onInit`,
  * and again whenever the stored settings change, before rendering the app.
  */
-export function configureAuditPoint(setup: AuditPointSetup): AppSettings {
+export function configureAuditPoint(setup: AuditPointBootstrap): AppSettings {
   setupSp(setup.context);
   registerSettingsWriter(setup.onSettingsChange);
 
