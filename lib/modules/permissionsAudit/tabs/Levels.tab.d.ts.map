@@ -1,0 +1,1 @@
+{"version":3,"file":"Levels.tab.d.ts","sourceRoot":"","sources":["../../../../src/modules/permissionsAudit/tabs/Levels.tab.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,KAAK,MAAM,OAAO,CAAC;AAG/B,OAAO,EAAE,eAAe,EAAE,MAAM,6BAA6B,CAAC;AAI9D,eAAO,MAAM,SAAS,EAAE,KAAK,CAAC,EAAE,CAAC;IAC/B,MAAM,EAAE,eAAe,EAAE,CAAC;IAC1B,QAAQ,EAAE,CAAC,KAAK,EAAE,eAAe,KAAK,IAAI,CAAC;CAC5C,CAmBA,CAAC"}

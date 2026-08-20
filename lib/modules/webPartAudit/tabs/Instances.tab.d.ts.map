@@ -1,0 +1,1 @@
+{"version":3,"file":"Instances.tab.d.ts","sourceRoot":"","sources":["../../../../src/modules/webPartAudit/tabs/Instances.tab.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,KAAK,MAAM,OAAO,CAAC;AAG/B,OAAO,EAAE,eAAe,EAAE,MAAM,sBAAsB,CAAC;AAIvD,eAAO,MAAM,YAAY,EAAE,KAAK,CAAC,EAAE,CAAC;IAClC,SAAS,EAAE,eAAe,EAAE,CAAC;IAC7B,UAAU,EAAE,CAAC,QAAQ,EAAE,eAAe,KAAK,IAAI,CAAC;CACjD,CAuBA,CAAC"}

@@ -20,7 +20,7 @@
     "re-install": "rm -rf node_modules pnpm-lock.yaml && pnpm install",
     "build:lib": "heft build && node ./scripts/fix-lib-aliases.js",
     "fix-aliases": "node ./scripts/fix-lib-aliases.js",
-    "prepare": "node ./scripts/prepare.js"
+    "release": "pnpm run build && node ./scripts/release.js"
   },
   "dependencies": {
     "@fluentui/react": "8.125.2",

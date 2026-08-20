@@ -1,0 +1,134 @@
+export declare const ListsAuditContent: {
+    readonly title: "Lists and libraries";
+    readonly description: "Inventory of every list and library on the selected sites: item counts, storage, versioning, permissions and staleness.";
+    readonly run: "Run audit";
+    readonly rerun: "Run again";
+    readonly resume: "Resume";
+    readonly pause: "Pause";
+    readonly cancel: "Cancel";
+    readonly loadSaved: "Load saved report";
+    readonly exportCsv: "Export CSV";
+    readonly searchLists: "Search lists";
+    readonly details: "Details";
+    readonly tileInfo: {
+        readonly lists: "Visible lists that are not document libraries.";
+        readonly libraries: "Visible document libraries, including Site Pages and Site Assets.";
+        readonly items: "Item count reported by SharePoint for visible lists, folders included.";
+        readonly folders: "Folders counted while scanning items. Deep folder trees slow browsing and sync.";
+        readonly files: "Files counted while scanning libraries.";
+        readonly contentTypes: "Distinct visible content types attached across all scanned lists.";
+        readonly storage: "Total size of the files counted during the scan.";
+        readonly stale: "Lists with no item changed inside the stale window set for this run.";
+        readonly empty: "Lists holding no items at all.";
+        readonly governance: "Lists with versioning off or unique permissions.";
+    };
+    readonly configTitle: "Audit settings";
+    readonly historyTitle: "Previous runs";
+    readonly backToRuns: "All runs";
+    readonly moduleVersion: "Module";
+    readonly review: "Review";
+    readonly staleLabel: "Stale";
+    readonly activeLabel: "Active";
+    readonly storageUnavailable: "Storage metrics were not returned for these lists. The tenant may block StorageMetrics, or the audit ran with storage measurement off.";
+    readonly storageUnavailableShort: "Storage unavailable";
+    readonly tabs: {
+        readonly overview: "Overview";
+        readonly lists: "All lists";
+        readonly risks: "Governance";
+        readonly logs: "Log";
+        readonly issues: "Issues";
+    };
+    readonly stats: {
+        readonly lists: "Lists";
+        readonly libraries: "Libraries";
+        readonly items: "Items";
+        readonly files: "Files";
+        readonly folders: "Folders";
+        readonly storage: "Storage";
+        readonly contentTypes: "Content types";
+        readonly stale: "Stale";
+        readonly empty: "Empty";
+        readonly governance: "Governance flags";
+    };
+    readonly charts: {
+        readonly byTemplate: "Lists by template";
+        readonly split: "Lists by visibility";
+        readonly largestItems: "Items by list";
+        readonly largest: "Storage by list";
+        readonly contentTypes: "Lists by content type";
+        readonly extensions: "Files by type";
+        readonly extensionSize: "Storage by file type";
+        readonly governance: "Lists by governance flag";
+    };
+    readonly columns: {
+        readonly actions: "Actions";
+        readonly folders: "Folders";
+        readonly files: "Files";
+        readonly contentTypes: "Content types";
+        readonly visibility: "Visibility";
+        readonly title: "Name";
+        readonly template: "Template";
+        readonly items: "Items";
+        readonly storage: "Storage";
+        readonly modified: "Last item modified";
+        readonly versioning: "Versioning";
+        readonly permissions: "Permissions";
+    };
+    readonly empty: {
+        readonly title: "No audit yet";
+        readonly description: "Run the audit to inventory every list and library on the configured sites.";
+    };
+    readonly risksEmpty: {
+        readonly title: "No governance risks";
+        readonly description: "Every list has versioning on and inherits permissions.";
+    };
+    readonly issuesEmpty: {
+        readonly title: "No issues recorded";
+        readonly description: "Pages and lists that returned 401, 403 or 429 during the scan appear here.";
+    };
+    readonly openSettings: "List settings";
+    readonly openList: "Open list";
+    readonly hidden: "Hidden";
+    readonly visible: "Visible";
+    readonly truncated: "item scan hit the per list cap on some lists, so counts and sizes are partial.";
+    readonly scanOff: "Item scanning was off for this run, so folder, file and size counts are unavailable.";
+    readonly dialog: {
+        readonly close: "Close";
+        readonly created: "Created";
+        readonly versionLimit: "Version limit";
+        readonly unlimited: "Unlimited";
+        readonly contentTypesOn: "Content types enabled";
+        readonly noContentTypes: "No visible content types were returned for this list.";
+        readonly noFiles: "No files were counted in this list.";
+        readonly scanTitle: "Scan coverage";
+        readonly itemsScanned: "items scanned";
+        readonly capped: "(hit the per list cap, so counts are partial)";
+        readonly notScanned: "Item scanning was off for this run.";
+        readonly perFile: "per file";
+        readonly daysAgo: "days ago";
+        readonly tabSummary: "Summary";
+        readonly tabConfiguration: "Configuration";
+        readonly tabFiles: "Files";
+        readonly filesOnlyTitle: "Lists do not hold files";
+        readonly filesOnly: "File type and storage breakdowns only apply to document libraries.";
+        readonly url: "Server relative URL";
+    };
+    readonly cardInfo: {
+        readonly templates: "How many lists use each list template. Useful for spotting duplicated or legacy list types.";
+        readonly contentTypes: "How often each content type is attached to a list. A long tail usually means content type sprawl.";
+        readonly extensions: "File extensions counted across every scanned library.";
+        readonly extensionSize: "Storage used by each file type, so you can see what is actually consuming space.";
+        readonly largest: "Libraries and lists holding the most storage.";
+        readonly largestItems: "Lists holding the most items. Very large lists are the ones that hit list view thresholds.";
+        readonly split: "Split of visible libraries, visible lists and hidden or system lists.";
+        readonly governance: "Versioning and permission flags across visible lists.";
+        readonly listContentTypes: "Content types attached to this list, with items spread evenly as an indication only.";
+        readonly listContentTypesFooter: "Even split, SharePoint does not report items per content type without scanning each item.";
+    };
+    readonly governanceIntro: "Lists flagged here are worth a look before they cause problems: versioning off means an accidental overwrite cannot be undone, and unique permissions mean the list no longer follows site access.";
+    readonly unique: "Unique";
+    readonly inherited: "Inherited";
+    readonly on: "On";
+    readonly off: "Off";
+};
+//# sourceMappingURL=ListsAudit.content.d.ts.map

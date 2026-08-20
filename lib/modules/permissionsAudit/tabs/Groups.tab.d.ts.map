@@ -1,0 +1,1 @@
+{"version":3,"file":"Groups.tab.d.ts","sourceRoot":"","sources":["../../../../src/modules/permissionsAudit/tabs/Groups.tab.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,KAAK,MAAM,OAAO,CAAC;AAG/B,OAAO,EAAE,gBAAgB,EAAE,MAAM,6BAA6B,CAAC;AAI/D,eAAO,MAAM,SAAS,EAAE,KAAK,CAAC,EAAE,CAAC;IAC/B,MAAM,EAAE,gBAAgB,EAAE,CAAC;IAC3B,QAAQ,EAAE,CAAC,KAAK,EAAE,gBAAgB,KAAK,IAAI,CAAC;CAC7C,CAsBA,CAAC"}

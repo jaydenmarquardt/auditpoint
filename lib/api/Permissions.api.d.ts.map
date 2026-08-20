@@ -1,0 +1,1 @@
+{"version":3,"file":"Permissions.api.d.ts","sourceRoot":"","sources":["../../src/api/Permissions.api.ts"],"names":[],"mappings":"AAEA,OAAO,EAAE,aAAa,EAAE,WAAW,EAAE,MAAM,gBAAgB,CAAC;AAK5D,wBAAgB,WAAW,CAAC,MAAM,CAAC,EAAE,MAAM,GAAG;IAC5C,WAAW,IAAI,OAAO,CAAC,WAAW,CAAC,CAAC;IACpC,aAAa,IAAI,OAAO,CAAC,aAAa,CAAC,CAAC;IACxC,YAAY,IAAI,OAAO,CAAC;CACzB,CAoCA"}

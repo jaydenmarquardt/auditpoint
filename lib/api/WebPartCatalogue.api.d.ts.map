@@ -1,0 +1,1 @@
+{"version":3,"file":"WebPartCatalogue.api.d.ts","sourceRoot":"","sources":["../../src/api/WebPartCatalogue.api.ts"],"names":[],"mappings":"AAEA,OAAO,EAAE,cAAc,EAAE,MAAM,sBAAsB,CAAC;AAgBtD,qFAAqF;AACrF,wBAAgB,gBAAgB,CAAC,MAAM,CAAC,EAAE,MAAM,GAAG;IACjD,MAAM,IAAI,OAAO,CAAC,cAAc,EAAE,CAAC,CAAC;CACrC,CA4BA"}

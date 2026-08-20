@@ -1,0 +1,1 @@
+{"version":3,"file":"PermissionsAudit.report.d.ts","sourceRoot":"","sources":["../../../src/modules/permissionsAudit/PermissionsAudit.report.ts"],"names":[],"mappings":"AAIA,OAAO,EAAE,gBAAgB,EAAE,MAAM,4BAA4B,CAAC;AAC9D,OAAO,EAAE,sBAAsB,EAAE,oBAAoB,EAAE,MAAM,mDAAmD,CAAC;AAGjH,eAAO,MAAM,sBAAsB,sBAAsB,CAAC;AAE1D,eAAO,MAAM,sBAAsB,EAAE,gBAAgB,CAAC,oBAAoB,EAAE,sBAAsB,CA2OjG,CAAC"}

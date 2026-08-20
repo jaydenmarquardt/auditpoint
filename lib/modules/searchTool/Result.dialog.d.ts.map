@@ -1,0 +1,1 @@
+{"version":3,"file":"Result.dialog.d.ts","sourceRoot":"","sources":["../../../src/modules/searchTool/Result.dialog.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,KAAK,MAAM,OAAO,CAAC;AAM/B,OAAO,EAAE,SAAS,EAAE,MAAM,oBAAoB,CAAC;AAI/C,MAAM,WAAW,iBAAiB;IAChC,GAAG,CAAC,EAAE,SAAS,CAAC;IAChB,SAAS,EAAE,MAAM,IAAI,CAAC;CACvB;AAyBD,eAAO,MAAM,YAAY,EAAE,KAAK,CAAC,EAAE,CAAC,iBAAiB,CAkCpD,CAAC"}

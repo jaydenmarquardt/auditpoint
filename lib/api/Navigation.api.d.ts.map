@@ -1,0 +1,1 @@
+{"version":3,"file":"Navigation.api.d.ts","sourceRoot":"","sources":["../../src/api/Navigation.api.ts"],"names":[],"mappings":"AAAA,OAAO,oBAAoB,CAAC;AAG5B,OAAO,EAAE,cAAc,EAAE,MAAM,mBAAmB,CAAC;AAYnD,wBAAgB,cAAc,CAAC,MAAM,CAAC,EAAE,MAAM,GAAG;IAC/C,KAAK,IAAI,OAAO,CAAC,cAAc,EAAE,CAAC,CAAC;CACpC,CAeA"}

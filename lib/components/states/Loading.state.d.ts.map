@@ -1,0 +1,1 @@
+{"version":3,"file":"Loading.state.d.ts","sourceRoot":"","sources":["../../../src/components/states/Loading.state.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,KAAK,MAAM,OAAO,CAAC;AAK/B,MAAM,WAAW,iBAAiB;IAChC,KAAK,CAAC,EAAE,MAAM,CAAC;IACf,6DAA6D;IAC7D,IAAI,CAAC,EAAE,OAAO,CAAC;CAChB;AAED,eAAO,MAAM,YAAY,EAAE,KAAK,CAAC,EAAE,CAAC,iBAAiB,CAcpD,CAAC"}

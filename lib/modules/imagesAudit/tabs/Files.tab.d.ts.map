@@ -1,0 +1,1 @@
+{"version":3,"file":"Files.tab.d.ts","sourceRoot":"","sources":["../../../../src/modules/imagesAudit/tabs/Files.tab.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,KAAK,MAAM,OAAO,CAAC;AAI/B,OAAO,EAAE,aAAa,EAAE,MAAM,yCAAyC,CAAC;AAGxE,eAAO,MAAM,QAAQ,EAAE,KAAK,CAAC,EAAE,CAAC;IAC9B,KAAK,EAAE,aAAa,EAAE,CAAC;IACvB,UAAU,CAAC,EAAE,MAAM,CAAC;IACpB,gBAAgB,CAAC,EAAE,MAAM,CAAC;CAC3B,CAuBA,CAAC"}
