@@ -1,0 +1,33 @@
+export const ReportsContent = {
+  title: "Reports",
+  description:
+    "Report output is written as JSON to the configured library, so it inherits site permissions and version history. Unfinished runs can be resumed from their last completed stage.",
+  refresh: "Refresh",
+  openFolder: "Open folder",
+  search: "Search reports",
+  filterKind: "Report type",
+  allKinds: "All types",
+  open: "View",
+  resume: "Resume run",
+  download: "Download",
+  delete: "Delete",
+  deleteTitle: "Delete this report?",
+  deleteBody: "The file is sent to the site recycle bin. This does not delete the pages it audited.",
+  confirm: "Delete report",
+  cancel: "Cancel",
+  empty: {
+    title: "No reports saved",
+    description: "Run a scan from a dashboard and save it, it will land here.",
+  },
+  unknownUser: "Unknown",
+  notYours: "Only the person who started this run can resume it:",
+  columns: {
+    name: "Report",
+    kind: "Type",
+    status: "Status",
+    createdBy: "Run by",
+    modified: "Saved",
+    size: "Size",
+    actions: "Actions",
+  },
+} as const;

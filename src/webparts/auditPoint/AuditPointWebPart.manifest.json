@@ -1,0 +1,32 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
+  "id": "705f3e81-5611-45f0-947f-bc299b8c8750",
+  "alias": "AuditPointWebPart",
+  "componentType": "WebPart",
+  "version": "*",
+  "manifestVersion": 2,
+  "requiresCustomScript": false,
+  "supportsFullBleed": true,
+  "supportedHosts": [
+    "SharePointWebPart",
+    "SharePointFullPage"
+  ],
+  "preconfiguredEntries": [
+    {
+      "groupId": "5c03119e-3074-46fd-976b-c60198311f70",
+      "group": {
+        "default": "Other"
+      },
+      "title": {
+        "default": "AuditPoint"
+      },
+      "description": {
+        "default": "Admin-only dashboard suite for auditing a SharePoint site. Restricted to site administrators and owners."
+      },
+      "officeFabricIconFontName": "Insights",
+      "properties": {
+        "settingsJson": ""
+      }
+    }
+  ]
+}

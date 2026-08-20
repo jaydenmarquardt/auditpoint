@@ -1,0 +1,46 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "AuditPoint",
+    "id": "7a817e20-6855-4d76-b511-3d5a87f758dd",
+    "version": "0.18.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "Jayden Marquardt",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.23.0"
+    },
+    "webApiPermissionRequests": [
+      {
+        "resource": "Microsoft Graph",
+        "scope": "Sites.Read.All"
+      }
+    ],
+    "features": [
+      {
+        "title": "AuditPoint",
+        "description": "Admin dashboard suite for auditing a SharePoint site.",
+        "id": "e358bde6-9f36-4c97-9be3-b4f19a540c6c",
+        "version": "0.18.0.0"
+      }
+    ],
+    "metadata": {
+      "shortDescription": {
+        "default": "AuditPoint admin dashboard"
+      },
+      "longDescription": {
+        "default": "Full-page admin dashboard hosting audit tools for a SharePoint site."
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    }
+  },
+  "paths": {
+    "zippedPackage": "solution/audit-point.sppkg"
+  }
+}

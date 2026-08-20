@@ -1,0 +1,80 @@
+
+
+
+to fix:
+
+
+images audit
+- find where images are used
+- images quality and format
+- tool to reduce/format
+- find duplicate images
+- find unused images
+
+
+
+
+
+link audit:
+- identify if its a shared link or path link
+- all the other features duh
+
+audit ideas:
+page creators
+page editors
+user audit
+staleness report
+permissions audit
+webpart audit
+wcag audit
+image audit files and in content
+page views
+file views 
+link audit
+
+
+Tools:
+migration tools
+file finding
+moving pages tools
+other dfat tools?
+provisioning tools
+content type management
+list exporter 
+
+- tool to reduce/format
+
+
+
+
+
+random :
+use the theme coloours from sp site
+icon picker
+
+3. back navigation history in app
+- compare reports features 
+- each module needs an info md explaining what it covers and its abilities
+- export reports as pdf reports
+- list views
+- list forms
+- list workflows
+
+- allow rerun a report by same config options 
+
+audit my modules for anything that is similar to make reusability better
+
+audits that run other audits as parent audits?
+
+percentages for all pie chart cards
+allow renaming and tagging reports 
+
+atatachements tracking too
+
+set this repo up so other repos can include it as a npm package with branch being the version
+
+when including the webpart allow settings
+- ie in 
+
+run each audit and send the log for efficiency and error check
+1. the audit report grid stats, make them 100w% width

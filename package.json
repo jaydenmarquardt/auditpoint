@@ -1,0 +1,96 @@
+{
+  "name": "auditpoint",
+  "version": "0.18.0",
+  "private": false,
+  "engines": {
+    "node": ">=22.14.0 < 23.0.0"
+  },
+  "main": "lib/index.js",
+  "packageManager": "pnpm@10.30.3",
+  "scripts": {
+    "build": "heft build --clean && node ./scripts/fix-lib-aliases.js",
+    "clean": "heft clean",
+    "bundle": "heft build --production",
+    "package": "heft package-solution --production",
+    "serve": "NODE_OPTIONS=--max_old_space_size=8192 heft start --nobrowser",
+    "ship": "heft clean && NODE_OPTIONS=--max_old_space_size=8192 heft build --production && NODE_OPTIONS=--max_old_space_size=8192 heft package-solution --production",
+    "check": "tsc --noEmit -p tsconfig.json && eslint \"src/**/*.{ts,tsx}\"",
+    "lint:fix": "eslint --fix \"src/**/*.{ts,tsx}\"",
+    "trust-cert": "NODE_NO_HTTP2=1 heft trust-dev-cert",
+    "re-install": "rm -rf node_modules pnpm-lock.yaml && pnpm install",
+    "build:lib": "heft build && node ./scripts/fix-lib-aliases.js",
+    "fix-aliases": "node ./scripts/fix-lib-aliases.js",
+    "prepare": "node ./scripts/prepare.js"
+  },
+  "dependencies": {
+    "@fluentui/react": "8.125.2",
+    "@fluentui/react-charting": "5.25.11",
+    "@pnp/core": "4.17.0",
+    "@pnp/graph": "4.17.0",
+    "@pnp/logging": "4.17.0",
+    "@pnp/queryable": "4.17.0",
+    "@pnp/sp": "4.17.0",
+    "tslib": "2.3.1"
+  },
+  "devDependencies": {
+    "@microsoft/eslint-config-spfx": "1.23.0",
+    "@microsoft/eslint-plugin-spfx": "1.23.0",
+    "@microsoft/sp-component-base": "1.23.0",
+    "@microsoft/sp-core-library": "1.23.0",
+    "@microsoft/sp-http": "1.23.0",
+    "@microsoft/sp-lodash-subset": "1.23.0",
+    "@microsoft/sp-module-interfaces": "1.23.0",
+    "@microsoft/sp-office-ui-fabric-core": "1.23.0",
+    "@microsoft/sp-property-pane": "1.23.0",
+    "@microsoft/sp-webpart-base": "1.23.0",
+    "@microsoft/spfx-heft-plugins": "1.23.0",
+    "@microsoft/spfx-web-build-rig": "1.23.0",
+    "@rushstack/eslint-config": "4.5.2",
+    "@rushstack/heft": "1.1.2",
+    "@types/react": "17.0.45",
+    "@types/react-dom": "17.0.17",
+    "@types/webpack-env": "~1.15.2",
+    "@typescript-eslint/parser": "8.46.2",
+    "eslint": "8.57.1",
+    "eslint-plugin-react-hooks": "4.3.0",
+    "react": "17.0.1",
+    "react-dom": "17.0.1",
+    "typescript": "~5.8.0"
+  },
+  "pnpm": {
+    "ignoredBuiltDependencies": [
+      "@pnp/spfx-controls-react",
+      "@pnp/spfx-property-controls"
+    ],
+    "overrides": {
+      "@babel/runtime": "^7.26.10",
+      "lodash": "^4.17.23",
+      "braces": "^3.0.3",
+      "micromatch": "^4.0.8",
+      "minimatch": "^3.1.2",
+      "fast-xml-parser": "^5.3.4"
+    }
+  },
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "src",
+    "config",
+    "custom.d.ts",
+    "tsconfig.json",
+    "README.md",
+    "AGENTS.md",
+    "scripts"
+  ],
+  "peerDependencies": {
+    "@microsoft/sp-component-base": ">=1.22.0",
+    "@microsoft/sp-core-library": ">=1.22.0",
+    "@microsoft/sp-http": ">=1.22.0",
+    "@microsoft/sp-lodash-subset": ">=1.22.0",
+    "@microsoft/sp-office-ui-fabric-core": ">=1.22.0",
+    "@microsoft/sp-property-pane": ">=1.22.0",
+    "@microsoft/sp-webpart-base": ">=1.22.0",
+    "react": "17.0.1",
+    "react-dom": "17.0.1"
+  }
+}

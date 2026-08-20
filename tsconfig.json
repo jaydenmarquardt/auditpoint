@@ -1,0 +1,34 @@
+{
+  "extends": "./node_modules/@microsoft/spfx-web-build-rig/profiles/default/tsconfig-base.json",
+  "compilerOptions": {
+    "target": "es2016",
+    "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "jsx": "react",
+    "declaration": true,
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "experimentalDecorators": true,
+    "skipLibCheck": true,
+    "outDir": "lib",
+    "inlineSources": false,
+    "strict": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": false,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "useUnknownInCatchVariables": false,
+    "typeRoots": ["./node_modules/@types", "./node_modules/@microsoft"],
+    "types": ["webpack-env"],
+    "lib": ["es2021", "es5", "dom", "es2015.collection", "es2015.promise"],
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "custom.d.ts"],
+  "exclude": ["node_modules", "lib", "dist", "temp", "release"],
+  "files": ["custom.d.ts"]
+}

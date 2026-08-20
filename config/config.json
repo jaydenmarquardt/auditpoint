@@ -1,0 +1,16 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "audit-point": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/auditPoint/AuditPointWebPart.js",
+          "manifest": "./src/webparts/auditPoint/AuditPointWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {}
+}
