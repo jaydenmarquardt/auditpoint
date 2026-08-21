@@ -1,4 +1,5 @@
 import { SiteLists } from "@/api/Lists.api";
+import { SiteList } from "@/api/Lists.types";
 import { Publishing } from "@/api/Publishing.api";
 import { ReportDefinition } from "@/core/report/Report.types";
 import { PublishingAuditConfig, PublishingAuditData } from "@/modules/publishingAudit/PublishingAudit.types";
@@ -26,7 +27,7 @@ export const publishingAuditReport: ReportDefinition<PublishingAuditData, Publis
     dateColumns: "ReviewDate,ExpiryDate,ArticleStartDate",
     readVersions: false,
     versionDepth: 50,
-    versionSample: 5000,
+    versionSample: 0,
   },
 
   configFields: [
@@ -115,16 +116,19 @@ export const publishingAuditReport: ReportDefinition<PublishingAuditData, Publis
     },
     {
       key: "versionSample",
-      label: "Items sampled for versions",
+      showWhen: (config) => config.readVersions,
+      label: "Items read for versions (0 for all)",
       type: "number",
       group: "Thresholds",
-      min: 10,
-      max: 5000,
-      step: 10,
-      description: "How many recently changed items to read version history for.",
+      min: 0,
+      max: 50000,
+      step: 50,
+      description:
+        "Zero reads every content item found. Set a number to cap it at the most recently changed. Only pages, documents and lists with rich text columns are read.",
     },
     {
       key: "versionDepth",
+      showWhen: (config) => config.readVersions,
       label: "Versions read per item",
       type: "number",
       group: "Thresholds",
@@ -174,10 +178,17 @@ export const publishingAuditReport: ReportDefinition<PublishingAuditData, Publis
           }
 
           try {
-            const available = new Set(await api.fieldNames(lists[index]));
+            const list = lists[index];
+            const available = new Set(await api.fieldNames(list));
             const present = columns.filter((column) => available.has(column));
 
-            items.push(...(await api.items(lists[index], present, context.config.maxItemsPerList)));
+            // Version history is only worth reading where the content lives, so the
+            // lists that hold any are recorded as they are read.
+            if (await holdsContent(api, list)) {
+              context.data.contentListIds = [...new Set([...(context.data.contentListIds ?? []), list.id])];
+            }
+
+            items.push(...(await api.items(list, present, context.config.maxItemsPerList)));
           } catch (error) {
             context.issue({
               target: lists[index].title,
@@ -206,10 +217,17 @@ export const publishingAuditReport: ReportDefinition<PublishingAuditData, Publis
           return;
         }
 
-        const items = (context.data.items ?? []).filter((item) => item.siteUrl === context.siteUrl);
-        const sample = [...items]
-          .sort((a, b) => b.modified.localeCompare(a.modified))
-          .slice(0, context.config.versionSample);
+        // Pages, documents and rich text lists only: a version count on a settings
+        // list or a lookup table says nothing about publishing.
+        const contentLists = new Set(context.data.contentListIds ?? []);
+        const items = (context.data.items ?? []).filter(
+          (item) => item.siteUrl === context.siteUrl && contentLists.has(item.listId)
+        );
+
+        // Zero means the whole content set: a cap that silently drops items makes the
+        // version numbers unreadable against the item counts beside them.
+        const ordered = [...items].sort((first, second) => second.modified.localeCompare(first.modified));
+        const sample = context.config.versionSample > 0 ? ordered.slice(0, context.config.versionSample) : ordered;
 
         const api = Publishing(context.siteUrl);
         const start = typeof context.cursor === "number" ? context.cursor : 0;
@@ -252,6 +270,12 @@ export const publishingAuditReport: ReportDefinition<PublishingAuditData, Publis
     },
   ],
 };
+
+/** Site Pages and libraries always count; a list has to carry a rich text column. */
+async function holdsContent(api: ReturnType<typeof Publishing>, list: SiteList): Promise<boolean> {
+  if (list.kind === "library" || list.title === "Site Pages") return true;
+  return (await api.contentColumns(list)).length > 0;
+}
 
 function statusOf(error: unknown): number | undefined {
   const candidate = error as { status?: number; httpStatus?: number };

@@ -2,6 +2,8 @@ import { SiteList } from "./Lists.types";
 import { PopularityRow, PublishingItem } from "./Publishing.types";
 export declare function Publishing(webUrl?: string): {
     fieldNames(list: SiteList): Promise<string[]>;
+    /** Internal names of the list's rich text columns, which is what makes it content. */
+    contentColumns(list: SiteList): Promise<string[]>;
     items(list: SiteList, dateColumns: string[], top: number): Promise<PublishingItem[]>;
     versions(list: SiteList, itemId: number, depth: number): Promise<{
         count: number;

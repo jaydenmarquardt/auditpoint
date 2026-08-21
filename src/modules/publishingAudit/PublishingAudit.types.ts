@@ -17,6 +17,8 @@ export interface PublishingAuditConfig {
 export interface PublishingAuditData {
   items: PublishingItem[];
   listCount: number;
+  /** Lists holding content: pages, libraries, or anything with a rich text column. */
+  contentListIds: string[];
   scannedSites: string[];
 }
 

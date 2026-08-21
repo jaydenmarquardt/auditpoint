@@ -29,8 +29,26 @@ interface ItemRow {
   [key: string]: unknown;
 }
 
+const RICH_TYPES = ["Note", "HTML", "MultiLine"];
+
+interface FieldRow {
+  InternalName: string;
+  TypeAsString: string;
+  Hidden?: boolean;
+}
+
+/** One read per list, shared by the date column check and the content check. */
+async function fields(webUrl: string | undefined, list: SiteList): Promise<FieldRow[]> {
+  return (await throttled(
+    () => getSp(webUrl).web.lists.getById(list.id).fields.select("InternalName", "TypeAsString", "Hidden")(),
+    { label: "Publishing.fields" }
+  )) as FieldRow[];
+}
+
 export function Publishing(webUrl?: string): {
   fieldNames(list: SiteList): Promise<string[]>;
+  /** Internal names of the list's rich text columns, which is what makes it content. */
+  contentColumns(list: SiteList): Promise<string[]>;
   items(list: SiteList, dateColumns: string[], top: number): Promise<PublishingItem[]>;
   versions(list: SiteList, itemId: number, depth: number): Promise<{ count: number; editors: string[] }>;
   popularity(rowLimit: number): Promise<PopularityRow[]>;
@@ -39,12 +57,15 @@ export function Publishing(webUrl?: string): {
 
   return {
     async fieldNames(list: SiteList): Promise<string[]> {
-      const fields = (await throttled(
-        () => getSp(webUrl).web.lists.getById(list.id).fields.select("InternalName")(),
-        { label: "Publishing.fields" }
-      )) as { InternalName: string }[];
+      return (await fields(webUrl, list)).map((field) => field.InternalName);
+    },
 
-      return fields.map((field) => field.InternalName);
+    async contentColumns(list: SiteList): Promise<string[]> {
+      return (await fields(webUrl, list))
+        .filter((field) => !field.Hidden && RICH_TYPES.indexOf(field.TypeAsString) !== -1)
+        .map((field) => field.InternalName)
+        // Underscore prefixed columns cannot be selected over REST.
+        .filter((name) => !name.startsWith("_"));
     },
 
     /** Only columns the list actually has are selected, since one bad name fails the request. */
