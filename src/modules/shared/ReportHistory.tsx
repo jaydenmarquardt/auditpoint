@@ -234,6 +234,7 @@ function statusOf(status: ReportIndexEntry["status"]): ProgressStatus {
   if (status === "failed") return "failed";
   if (status === "paused") return "paused";
   if (status === "cancelled") return "cancelled";
+  if (status === "interrupted") return "interrupted";
   if (status === "running") return "running";
   return "pending";
 }

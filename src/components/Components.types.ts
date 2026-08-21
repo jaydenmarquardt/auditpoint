@@ -205,6 +205,7 @@ export interface PageHeaderProps {
 export type ProgressStatus =
   | "pending"
   | "queued"
+  | "interrupted"
   | "waiting"
   | "running"
   | "throttled"

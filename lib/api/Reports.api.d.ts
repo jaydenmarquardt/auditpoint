@@ -1,6 +1,7 @@
-import { ReportEnvelope, ReportFolderAccess, ReportIndexEntry, ReportLocation, ReportSummary } from "./Reports.types";
+import { ReportEnvelope, ReportFolderAccess, ReportIndexEntry, ReportLocation, ReportRunStatus, ReportSummary } from "./Reports.types";
 export declare function reportLocation(overrides?: Partial<ReportLocation>): ReportLocation;
 export declare function reportFolderUrl(location?: ReportLocation): string;
+export declare function runStatusOf(status: ReportRunStatus, updatedIso: string): ReportRunStatus;
 export declare function Reports(location?: ReportLocation): {
     folderUrl(): string;
     checkFolder(): Promise<ReportFolderAccess>;

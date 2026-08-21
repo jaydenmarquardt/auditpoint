@@ -13,6 +13,7 @@ const MAP: Record<ProgressStatus, { tone: BadgeTone; icon: string; label: string
   cancelled: { tone: "neutral", icon: "Cancel", label: "Cancelled" },
   skipped: { tone: "neutral", icon: "Blocked", label: "Skipped" },
   queued: { tone: "neutral", icon: "Clock", label: "Queued" },
+  interrupted: { tone: "warning", icon: "PlugDisconnected", label: "Interrupted" },
 };
 
 /** Queue and stage statuses both land here, so an unknown one must not throw. */

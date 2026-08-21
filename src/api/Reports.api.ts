@@ -8,6 +8,7 @@ import {
   ReportFolderAccess,
   ReportIndexEntry,
   ReportLocation,
+  ReportRunStatus,
   ReportSummary,
 } from "@/api/Reports.types";
 import { toErrorMessage } from "@/utils/Guard.util";
@@ -60,6 +61,21 @@ async function permission(location: ReportLocation, kind: PermissionKind): Promi
 }
 
 const INDEX_FILE = "index.json";
+/**
+ * A run checkpoints after every stage, so a file still claiming to be running long
+ * after its last write was abandoned when its page closed. Anything fresher might
+ * genuinely be running, possibly for somebody else, so it is left alone.
+ */
+const ABANDONED_AFTER_MS = 5 * 60 * 1000;
+
+export function runStatusOf(status: ReportRunStatus, updatedIso: string): ReportRunStatus {
+  if (status !== "running") return status;
+
+  const updated = new Date(updatedIso).getTime();
+  if (!Number.isFinite(updated)) return status;
+
+  return Date.now() - updated > ABANDONED_AFTER_MS ? "interrupted" : status;
+}
 
 export function Reports(location: ReportLocation = reportLocation()): {
   folderUrl(): string;
@@ -99,7 +115,10 @@ export function Reports(location: ReportLocation = reportLocation()): {
           () => sp().web.getFileByServerRelativePath(`${folder()}/${INDEX_FILE}`).getText(),
           { label: "Reports.index", priority: true, retries: 0 }
         );
-        return JSON.parse(text) as ReportIndexEntry[];
+        return (JSON.parse(text) as ReportIndexEntry[]).map((entry) => ({
+          ...entry,
+          status: runStatusOf(entry.status, entry.updatedIso),
+        }));
       } catch {
         return [];
       }
@@ -129,7 +148,7 @@ export function Reports(location: ReportLocation = reportLocation()): {
             name: file.Name,
             kind: entry?.kind ?? file.Name.split("__")[0],
             title: entry?.title ?? "",
-            status: entry?.status ?? "complete",
+            status: entry ? runStatusOf(entry.status, entry.updatedIso) : "complete",
             serverRelativeUrl: file.ServerRelativeUrl,
             modified: entry?.updatedIso ?? file.TimeLastModified,
             sizeBytes: Number(file.Length ?? 0),
@@ -145,7 +164,9 @@ export function Reports(location: ReportLocation = reportLocation()): {
         () => sp().web.getFileByServerRelativePath(serverRelativeUrl).getText(),
         { label: "Reports.read", priority: true }
       );
-      return JSON.parse(text) as ReportEnvelope<TData, TConfig>;
+
+      const envelope = JSON.parse(text) as ReportEnvelope<TData, TConfig>;
+      return { ...envelope, status: runStatusOf(envelope.status, envelope.updatedIso) };
     },
 
     async save<TData, TConfig>(envelope: ReportEnvelope<TData, TConfig>): Promise<ReportSummary> {

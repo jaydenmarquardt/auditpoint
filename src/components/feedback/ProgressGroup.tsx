@@ -10,6 +10,7 @@ const WORK_ICON = { network: "Cloud", client: "Processing", both: "SyncOccurence
 const ICONS: Record<ProgressStatus, string> = {
   pending: "CircleRing",
   queued: "Clock",
+  interrupted: "PlugDisconnected",
   waiting: "Clock",
   running: "SyncOccurence",
   throttled: "Hourglass",

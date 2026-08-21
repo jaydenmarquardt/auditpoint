@@ -95,9 +95,7 @@ audits that run other audits as parent audits?
 contact finder in content ie emails and numbers
 - content search
 
-allow renaming and tagging reports 
 
-atatachements tracking too
 
 set this repo up so other repos can include it as a npm package with branch being the version
 
@@ -105,5 +103,9 @@ pre audit report config ui improvements pls
 
 hide from webpart list only manual adding
 
+add a memory usage val to the steps progress bar
 
 wcag/aaa/document cag
+
+
+1. content, links and images audit are not including 

@@ -1,4 +1,12 @@
-export type ReportRunStatus = "pending" | "running" | "paused" | "cancelled" | "complete" | "failed";
+export type ReportRunStatus =
+  | "pending"
+  | "running"
+  | "paused"
+  | "cancelled"
+  | "complete"
+  | "failed"
+  /** Said it was running, but nothing has touched it since: the page went away. */
+  | "interrupted";
 
 export type StageStatus =
   | "pending"

@@ -161,7 +161,7 @@ export interface PageHeaderProps {
     description?: string;
     actions?: React.ReactNode;
 }
-export type ProgressStatus = "pending" | "queued" | "waiting" | "running" | "throttled" | "paused" | "succeeded" | "failed" | "cancelled" | "skipped";
+export type ProgressStatus = "pending" | "queued" | "interrupted" | "waiting" | "running" | "throttled" | "paused" | "succeeded" | "failed" | "cancelled" | "skipped";
 export interface ProgressBarProps {
     label?: string;
     description?: string;

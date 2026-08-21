@@ -89,7 +89,7 @@ export const ReportRunPanel: React.FC<ReportRunPanelProps> = ({
         {(controller.running || controller.paused) && (
           <Button label={runLabel.cancel} variant="subtle" iconName="Cancel" onClick={controller.cancel} />
         )}
-        {envelope && envelope.status === "failed" && (
+        {envelope && !controller.running && !controller.paused && RESUMABLE.indexOf(envelope.status) !== -1 && (
           <Button label={runLabel.resume} variant="primary" iconName="Refresh" onClick={controller.resume} />
         )}
         {extraControls}
@@ -125,6 +125,13 @@ export const ReportRunPanel: React.FC<ReportRunPanelProps> = ({
           {envelope && <StatusBadge status={mapRunStatus(envelope.status)} />}
         </div>
       </Toolbar>
+      )}
+
+      {envelope?.status === "interrupted" && (
+        <Notice
+          tone="warning"
+          message="This run stopped before it finished, most likely because its page was closed. Resume picks it up from the last completed stage."
+        />
       )}
 
       {envelope && (
@@ -257,6 +264,9 @@ export const ReportRunPanel: React.FC<ReportRunPanelProps> = ({
   );
 };
 
+/** Statuses a run can be picked up from, rather than started again from nothing. */
+const RESUMABLE: ReportEnvelope["status"][] = ["failed", "interrupted", "paused", "running"];
+
 function countLabel(stage: {
   processed: number;
   total?: number;
@@ -282,6 +292,7 @@ function mapRunStatus(status: ReportEnvelope["status"]): ProgressStatus {
   if (status === "failed") return "failed";
   if (status === "paused") return "paused";
   if (status === "cancelled") return "cancelled";
+  if (status === "interrupted") return "interrupted";
   if (status === "running") return "running";
   return "pending";
 }
