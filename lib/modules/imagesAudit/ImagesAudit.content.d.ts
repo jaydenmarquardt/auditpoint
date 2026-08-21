@@ -12,6 +12,14 @@ export declare const ImagesAuditContent: {
     readonly cancel: "Cancel";
     readonly exportCsv: "Export CSV";
     readonly review: "Review";
+    readonly duplicates: {
+        readonly certain: "Same name and size";
+        readonly likely: "Same size";
+        readonly possible: "Similar name";
+        readonly none: "Unique";
+        readonly column: "Duplicate";
+        readonly info: "The bytes cannot be read from the browser, so a match is judged on size and name: same size and name is as close to certain as this gets, same size alone is likely, a matching name alone is worth a look.";
+    };
     readonly tabs: {
         readonly overview: "Overview";
         readonly files: "Files";

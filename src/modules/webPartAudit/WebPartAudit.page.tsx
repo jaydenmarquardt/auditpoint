@@ -11,6 +11,8 @@ import { ReportHistory } from "@/modules/shared/ReportHistory";
 import { findModule } from "@/modules/Modules.registry";
 import { statTiles } from "@/modules/webPartAudit/WebPartAudit.stats";
 import { ComparisonBar } from "@/modules/shared/ComparisonBar";
+import { ComparisonCards } from "@/modules/shared/ComparisonCards";
+import { compareTiles } from "@/modules/shared/StatSections";
 import { webPartAuditReport } from "@/modules/webPartAudit/WebPartAudit.report";
 import { WebPartAuditContent } from "@/modules/webPartAudit/WebPartAudit.content";
 import { buildView } from "@/modules/webPartAudit/WebPartAudit.logic";
@@ -139,6 +141,11 @@ const WebPartAuditPage: React.FC = () => {
                 key: "overview",
                 label: WebPartAuditContent.tabs.overview,
                 content: <OverviewTab view={view} hasData={hasData} onRun={() => setConfigOpen(true)} previousTiles={previousTiles}
+                    comparisonCards={
+                      previousTiles ? (
+                        <ComparisonCards sections={[{ title: "", tiles: compareTiles(statTiles(view), previousTiles) }]} />
+                      ) : undefined
+                    }
                     comparison={
                       hasData ? (
                         <ComparisonBar

@@ -22,6 +22,10 @@ export interface ImageFileView extends ImageFile {
   useCount: number;
   duplicateKey: string;
   isDuplicate: boolean;
+  /** How sure the match is: same bytes and name, or only one of the two. */
+  duplicateConfidence: "certain" | "likely" | "possible" | "none";
+  /** Files this one appears to duplicate. */
+  duplicateOf: string[];
   isUnused: boolean;
   isOversized: boolean;
   isLegacyFormat: boolean;

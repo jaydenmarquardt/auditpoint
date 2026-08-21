@@ -32,21 +32,32 @@ export const ComparisonCards: React.FC<ComparisonCardsProps> = ({ sections }) =>
 
   const tone = (value: number): string => Theme.tone(value >= 0 ? "success" : "danger").solid;
 
+  const before = Theme.tone("neutral").solid;
+  const after = Theme.tone("info").solid;
+
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(min(360px, 100%), 1fr))",
-        gap: Theme.tokens.space.md,
-        minWidth: 0,
-      }}
-    >
+    <>
+      <ChartCard
+        title="Before and after"
+        info="The measures that moved most, each shown as it was and as it is now."
+        defaultChart="bar"
+        charts={["bar", "hbar"]}
+        span={2}
+        selectable={false}
+        valueFormatter={(value) => value.toLocaleString()}
+        points={movers.flatMap((tile) => [
+          { label: `${tile.label} — was`, value: tile.previousValue ?? 0, colour: before },
+          { label: `${tile.label} — now`, value: tile.currentValue ?? 0, colour: after },
+        ])}
+      />
+
       <ChartCard
         title="Biggest changes"
         info="Measures that moved the most between the two runs, by count."
         defaultChart="hbar"
         charts={["hbar", "bar"]}
         span={2}
+        selectable={false}
         valueFormatter={(value) => value.toLocaleString()}
         points={movers.map((tile) => ({
           label: tile.label,
@@ -56,11 +67,12 @@ export const ComparisonCards: React.FC<ComparisonCardsProps> = ({ sections }) =>
       />
 
       <ChartCard
-        title="Biggest changes by percentage"
+        title="Change by percentage"
         info="The same comparison as a share of the earlier run, so small measures are not drowned out."
         defaultChart="hbar"
         charts={["hbar", "bar"]}
         span={2}
+        selectable={false}
         valueFormatter={(value) => `${value}%`}
         points={byPercent.map((tile) => ({
           label: tile.label,
@@ -68,6 +80,6 @@ export const ComparisonCards: React.FC<ComparisonCardsProps> = ({ sections }) =>
           colour: tone(percent(tile)),
         }))}
       />
-    </div>
+    </>
   );
 };

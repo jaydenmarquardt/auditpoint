@@ -10,6 +10,8 @@ import { ReportHistory } from "@/modules/shared/ReportHistory";
 import { findModule } from "@/modules/Modules.registry";
 import { statTiles } from "@/modules/imagesAudit/ImagesAudit.stats";
 import { ComparisonBar } from "@/modules/shared/ComparisonBar";
+import { ComparisonCards } from "@/modules/shared/ComparisonCards";
+import { compareTiles } from "@/modules/shared/StatSections";
 import { imagesAuditReport } from "@/modules/imagesAudit/ImagesAudit.report";
 import { ImagesAuditContent } from "@/modules/imagesAudit/ImagesAudit.content";
 import { buildView } from "@/modules/imagesAudit/ImagesAudit.logic";
@@ -120,6 +122,11 @@ const ImagesAuditPage: React.FC = () => {
                 key: "overview",
                 label: ImagesAuditContent.tabs.overview,
                 content: <OverviewTab view={view} hasData={hasData} onRun={() => setConfigOpen(true)} previousTiles={previousTiles}
+                    comparisonCards={
+                      previousTiles ? (
+                        <ComparisonCards sections={[{ title: "", tiles: compareTiles(statTiles(view), previousTiles) }]} />
+                      ) : undefined
+                    }
                     comparison={
                       hasData ? (
                         <ComparisonBar

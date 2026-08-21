@@ -12,10 +12,11 @@ import { BlocksByContentTypeCard } from "@/modules/contentAudit/cards/BlocksByCo
 import { WordsByListCard } from "@/modules/contentAudit/cards/WordsByList.ocard";
 import { BlocksBySourceCard } from "@/modules/contentAudit/cards/BlocksBySource.ocard";
 
-export const OverviewTab: React.FC<{ view: ContentAuditView; hasData: boolean; onRun: () => void; comparison?: React.ReactNode; previousTiles?: StatTileSpec[] }> = ({
+export const OverviewTab: React.FC<{ view: ContentAuditView; hasData: boolean; onRun: () => void; comparison?: React.ReactNode;
+  comparisonCards?: React.ReactNode; previousTiles?: StatTileSpec[] }> = ({
   view,
   hasData,
-  onRun, comparison, previousTiles }) => {
+  onRun, comparison, comparisonCards, previousTiles }) => {
   if (!hasData) {
     return (
       <EmptyState
@@ -43,6 +44,7 @@ export const OverviewTab: React.FC<{ view: ContentAuditView; hasData: boolean; o
             minWidth: 0,
           }}
         >
+          {comparisonCards}
           <WordsByPageCard view={view} />
           <HeadingsByLevelCard view={view} />
           <BlocksByContentTypeCard view={view} />

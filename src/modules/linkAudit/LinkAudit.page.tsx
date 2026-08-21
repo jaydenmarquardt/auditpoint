@@ -21,6 +21,9 @@ import { ExternalTab } from "@/modules/linkAudit/tabs/External.tab";
 import { UntestedTab } from "@/modules/linkAudit/tabs/Untested.tab";
 import { ActionsTab } from "@/modules/linkAudit/tabs/Actions.tab";
 import { ComparisonBar } from "@/modules/shared/ComparisonBar";
+import { ComparisonCards } from "@/modules/shared/ComparisonCards";
+import { compareTiles } from "@/modules/shared/StatSections";
+import { statSections } from "@/modules/linkAudit/LinkAudit.stats";
 import { MegaMenuTab } from "@/modules/linkAudit/tabs/MegaMenu.tab";
 import { ReferenceDialog } from "@/modules/linkAudit/Reference.dialog";
 import { LinkDialog } from "@/modules/linkAudit/Link.dialog";
@@ -121,6 +124,21 @@ const LinkAuditPage: React.FC = () => {
                     hasData={hasData}
                     onRun={() => setConfigOpen(true)}
                     previous={previous}
+                    comparisonCards={
+                      previous ? (
+                        <ComparisonCards
+                          sections={statSections(view, controller.envelope?.config ?? controller.config).map(
+                            (section, index) => ({
+                              ...section,
+                              tiles: compareTiles(
+                                section.tiles,
+                                statSections(previous, controller.envelope?.config ?? controller.config)[index]?.tiles
+                              ),
+                            })
+                          )}
+                        />
+                      ) : undefined
+                    }
                     comparison={
                       hasData ? (
                         <ComparisonBar

@@ -4,7 +4,7 @@ import { MenuButton } from "@/components/actions/MenuButton";
 import { ProgressGroup } from "@/components/feedback/ProgressGroup";
 import { StatusBadge } from "@/components/feedback/StatusBadge";
 import { Notice } from "@/components/feedback/Notice";
-import { LoadingState } from "@/components/states/Loading.state";
+import { ReportSkeleton } from "@/modules/shared/ReportSkeleton";
 import { Toolbar } from "@/components/layout/Toolbar";
 import { Modal } from "@/components/actions/Modal";
 import { ReportDetails } from "@/modules/shared/ReportDetails";
@@ -176,18 +176,7 @@ export const ReportRunPanel: React.FC<ReportRunPanelProps> = ({
         }}
       />
 
-      {controller.loading && (
-        <div
-          style={{
-            border: `1px solid ${Theme.palette().border}`,
-            borderRadius: Theme.tokens.radius.md,
-            background: Theme.palette().surface,
-            padding: Theme.tokens.space.lg,
-          }}
-        >
-          <LoadingState label="Opening report. Large runs take a moment to read and parse." />
-        </div>
-      )}
+      {controller.loading && <ReportSkeleton label={`Opening ${title}`} />}
 
       {controller.error && (
         <Notice tone="error" message={controller.error} onDismiss={controller.clearError} />
@@ -266,7 +255,7 @@ export const ReportRunPanel: React.FC<ReportRunPanelProps> = ({
 
       {envelope && (
         <ProgressGroup
-          label={title}
+          label={activeLabel(title, steps)}
           status={mapRunStatus(envelope.status)}
           ratio={overall}
           steps={steps}
@@ -281,6 +270,14 @@ export const ReportRunPanel: React.FC<ReportRunPanelProps> = ({
 
 /** Statuses a run can be picked up from, rather than started again from nothing. */
 const RESUMABLE: ReportEnvelope["status"][] = ["failed", "interrupted", "paused", "running"];
+
+/** The run bar should say what it is doing, not just that it is doing something. */
+function activeLabel(title: string, steps: ProgressStep[]): string {
+  const index = steps.findIndex((step) => step.status === "running" || step.status === "throttled");
+  if (index === -1) return title;
+
+  return `${title}: step ${index + 1} of ${steps.length}, ${steps[index].label}`;
+}
 
 function countLabel(stage: {
   processed: number;

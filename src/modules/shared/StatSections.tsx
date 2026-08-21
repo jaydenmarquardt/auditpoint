@@ -2,7 +2,6 @@ import * as React from "react";
 import { StatGrid } from "@/components/layout/StatGrid";
 import { StatTileSpec } from "@/components/Components.types";
 import { Theme } from "@/theme/Theme.api";
-import { ComparisonCards } from "@/modules/shared/ComparisonCards";
 
 export interface StatSectionSpec {
   title: string;
@@ -65,8 +64,6 @@ function numberIn(value: string): number | undefined {
 
 export const StatSections: React.FC<{ sections: { title: string; tiles: StatTileSpec[] }[] }> = ({ sections }) => (
   <div style={{ display: "grid", gap: Theme.tokens.space.lg, width: "100%", minWidth: 0 }}>
-    <ComparisonCards sections={sections} />
-
     {sections.map((section) => (
       <StatGrid key={section.title} title={section.title} tiles={section.tiles} minWidth={180} />
     ))}

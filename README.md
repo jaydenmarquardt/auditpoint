@@ -63,6 +63,12 @@ pane shows only that JSON. Saving needs the page in edit mode. Until the report 
 set, modules stay locked. The Settings page also verifies and repairs the report folder and reports
 whether the current user can view and edit it.
 
+## Using AuditPoint in another solution
+
+AuditPoint is consumable as a library: a host solution extends `AuditPointBaseWebPart`
+and decides which modules and defaults it ships. See [INSTALL.md](INSTALL.md) for the
+dependency, the web part, the `setup()` contract and the release process.
+
 ## Contributing
 
 Read [AGENTS.md](AGENTS.md) first: it is the binding set of conventions, and the in-app

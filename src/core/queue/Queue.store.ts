@@ -161,7 +161,12 @@ async function start(task: QueueTask): Promise<void> {
     if (cancelled.has(task.id)) {
       patch(task.id, { status: "cancelled", finishedAt: Date.now() });
     } else {
-      patch(task.id, { status: "succeeded", result, finishedAt: Date.now(), progress: { ratio: 1 } });
+      patch(task.id, {
+        status: "succeeded",
+        result,
+        finishedAt: Date.now(),
+        progress: { ...queueStore.getState().tasks.filter((entry) => entry.id === task.id)[0]?.progress, ratio: 1 },
+      });
     }
   } catch (error) {
     patch(task.id, { status: "failed", error: toErrorMessage(error), finishedAt: Date.now() });

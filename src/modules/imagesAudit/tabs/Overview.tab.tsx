@@ -14,10 +14,11 @@ import { PlacementsByAltTextCard } from "@/modules/imagesAudit/cards/PlacementsB
 import { FilesBySizeCard } from "@/modules/imagesAudit/cards/FilesBySize.ocard";
 import { FilesByUseCard } from "@/modules/imagesAudit/cards/FilesByUse.ocard";
 
-export const OverviewTab: React.FC<{ view: ImagesAuditView; hasData: boolean; onRun: () => void; comparison?: React.ReactNode; previousTiles?: StatTileSpec[] }> = ({
+export const OverviewTab: React.FC<{ view: ImagesAuditView; hasData: boolean; onRun: () => void; comparison?: React.ReactNode;
+  comparisonCards?: React.ReactNode; previousTiles?: StatTileSpec[] }> = ({
   view,
   hasData,
-  onRun, comparison, previousTiles }) => {
+  onRun, comparison, comparisonCards, previousTiles }) => {
   if (!hasData) {
     return (
       <EmptyState
@@ -47,6 +48,7 @@ export const OverviewTab: React.FC<{ view: ImagesAuditView; hasData: boolean; on
             minWidth: 0,
           }}
         >
+          {comparisonCards}
           <FilesByFormatCard view={view} />
           <StorageByFormatCard view={view} />
           <FilesByUseCard view={view} />

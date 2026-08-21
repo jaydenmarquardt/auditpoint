@@ -21,8 +21,9 @@ export const OverviewTab: React.FC<{
   hasData: boolean;
   onRun: () => void;
   comparison?: React.ReactNode;
+  comparisonCards?: React.ReactNode;
   previousTiles?: StatTileSpec[];
-}> = ({ view, config, hasData, onRun, comparison, previousTiles }) => {
+}> = ({ view, config, hasData, onRun, comparison, comparisonCards, previousTiles }) => {
   if (!hasData) {
     return (
       <EmptyState
@@ -52,6 +53,7 @@ export const OverviewTab: React.FC<{
             minWidth: 0,
           }}
         >
+          {comparisonCards}
           <ItemsCreatedByMonthCard view={view} />
           <ItemsModifiedByMonthCard view={view} />
           <ItemsByStatusCard view={view} />

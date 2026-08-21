@@ -6,6 +6,7 @@ export declare const OverviewTab: React.FC<{
     hasData: boolean;
     onRun: () => void;
     comparison?: React.ReactNode;
+    comparisonCards?: React.ReactNode;
     previousTiles?: StatTileSpec[];
 }>;
 //# sourceMappingURL=Overview.tab.d.ts.map

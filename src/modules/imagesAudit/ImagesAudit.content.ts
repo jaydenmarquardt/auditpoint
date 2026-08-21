@@ -13,6 +13,14 @@ export const ImagesAuditContent = {
   cancel: "Cancel",
   exportCsv: "Export CSV",
   review: "Review",
+  duplicates: {
+    certain: "Same name and size",
+    likely: "Same size",
+    possible: "Similar name",
+    none: "Unique",
+    column: "Duplicate",
+    info: "The bytes cannot be read from the browser, so a match is judged on size and name: same size and name is as close to certain as this gets, same size alone is likely, a matching name alone is worth a look.",
+  },
   tabs: { overview: "Overview", files: "Files", usages: "Usages", duplicates: "Duplicates", unused: "Unused" },
   stats: {
     files: "Image files",

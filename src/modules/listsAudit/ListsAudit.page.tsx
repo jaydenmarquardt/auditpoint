@@ -11,6 +11,8 @@ import { ReportHistory } from "@/modules/shared/ReportHistory";
 import { findModule } from "@/modules/Modules.registry";
 import { statTiles } from "@/modules/listsAudit/ListsAudit.stats";
 import { ComparisonBar } from "@/modules/shared/ComparisonBar";
+import { ComparisonCards } from "@/modules/shared/ComparisonCards";
+import { compareTiles } from "@/modules/shared/StatSections";
 import { listsAuditReport } from "@/modules/listsAudit/ListsAudit.report";
 import { ListsAuditContent } from "@/modules/listsAudit/ListsAudit.content";
 import { buildView } from "@/modules/listsAudit/ListsAudit.logic";
@@ -125,6 +127,11 @@ const ListsAuditPage: React.FC = () => {
                 label: ListsAuditContent.tabs.overview,
                 content: (
                   <OverviewTab view={view} config={config} hasData={hasData} onRun={() => setConfigOpen(true)} previousTiles={previousTiles}
+                    comparisonCards={
+                      previousTiles ? (
+                        <ComparisonCards sections={[{ title: "", tiles: compareTiles(statTiles({ view, config }), previousTiles) }]} />
+                      ) : undefined
+                    }
                     comparison={
                       hasData ? (
                         <ComparisonBar

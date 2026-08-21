@@ -3,6 +3,7 @@ import { Card } from "@/components/layout/Card";
 import { Toggle } from "@/components/inputs/Toggle";
 import { Dropdown } from "@/components/inputs/Dropdown";
 import { Notice } from "@/components/feedback/Notice";
+import { Spinner } from "@/components/feedback/Spinner";
 import { Theme } from "@/theme/Theme.api";
 import { Reports, reportFolderUrl } from "@/api/Reports.api";
 import { ReportEnvelope, ReportIndexEntry } from "@/api/Reports.types";
@@ -77,17 +78,27 @@ export const ComparisonBar: React.FC<ComparisonBarProps> = ({ kind, currentId, o
     >
       <div style={{ display: "grid", gap: Theme.tokens.space.sm, minWidth: 0 }}>
         {on && (
-          <div style={{ maxWidth: 420 }}>
-            <Dropdown
-              label="Compare against"
-              placeholder={loading ? "Loading run…" : "Pick an earlier run"}
-              options={runs.map((run) => ({
-                key: run.fileName,
-                text: `${formatDateTime(run.updatedIso)} · ${run.createdBy || "Unknown"}`,
-              }))}
-              selectedKey={selected}
-              onChange={choose}
-            />
+          <div style={{ display: "flex", gap: Theme.tokens.space.sm, alignItems: "flex-end", flexWrap: "wrap" }}>
+            <div style={{ flex: "1 1 320px", maxWidth: 420 }}>
+              <Dropdown
+                label="Compare against"
+                placeholder="Pick an earlier run"
+                options={runs.map((run) => ({
+                  key: run.fileName,
+                  text: `${formatDateTime(run.updatedIso)} · ${run.createdBy || "Unknown"}`,
+                }))}
+                selectedKey={selected}
+                onChange={choose}
+                disabled={loading}
+              />
+            </div>
+
+            {loading && (
+              <div style={{ display: "flex", alignItems: "center", gap: Theme.tokens.space.xs, minHeight: 32 }}>
+                <Spinner size="small" />
+                <span style={{ color: Theme.palette().textMuted }}>Reading that run…</span>
+              </div>
+            )}
           </div>
         )}
 

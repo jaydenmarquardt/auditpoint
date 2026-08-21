@@ -17,10 +17,11 @@ export interface OverviewTabProps {
   hasData: boolean;
   onRun: () => void;
   comparison?: React.ReactNode;
+  comparisonCards?: React.ReactNode;
   previousTiles?: StatTileSpec[];
 }
 
-export const OverviewTab: React.FC<OverviewTabProps> = ({ view, hasData, onRun, comparison, previousTiles }) => {
+export const OverviewTab: React.FC<OverviewTabProps> = ({ view, hasData, onRun, comparison, comparisonCards, previousTiles }) => {
   if (!hasData) {
     return (
       <EmptyState
@@ -48,6 +49,7 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({ view, hasData, onRun, 
             minWidth: 0,
           }}
         >
+          {comparisonCards}
           <InstancesByWebPartCard view={view} />
           <WebPartsBySourceCard view={view} />
           <InstancesBySourceCard view={view} />

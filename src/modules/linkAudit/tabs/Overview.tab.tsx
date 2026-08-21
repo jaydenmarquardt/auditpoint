@@ -18,8 +18,9 @@ export const OverviewTab: React.FC<{
   hasData: boolean;
   onRun: () => void;
   comparison?: React.ReactNode;
+  comparisonCards?: React.ReactNode;
   previous?: LinkAuditView;
-}> = ({ view, config, hasData, onRun, comparison, previous }) => {
+}> = ({ view, config, hasData, onRun, comparison, comparisonCards, previous }) => {
   if (!hasData) {
     return (
       <EmptyState
@@ -49,6 +50,7 @@ export const OverviewTab: React.FC<{
             minWidth: 0,
           }}
         >
+          {comparisonCards}
           <LinksByTypeCard view={view} />
           <LinksByStatusCard view={view} />
           <LinksBySourceCard view={view} />

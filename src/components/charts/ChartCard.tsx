@@ -230,12 +230,25 @@ const ChartCardView: React.FC<ChartCardProps> = ({
         style={{
           flex: "1 1 auto",
           minHeight: 0,
-          overflowY: "auto",
-          overflowX: "hidden",
+          overflow: "hidden",
           padding: Theme.tokens.space.md,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
         {chart(preview, "card")}
+      </div>
+
+      <div
+        style={{
+          flex: "0 0 auto",
+          maxHeight: 120,
+          overflowY: "auto",
+          padding: `0 ${Theme.tokens.space.md} ${Theme.tokens.space.sm}`,
+          borderTop: `1px solid ${Theme.palette().border}`,
+        }}
+      >
         {legend(legendPoints)}
       </div>
 

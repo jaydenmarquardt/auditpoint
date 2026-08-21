@@ -10,6 +10,13 @@ import { ImageFileView } from "@/modules/imagesAudit/ImagesAudit.types";
 import { formatBytes, formatDate, formatNumber } from "@/utils/Format.util";
 import { absoluteFromServerRelative } from "@/utils/Url.util";
 
+const DUPLICATE_TONE = {
+  certain: "danger",
+  likely: "warning",
+  possible: "neutral",
+  none: "neutral",
+} as const;
+
 export const fileColumns: TableColumn<ImageFileView>[] = [
   {
     key: "name",
@@ -71,6 +78,22 @@ export const fileColumns: TableColumn<ImageFileView>[] = [
     minWidth: 150,
     sortValue: (file) => file.modified,
     render: (file) => <span>{file.modified ? formatDate(file.modified) : "-"}</span>,
+  },
+  {
+    key: "duplicate",
+    header: ImagesAuditContent.duplicates.column,
+    minWidth: 170,
+    sortValue: (file) => file.duplicateConfidence,
+    filterValue: (file) => ImagesAuditContent.duplicates[file.duplicateConfidence],
+    render: (file) => (
+      <span title={file.duplicateOf.join("\n")}>
+        <Badge
+          label={ImagesAuditContent.duplicates[file.duplicateConfidence]}
+          tone={DUPLICATE_TONE[file.duplicateConfidence]}
+          showIcon={false}
+        />
+      </span>
+    ),
   },
   {
     key: "flags",

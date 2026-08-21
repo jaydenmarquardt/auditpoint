@@ -1,4 +1,5 @@
 import { normalisePath } from "@/api/Images.api";
+import { ImageFile } from "@/api/Images.types";
 import { ImagesAuditContent } from "@/modules/imagesAudit/ImagesAudit.content";
 import {
   ImageFileView,
@@ -25,21 +26,37 @@ export function buildView(
     if (key) usesByPath.set(key, (usesByPath.get(key) ?? 0) + 1);
   });
 
-  const duplicateKeys = new Map<string, number>();
+  // Three ways of spotting the same picture twice, since the bytes cannot be read
+  // from the browser: identical size and name, identical size alone, or the same
+  // name once a copy suffix is stripped.
+  const byExact = new Map<string, ImageFile[]>();
+  const bySize = new Map<string, ImageFile[]>();
+  const byName = new Map<string, ImageFile[]>();
+
   files.forEach((file) => {
-    const key = `${file.name.toLowerCase()}|${file.sizeBytes}`;
-    duplicateKeys.set(key, (duplicateKeys.get(key) ?? 0) + 1);
+    push(byExact, exactKey(file), file);
+    if (file.sizeBytes > 0) push(bySize, sizeKey(file), file);
+    push(byName, nameKey(file), file);
   });
 
   const views: ImageFileView[] = files.map((file) => {
-    const key = `${file.name.toLowerCase()}|${file.sizeBytes}`;
+    const key = exactKey(file);
     const useCount = usesByPath.get(file.url.toLowerCase()) ?? 0;
+
+    const sameBytes = (bySize.get(sizeKey(file)) ?? []).filter((other) => other.url !== file.url);
+    const sameName = (byName.get(nameKey(file)) ?? []).filter((other) => other.url !== file.url);
+    const sameBoth = (byExact.get(key) ?? []).filter((other) => other.url !== file.url);
+
+    const confidence: ImageFileView["duplicateConfidence"] =
+      sameBoth.length > 0 ? "certain" : sameBytes.length > 0 ? "likely" : sameName.length > 0 ? "possible" : "none";
 
     return {
       ...file,
       useCount,
       duplicateKey: key,
-      isDuplicate: (duplicateKeys.get(key) ?? 0) > 1,
+      duplicateConfidence: confidence,
+      duplicateOf: [...new Set([...sameBoth, ...sameBytes, ...sameName].map((other) => other.url))].slice(0, 20),
+      isDuplicate: confidence === "certain" || confidence === "likely",
       isUnused: useCount === 0,
       isOversized: file.sizeBytes > oversizedBytes,
       isLegacyFormat: LEGACY_FORMATS.indexOf(file.extension) !== -1,
@@ -129,6 +146,29 @@ function sumBy(entries: { key: string; value: number }[]): { label: string; valu
   return [...totals.entries()]
     .map(([label, value]) => ({ label, value }))
     .sort((a, b) => b.value - a.value);
+}
+
+/** `logo (1).png`, `logo-copy.png` and `logo_2.png` are all the same picture's name. */
+function nameKey(file: ImageFile): string {
+  return file.name
+    .toLowerCase()
+    .replace(/\.[a-z0-9]+$/, "")
+    .replace(/[ _-]*(copy|copy \d+|\(\d+\)|\d+)$/, "")
+    .trim();
+}
+
+function sizeKey(file: ImageFile): string {
+  return `${file.extension}|${file.sizeBytes}`;
+}
+
+function exactKey(file: ImageFile): string {
+  return `${nameKey(file)}|${file.sizeBytes}`;
+}
+
+function push(map: Map<string, ImageFile[]>, key: string, file: ImageFile): void {
+  const existing = map.get(key);
+  if (existing) existing.push(file);
+  else map.set(key, [file]);
 }
 
 function sum(values: number[]): number {

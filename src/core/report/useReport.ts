@@ -151,7 +151,12 @@ export function useReport<TData, TConfig>(
     config,
     setConfig,
     status,
-    running: status === "running" || status === "throttled" || status === "queued",
+    // A finished envelope wins over a stale task status, so the controls never sit on
+    // Pause after the last stage has written its results.
+    running:
+      envelope?.status !== "complete" &&
+      envelope?.status !== "failed" &&
+      (status === "running" || status === "throttled" || status === "queued"),
     paused: status === "paused",
     savedUrl: run.savedUrl,
     loading,

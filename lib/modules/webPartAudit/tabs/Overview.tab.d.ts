@@ -6,6 +6,7 @@ export interface OverviewTabProps {
     hasData: boolean;
     onRun: () => void;
     comparison?: React.ReactNode;
+    comparisonCards?: React.ReactNode;
     previousTiles?: StatTileSpec[];
 }
 export declare const OverviewTab: React.FC<OverviewTabProps>;

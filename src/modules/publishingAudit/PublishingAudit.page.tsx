@@ -10,6 +10,8 @@ import { ReportHistory } from "@/modules/shared/ReportHistory";
 import { findModule } from "@/modules/Modules.registry";
 import { statTiles } from "@/modules/publishingAudit/PublishingAudit.stats";
 import { ComparisonBar } from "@/modules/shared/ComparisonBar";
+import { ComparisonCards } from "@/modules/shared/ComparisonCards";
+import { compareTiles } from "@/modules/shared/StatSections";
 import { publishingAuditReport } from "@/modules/publishingAudit/PublishingAudit.report";
 import { PublishingAuditContent } from "@/modules/publishingAudit/PublishingAudit.content";
 import { buildView } from "@/modules/publishingAudit/PublishingAudit.logic";
@@ -135,6 +137,11 @@ const PublishingAuditPage: React.FC = () => {
                 label: PublishingAuditContent.tabs.overview,
                 content: (
                   <OverviewTab view={view} config={config} hasData={hasData} onRun={() => setConfigOpen(true)} previousTiles={previousTiles}
+                    comparisonCards={
+                      previousTiles ? (
+                        <ComparisonCards sections={[{ title: "", tiles: compareTiles(statTiles(view, config), previousTiles) }]} />
+                      ) : undefined
+                    }
                     comparison={
                       hasData ? (
                         <ComparisonBar

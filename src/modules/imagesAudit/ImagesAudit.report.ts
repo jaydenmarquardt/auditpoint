@@ -161,6 +161,7 @@ export const imagesAuditReport: ReportDefinition<ImagesAuditData, ImagesAuditCon
 
         const start = typeof context.cursor === "number" ? context.cursor : 0;
         const usages = context.data.usages ?? [];
+        const scanned = new Set<string>();
 
         for (let index = start; index < lists.length; index = index + 1) {
           await context.waitIfPaused();
@@ -181,6 +182,7 @@ export const imagesAuditReport: ReportDefinition<ImagesAuditData, ImagesAuditCon
             const columns = [...new Set([...named, ...detected])].filter((column) => available.has(column));
 
             if (columns.length > 0) {
+              columns.forEach((column) => scanned.add(column));
               const records = await source.items(list, columns, context.config.maxItemsPerList);
 
               records.forEach((record) =>

@@ -215,6 +215,9 @@ function toChild(stage: {
 }
 
 function taskStatus<TData, TConfig>(envelope: ReportEnvelope<TData, TConfig>): TaskStatus {
+  // The envelope knows it has finished before the runner returns, and the queue has
+  // to hear it: otherwise the last publish leaves the task looking like it is running.
+  if (envelope.status === "complete") return "succeeded";
   if (envelope.status === "cancelled") return "cancelled";
   if (envelope.status === "paused") return "paused";
   if (envelope.status === "failed") return "failed";
