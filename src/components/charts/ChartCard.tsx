@@ -22,7 +22,7 @@ const LABELS: Record<ChartKind, string> = {
   stacked: "Stacked bar",
 };
 
-export const ChartCard: React.FC<ChartCardProps> = ({
+const ChartCardView: React.FC<ChartCardProps> = ({
   title,
   info,
   points,
@@ -281,3 +281,9 @@ export const ChartCard: React.FC<ChartCardProps> = ({
     </section>
   );
 };
+
+/**
+ * Charts are the most expensive thing on an overview and their inputs rarely change
+ * between renders, so identical points skip the redraw.
+ */
+export const ChartCard = React.memo(ChartCardView);

@@ -4,6 +4,7 @@ import { readLocal, writeLocal } from "@/utils/Storage.util";
 
 const KEY = "queue";
 const MAX_TASKS = 40;
+const PERSIST_EVERY_MS = 2000;
 
 /**
  * The queue lives in the browser, so a reload would otherwise lose every record
@@ -25,12 +26,26 @@ export function restoreQueue(): void {
   if (subscribed) return;
   subscribed = true;
 
-  queueStore.subscribe((state) =>
-    writeLocal(
-      KEY,
-      state.tasks.slice(-MAX_TASKS).map((task) => ({ ...task, result: undefined }))
-    )
-  );
+  let pending: number | undefined;
+
+  queueStore.subscribe((state) => {
+    // Serialising the whole queue on every progress update was costing more than the
+    // work it was recording, so writes are coalesced and the child progress dropped.
+    if (pending !== undefined) return;
+
+    pending = window.setTimeout(() => {
+      pending = undefined;
+
+      writeLocal(
+        KEY,
+        state.tasks.slice(-MAX_TASKS).map((task) => ({
+          ...task,
+          result: undefined,
+          progress: { ...task.progress, children: undefined },
+        }))
+      );
+    }, PERSIST_EVERY_MS);
+  });
 }
 
 export const INTERRUPTED = "The page was closed or reloaded before this task finished.";

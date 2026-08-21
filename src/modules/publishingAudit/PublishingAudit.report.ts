@@ -5,6 +5,9 @@ import { ReportDefinition } from "@/core/report/Report.types";
 import { PublishingAuditConfig, PublishingAuditData } from "@/modules/publishingAudit/PublishingAudit.types";
 import { toErrorMessage } from "@/utils/Guard.util";
 
+/** Requests queued per turn of the version loop; the throttle caps what runs. */
+const VERSION_BATCH = 10;
+
 export const PUBLISHING_AUDIT_KIND = "publishing-audit";
 
 export const publishingAuditReport: ReportDefinition<PublishingAuditData, PublishingAuditConfig> = {
@@ -232,30 +235,40 @@ export const publishingAuditReport: ReportDefinition<PublishingAuditData, Publis
         const api = Publishing(context.siteUrl);
         const start = typeof context.cursor === "number" ? context.cursor : 0;
 
-        for (let index = start; index < sample.length; index = index + 1) {
+        // One request per item, so they are fired in batches; the throttle layer still
+        // decides how many are actually in flight.
+        for (let index = start; index < sample.length; index = index + VERSION_BATCH) {
           await context.waitIfPaused();
           if (context.isCancelled()) {
             context.setCursor(index);
             return;
           }
 
-          const item = sample[index];
+          const batch = sample.slice(index, index + VERSION_BATCH);
 
-          try {
-            const history = await api.versions(
-              { id: item.listId, title: item.listTitle } as never,
-              item.itemId,
-              context.config.versionDepth
-            );
+          await Promise.all(
+            batch.map(async (item) => {
+              try {
+                const history = await api.versions(
+                  { id: item.listId, title: item.listTitle } as never,
+                  item.itemId,
+                  context.config.versionDepth
+                );
 
-            item.versionCount = history.count;
-            item.versionEditors = history.editors;
-          } catch (error) {
-            context.issue({ target: item.title, code: statusOf(error) ?? "error", message: toErrorMessage(error) });
-          }
+                item.versionCount = history.count;
+                item.versionEditors = history.editors;
+              } catch (error) {
+                context.issue({
+                  target: item.title,
+                  code: statusOf(error) ?? "error",
+                  message: toErrorMessage(error),
+                });
+              }
+            })
+          );
 
-          context.setCursor(index + 1);
-          context.progress(index + 1, sample.length);
+          context.setCursor(index + VERSION_BATCH);
+          context.progress(Math.min(index + VERSION_BATCH, sample.length), sample.length);
         }
       },
     },

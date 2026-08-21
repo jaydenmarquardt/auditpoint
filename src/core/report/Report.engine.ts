@@ -137,7 +137,7 @@ function buildContext<TData, TConfig>(
     progress: (processed, total) => {
       state.processed = processed;
       state.total = total ?? state.total;
-      publish(envelope, options);
+      publish(envelope, options, true);
     },
     setCursor: (cursor) => {
       state.cursor = cursor;
@@ -205,8 +205,26 @@ function addLog<TData, TConfig>(
   );
 }
 
-function publish<TData, TConfig>(envelope: ReportEnvelope<TData, TConfig>, options: RunOptions<TData, TConfig>): void {
-  envelope.updatedIso = new Date().toISOString();
+/**
+ * A stage reports progress per item, which on a long run is thousands of updates a
+ * minute. Every one of them re-rendered the page and rebuilt its view, so progress
+ * is published on a timer and `updatedIso` only moves when something real happened:
+ * the pages that derive from the run key their memos off it.
+ */
+const PUBLISH_EVERY_MS = 400;
+let lastPublish = 0;
+
+function publish<TData, TConfig>(
+  envelope: ReportEnvelope<TData, TConfig>,
+  options: RunOptions<TData, TConfig>,
+  progressOnly = false
+): void {
+  const now = Date.now();
+  if (progressOnly && now - lastPublish < PUBLISH_EVERY_MS) return;
+
+  lastPublish = now;
+  if (!progressOnly) envelope.updatedIso = new Date().toISOString();
+
   options.onUpdate({ ...envelope, stages: [...envelope.stages], issues: [...envelope.issues] });
 }
 
