@@ -10,6 +10,7 @@ export const WordsByListCard: React.FC<{ view: ContentAuditView }> = ({ view }) 
     defaultChart="hbar"
     charts={["hbar", "donut", "bar"]}
     span={2}
+    selectable={false}
     points={view.wordsByList}
   />
 );

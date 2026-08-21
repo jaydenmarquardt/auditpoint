@@ -10,6 +10,7 @@ export const ItemsByListCard: React.FC<{ view: PublishingAuditView }> = ({ view 
     defaultChart="hbar"
     charts={["hbar", "donut", "bar"]}
     span={2}
+    selectable={false}
     points={view.itemsByList}
   />
 );

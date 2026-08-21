@@ -10,6 +10,7 @@ export const WordsByPageCard: React.FC<{ view: ContentAuditView }> = ({ view }) 
     defaultChart="hbar"
     charts={["hbar", "hbar", "bar"]}
     span={2}
+    selectable={false}
     points={view.wordsByEntry}
   />
 );

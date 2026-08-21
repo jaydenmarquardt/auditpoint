@@ -8,6 +8,7 @@ export const ItemsByListCard: React.FC<{ view: ListsAuditView }> = ({ view }) =>
     title={ListsAuditContent.charts.largestItems}
     info={ListsAuditContent.cardInfo.largestItems}
     span={2}
+    selectable={false}
     points={view.largestByItems.map((list) => ({ label: list.title, value: list.itemCount }))}
     charts={["hbar", "bar"]}
   />

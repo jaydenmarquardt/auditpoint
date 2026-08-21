@@ -10,6 +10,7 @@ export const TopTargetsCard: React.FC<{ view: LinkAuditView }> = ({ view }) => (
     defaultChart="hbar"
     charts={["donut", "hbar", "bar"]}
     span={2}
+    selectable={false}
     points={view.topTargets}
   />
 );

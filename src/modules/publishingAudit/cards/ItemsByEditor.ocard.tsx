@@ -9,6 +9,7 @@ export const ItemsByEditorCard: React.FC<{ view: PublishingAuditView }> = ({ vie
     info={PublishingAuditContent.cardInfo.editors}
     defaultChart="hbar"
     charts={["hbar", "hbar", "donut"]}
+    selectable={false}
     points={view.topEditors}
     previewCount={14}
   />

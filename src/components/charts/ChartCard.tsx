@@ -35,8 +35,11 @@ const ChartCardView: React.FC<ChartCardProps> = ({
   previewCount = 10,
   height = 410,
   span = 1,
+  selectable,
 }) => {
   const charts = React.useMemo(() => [...new Set(requestedCharts)], [requestedCharts]);
+  // A distribution is worth filtering; a top ten list is not.
+  const canSelect = selectable ?? charts.indexOf("donut") !== -1;
   const [kind, setKind] = React.useState<ChartKind>(defaultChart ?? charts[0]);
   // Dropping a dominant slice is how anyone reads the tail of a distribution.
   const [dropped, setDropped] = React.useState<string[]>([]);
@@ -47,6 +50,8 @@ const ChartCardView: React.FC<ChartCardProps> = ({
   const total = shown.reduce((sum, point) => sum + point.value, 0);
   const preview = shown.slice(0, previewCount);
   const hidden = shown.length - preview.length;
+  // The legend lists what was dropped as well, or there is no way to bring it back.
+  const legendPoints = points.slice(0, Math.max(previewCount, preview.length + dropped.length));
 
   const toggle = (label: string): void =>
     setDropped((current) =>
@@ -66,15 +71,20 @@ const ChartCardView: React.FC<ChartCardProps> = ({
     >
       {data.map((point, index) => {
         const off = dropped.indexOf(point.label) !== -1;
-        const share = total === 0 ? 0 : Math.round((point.value / total) * 100);
+        const share = total === 0 || off ? 0 : Math.round((point.value / total) * 100);
 
         return (
           <li key={point.label}>
             <button
               type="button"
+              disabled={!canSelect}
               onClick={() => toggle(point.label)}
-              aria-pressed={!off}
-              title={`${point.label}: ${valueFormatter ? valueFormatter(point.value) : point.value.toLocaleString()}`}
+              aria-pressed={canSelect ? !off : undefined}
+              title={
+                canSelect
+                  ? `${point.label}: click to ${off ? "show" : "hide"}`
+                  : `${point.label}: ${valueFormatter ? valueFormatter(point.value) : point.value.toLocaleString()}`
+              }
               style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -88,7 +98,7 @@ const ChartCardView: React.FC<ChartCardProps> = ({
                 textDecoration: off ? "line-through" : "none",
                 font: "inherit",
                 fontSize: Theme.tokens.font.sm,
-                cursor: "pointer",
+                cursor: canSelect ? "pointer" : "default",
                 minHeight: 28,
               }}
             >
@@ -106,7 +116,8 @@ const ChartCardView: React.FC<ChartCardProps> = ({
                 {point.label}
               </span>
               <span style={{ color: Theme.palette().textMuted, flex: "0 0 auto" }}>
-                {point.value.toLocaleString()} · {share}%
+                {point.value.toLocaleString()}
+                {off ? "" : ` · ${share}%`}
               </span>
             </button>
           </li>
@@ -225,7 +236,7 @@ const ChartCardView: React.FC<ChartCardProps> = ({
         }}
       >
         {chart(preview, "card")}
-        {legend(preview)}
+        {legend(legendPoints)}
       </div>
 
       {(hidden > 0 || footer) && (
@@ -275,7 +286,7 @@ const ChartCardView: React.FC<ChartCardProps> = ({
       >
         <div style={{ minHeight: full ? "70vh" : undefined }}>
           {chart(shown, full ? "fill" : "dialog")}
-          {legend(shown)}
+          {legend(points)}
         </div>
       </PreviewDialog>
     </section>

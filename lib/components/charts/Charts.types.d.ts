@@ -86,6 +86,12 @@ export interface ChartCardProps {
     previewCount?: number;
     /** Columns of the overview grid this card should cover. */
     span?: 1 | 2 | 3;
+    /**
+     * Lets the legend drop and restore entries. Worth it for a distribution, where one
+     * dominant slice hides the rest; pointless for a ranked list. Defaults to on for
+     * cards that offer a donut.
+     */
+    selectable?: boolean;
     height?: number;
 }
 export interface LegendItem {
