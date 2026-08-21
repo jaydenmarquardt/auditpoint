@@ -1,5 +1,6 @@
 import * as React from "react";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { ReportSkeleton } from "@/modules/shared/ReportSkeleton";
 import { Tabs } from "@/components/data/Tabs";
 import { Badge } from "@/components/feedback/Badge";
 import { Theme } from "@/theme/Theme.api";
@@ -36,6 +37,10 @@ const IndexingAuditPage: React.FC = () => {
   const items = data?.items ?? [];
   const properties = data?.managedProperties ?? [];
   const hasData = lists.length > 0;
+
+  if (controller.loading) {
+    return <ReportSkeleton label="Opening report" />;
+  }
 
   return (
     <>

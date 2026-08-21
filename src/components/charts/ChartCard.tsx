@@ -230,11 +230,9 @@ const ChartCardView: React.FC<ChartCardProps> = ({
         style={{
           flex: "1 1 auto",
           minHeight: 0,
-          overflow: "hidden",
+          overflowY: "auto",
+          overflowX: "hidden",
           padding: Theme.tokens.space.md,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
         }}
       >
         {chart(preview, "card")}

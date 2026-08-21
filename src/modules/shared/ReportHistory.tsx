@@ -74,7 +74,8 @@ export const ReportHistory: React.FC<ReportHistoryProps> = ({
       sortValue: (entry) => entry.updatedIso,
       render: (entry) => (
         <div style={{ minWidth: 0 }}>
-          <div style={{ fontWeight: 600 }}>{formatDateTime(entry.updatedIso)}</div>
+          <div style={{ fontWeight: 600 }}>{entry.title || formatDateTime(entry.updatedIso)}</div>
+          <div style={{ fontSize: Theme.tokens.font.sm }}>{formatDateTime(entry.updatedIso)}</div>
           <div style={{ fontSize: Theme.tokens.font.sm, color: Theme.palette().textMuted }}>
             v{entry.version} · {entry.sites.length} site(s)
           </div>

@@ -106,32 +106,42 @@ const Dashboard: React.FC = () => {
                 const locked = Boolean(module) && module?.requiresConfig !== false && !config.configured;
 
                 return (
-                  <Card
-                    key={route.key}
-                    title={route.label}
-                    subtitle={route.description}
-                    onClick={() => navigate(locked ? "settings" : route.key)}
-                    actions={
+                  <Card key={route.key} onClick={() => navigate(locked ? "settings" : route.key)}>
+                    <div style={{ display: "flex", gap: Tokens.space.md, minWidth: 0 }}>
                       <span
                         aria-hidden="true"
                         style={{
                           display: "inline-flex",
                           alignItems: "center",
                           justifyContent: "center",
-                          width: 32,
-                          height: 32,
-                          borderRadius: Tokens.radius.sm,
-                          background: Tokens.colour.accentSoft,
-                          color: Tokens.colour.accent,
+                          width: 44,
+                          height: 44,
+                          flex: "0 0 auto",
+                          borderRadius: Tokens.radius.md,
+                          background: locked ? Tokens.colour.surfaceAlt : Tokens.colour.accentSoft,
+                          color: locked ? Tokens.colour.textMuted : Tokens.colour.accent,
+                          fontSize: 20,
                         }}
                       >
                         <i className={`ms-Icon ms-Icon--${locked ? "Lock" : route.iconName}`} />
                       </span>
-                    }
-                  >
-                    <span style={{ color: locked ? Tokens.colour.textMuted : Tokens.colour.accent, fontWeight: 600 }}>
-                      {locked ? "Configure to enable" : "Open"}
-                    </span>
+
+                      <div style={{ minWidth: 0, display: "grid", gap: 4 }}>
+                        <strong style={{ fontSize: Tokens.font.md }}>{route.label}</strong>
+                        <span style={{ color: Tokens.colour.textMuted, fontSize: Tokens.font.sm }}>
+                          {route.description}
+                        </span>
+                        <span
+                          style={{
+                            color: locked ? Tokens.colour.textMuted : Tokens.colour.accent,
+                            fontWeight: 600,
+                            fontSize: Tokens.font.sm,
+                          }}
+                        >
+                          {locked ? "Configure to enable" : "Open"}
+                        </span>
+                      </div>
+                    </div>
                   </Card>
                 );
               })}

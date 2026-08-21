@@ -9,6 +9,7 @@ import { contentAuditReport } from "@/modules/contentAudit/ContentAudit.report";
 import { publishingAuditReport } from "@/modules/publishingAudit/PublishingAudit.report";
 import { imagesAuditReport } from "@/modules/imagesAudit/ImagesAudit.report";
 import { linkAuditReport } from "@/modules/linkAudit/LinkAudit.report";
+import { analyticsAuditReport } from "@/modules/analyticsAudit/AnalyticsAudit.report";
 
 export const MODULES: Module[] = [
   {
@@ -126,6 +127,20 @@ export const MODULES: Module[] = [
     report: linkAuditReport,
     load: () =>
       import(/* webpackChunkName: "app-link-audit" */ "@/modules/linkAudit/LinkAudit.page") as Promise<{
+        default: React.ComponentType;
+      }>,
+  },
+  {
+    key: "analytics-audit",
+    label: "Analytics",
+    version: "1.0.0",
+    description:
+      "Views, unique viewers and time spent for every page and file, by day, folder, area and file type.",
+    iconName: "BarChartVertical",
+    group: "audits",
+    report: analyticsAuditReport,
+    load: () =>
+      import(/* webpackChunkName: "app-analytics-audit" */ "@/modules/analyticsAudit/AnalyticsAudit.page") as Promise<{
         default: React.ComponentType;
       }>,
   },

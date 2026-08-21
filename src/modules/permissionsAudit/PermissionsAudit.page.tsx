@@ -1,5 +1,6 @@
 import * as React from "react";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { ReportSkeleton } from "@/modules/shared/ReportSkeleton";
 import { Tabs } from "@/components/data/Tabs";
 import { Badge } from "@/components/feedback/Badge";
 import { Theme } from "@/theme/Theme.api";
@@ -45,6 +46,10 @@ const PermissionsAuditPage: React.FC = () => {
   const grants = data?.grants ?? [];
   const scopes = data?.scopes ?? [];
   const hasData = grants.length > 0 || groups.length > 0;
+
+  if (controller.loading) {
+    return <ReportSkeleton label="Opening report" />;
+  }
 
   return (
     <>

@@ -30,24 +30,7 @@ content audit
  - classifieds by price
  - Executive messages by title
 
-Analytics Audit
-- 90 days
-- device views
-- file views
-- use the site apis that the sp site uses not search as its shit check the quark app analytics setting tool for its logic on this apis
-- Unique viewers
-- site visits
-- average time spent
-- page views,
-    - Views by folder
-    - Views by Org unit
-    - views by other props????
-    - unique, visits, % change,
-    - today, 7d,30d,90d, all
-    - get daily and graphs
-    - time spent
-    - time of day
-    - 
+
 *allow merging with other reports
 
 
@@ -97,7 +80,6 @@ audits that run other audits as parent audits?
 
 contact finder in content ie emails and numbers
 - content search
-
 
 
 set this repo up so other repos can include it as a npm package with branch being the version

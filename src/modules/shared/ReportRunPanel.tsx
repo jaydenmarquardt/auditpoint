@@ -4,7 +4,6 @@ import { MenuButton } from "@/components/actions/MenuButton";
 import { ProgressGroup } from "@/components/feedback/ProgressGroup";
 import { StatusBadge } from "@/components/feedback/StatusBadge";
 import { Notice } from "@/components/feedback/Notice";
-import { ReportSkeleton } from "@/modules/shared/ReportSkeleton";
 import { Toolbar } from "@/components/layout/Toolbar";
 import { Modal } from "@/components/actions/Modal";
 import { ReportDetails } from "@/modules/shared/ReportDetails";
@@ -175,8 +174,6 @@ export const ReportRunPanel: React.FC<ReportRunPanelProps> = ({
           if (file) void controller.importJson(file);
         }}
       />
-
-      {controller.loading && <ReportSkeleton label={`Opening ${title}`} />}
 
       {controller.error && (
         <Notice tone="error" message={controller.error} onDismiss={controller.clearError} />
