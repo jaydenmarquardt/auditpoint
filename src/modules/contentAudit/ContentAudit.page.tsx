@@ -67,7 +67,7 @@ const ContentAuditPage: React.FC = () => {
           kind={contentAuditReport.kind}
           title={ContentAuditContent.historyTitle}
           newLabel={ContentAuditContent.run}
-          busy={controller.running}
+          busy={controller.running || controller.loading}
           onNew={() => setConfigOpen(true)}
           onOpen={(url) => void controller.open(url)}
           onResume={(url) => void controller.resumeSaved(url)}

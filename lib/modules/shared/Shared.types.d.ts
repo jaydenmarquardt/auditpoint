@@ -39,8 +39,8 @@ export interface ReportHistoryProps {
     title: string;
     newLabel: string;
     onNew: () => void;
-    onOpen: (serverRelativeUrl: string) => void;
-    onResume: (serverRelativeUrl: string) => void;
+    onOpen: (serverRelativeUrl: string) => void | Promise<void>;
+    onResume: (serverRelativeUrl: string) => void | Promise<void>;
     busy?: boolean;
     /** Loads a run exported earlier, so results can be shared as a file. */
     onImport?: (file: File) => void;

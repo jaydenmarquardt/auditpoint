@@ -25,6 +25,8 @@ export interface ReportController<TData, TConfig = Record<string, unknown>> {
   running: boolean;
   paused: boolean;
   savedUrl?: string;
+  /** True while a saved run is being read: they can be tens of megabytes. */
+  loading: boolean;
   /** Last failure from opening or resuming a saved run, for the page to surface. */
   error?: string;
   clearError(): void;
@@ -52,6 +54,7 @@ export function useReport<TData, TConfig>(
     reportConfig(definition as unknown as ReportDefinition<unknown, TConfig>)
   );
   const [error, setError] = useState<string | undefined>(undefined);
+  const [loading, setLoading] = useState(false);
 
   const start = useCallback(
     (sites?: string[]) => {
@@ -95,6 +98,7 @@ export function useReport<TData, TConfig>(
 
   const open = useCallback(async (serverRelativeUrl: string) => {
     setError(undefined);
+    setLoading(true);
 
     try {
       const saved = await Reports().read<TData, TConfig>(serverRelativeUrl);
@@ -103,6 +107,8 @@ export function useReport<TData, TConfig>(
       // A run deleted since the list was drawn is the common case, so say so rather
       // than leaving a button that appears to do nothing.
       setError(`${MISSING_REPORT} ${toErrorMessage(failure)}`);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -126,12 +132,15 @@ export function useReport<TData, TConfig>(
   const resumeSaved = useCallback(
     async (serverRelativeUrl: string) => {
       setError(undefined);
+      setLoading(true);
 
       try {
         const saved = await Reports().read<TData, TConfig>(serverRelativeUrl);
         startReport(definition, { resumeFrom: saved, sites: saved.sites, config: saved.config });
       } catch (failure) {
         setError(`${MISSING_REPORT} ${toErrorMessage(failure)}`);
+      } finally {
+        setLoading(false);
       }
     },
     [definition]
@@ -145,6 +154,7 @@ export function useReport<TData, TConfig>(
     running: status === "running" || status === "throttled" || status === "queued",
     paused: status === "paused",
     savedUrl: run.savedUrl,
+    loading,
     error,
     clearError: useCallback(() => setError(undefined), []),
     start,

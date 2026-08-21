@@ -9,6 +9,8 @@ export interface ReportController<TData, TConfig = Record<string, unknown>> {
     running: boolean;
     paused: boolean;
     savedUrl?: string;
+    /** True while a saved run is being read: they can be tens of megabytes. */
+    loading: boolean;
     /** Last failure from opening or resuming a saved run, for the page to surface. */
     error?: string;
     clearError(): void;

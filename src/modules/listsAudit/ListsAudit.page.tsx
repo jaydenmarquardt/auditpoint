@@ -69,7 +69,7 @@ const ListsAuditPage: React.FC = () => {
           kind={listsAuditReport.kind}
           title={ListsAuditContent.historyTitle}
           newLabel={ListsAuditContent.run}
-          busy={controller.running}
+          busy={controller.running || controller.loading}
           onNew={() => setConfigOpen(true)}
           onOpen={(url) => void controller.open(url)}
           onResume={(url) => void controller.resumeSaved(url)}

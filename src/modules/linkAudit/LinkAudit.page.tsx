@@ -67,7 +67,7 @@ const LinkAuditPage: React.FC = () => {
           kind={linkAuditReport.kind}
           title={LinkAuditContent.historyTitle}
           newLabel={LinkAuditContent.run}
-          busy={controller.running}
+          busy={controller.running || controller.loading}
           onNew={() => setConfigOpen(true)}
           onOpen={(url) => void controller.open(url)}
           onResume={(url) => void controller.resumeSaved(url)}

@@ -67,7 +67,7 @@ const PermissionsAuditPage: React.FC = () => {
           kind={permissionsAuditReport.kind}
           title={PermissionsAuditContent.historyTitle}
           newLabel={PermissionsAuditContent.run}
-          busy={controller.running}
+          busy={controller.running || controller.loading}
           onNew={() => setConfigOpen(true)}
           onOpen={(url) => void controller.open(url)}
           onResume={(url) => void controller.resumeSaved(url)}

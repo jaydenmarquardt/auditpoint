@@ -79,7 +79,7 @@ const PublishingAuditPage: React.FC = () => {
           kind={publishingAuditReport.kind}
           title={PublishingAuditContent.historyTitle}
           newLabel={PublishingAuditContent.run}
-          busy={controller.running}
+          busy={controller.running || controller.loading}
           onNew={() => setConfigOpen(true)}
           onOpen={(url) => void controller.open(url)}
           onResume={(url) => void controller.resumeSaved(url)}

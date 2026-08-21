@@ -84,7 +84,7 @@ const WebPartAuditPage: React.FC = () => {
           kind={webPartAuditReport.kind}
           title={WebPartAuditContent.historyTitle}
           newLabel={WebPartAuditContent.run}
-          busy={controller.running}
+          busy={controller.running || controller.loading}
           onNew={() => setConfigOpen(true)}
           onOpen={(url) => void controller.open(url)}
           onResume={(url) => void controller.resumeSaved(url)}

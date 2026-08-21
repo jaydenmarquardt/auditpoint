@@ -4,6 +4,7 @@ import { MenuButton } from "@/components/actions/MenuButton";
 import { ProgressGroup } from "@/components/feedback/ProgressGroup";
 import { StatusBadge } from "@/components/feedback/StatusBadge";
 import { Notice } from "@/components/feedback/Notice";
+import { LoadingState } from "@/components/states/Loading.state";
 import { Toolbar } from "@/components/layout/Toolbar";
 import { Modal } from "@/components/actions/Modal";
 import { ReportDetails } from "@/modules/shared/ReportDetails";
@@ -95,6 +96,8 @@ export const ReportRunPanel: React.FC<ReportRunPanelProps> = ({
         {extraControls}
 
         <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: Theme.tokens.space.sm }}>
+          {envelope && <StatusBadge status={mapRunStatus(envelope.status)} />}
+
           <MenuButton
             label="More"
             items={[
@@ -122,7 +125,6 @@ export const ReportRunPanel: React.FC<ReportRunPanelProps> = ({
             ]}
           />
 
-          {envelope && <StatusBadge status={mapRunStatus(envelope.status)} />}
         </div>
       </Toolbar>
       )}
@@ -173,6 +175,19 @@ export const ReportRunPanel: React.FC<ReportRunPanelProps> = ({
           if (file) void controller.importJson(file);
         }}
       />
+
+      {controller.loading && (
+        <div
+          style={{
+            border: `1px solid ${Theme.palette().border}`,
+            borderRadius: Theme.tokens.radius.md,
+            background: Theme.palette().surface,
+            padding: Theme.tokens.space.lg,
+          }}
+        >
+          <LoadingState label="Opening report. Large runs take a moment to read and parse." />
+        </div>
+      )}
 
       {controller.error && (
         <Notice tone="error" message={controller.error} onDismiss={controller.clearError} />

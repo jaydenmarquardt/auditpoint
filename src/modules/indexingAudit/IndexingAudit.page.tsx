@@ -58,7 +58,7 @@ const IndexingAuditPage: React.FC = () => {
           kind={indexingAuditReport.kind}
           title={IndexingAuditContent.historyTitle}
           newLabel={IndexingAuditContent.run}
-          busy={controller.running}
+          busy={controller.running || controller.loading}
           onNew={() => setConfigOpen(true)}
           onOpen={(url) => void controller.open(url)}
           onResume={(url) => void controller.resumeSaved(url)}

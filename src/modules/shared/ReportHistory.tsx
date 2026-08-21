@@ -32,12 +32,22 @@ export const ReportHistory: React.FC<ReportHistoryProps> = ({
   const fileInput = React.useRef<HTMLInputElement>(null);
   const { access } = useApp();
   const [pendingDelete, setPendingDelete] = React.useState<ReportIndexEntry | undefined>(undefined);
+  // A large run takes seconds to read, so the row that was clicked says so.
+  const [opening, setOpening] = React.useState<string | undefined>(undefined);
   const [deleteError, setDeleteError] = React.useState<string | undefined>(undefined);
   const entries = useAsync(async () => (await Reports().index()).filter((entry) => entry.kind === kind), {
     deps: [kind],
   });
 
   const urlOf = (entry: ReportIndexEntry): string => `${reportFolderUrl()}/${entry.fileName}`;
+
+  const run = (entry: ReportIndexEntry, action: (url: string) => void | Promise<void>): void => {
+    setOpening(entry.id);
+
+    Promise.resolve(action(urlOf(entry)))
+      .then(() => setOpening(undefined))
+      .catch(() => setOpening(undefined));
+  };
 
   const remove = (entry: ReportIndexEntry): void => {
     setPendingDelete(undefined);
@@ -120,19 +130,21 @@ export const ReportHistory: React.FC<ReportHistoryProps> = ({
       render: (entry) => (
         <div style={{ display: "flex", gap: 4 }}>
           <Button
-            label="Open"
+            label={opening === entry.id ? "Opening" : "Open"}
             variant="subtle"
             iconName="OpenFile"
-            disabled={busy}
-            onClick={() => onOpen(urlOf(entry))}
+            busy={opening === entry.id}
+            disabled={busy || Boolean(opening)}
+            onClick={() => run(entry, onOpen)}
           />
           {entry.status !== "complete" && owns(entry) && (
             <Button
               label="Resume"
               variant="subtle"
               iconName="Play"
-              disabled={busy}
-              onClick={() => onResume(urlOf(entry))}
+              busy={opening === entry.id}
+              disabled={busy || Boolean(opening)}
+              onClick={() => run(entry, onResume)}
             />
           )}
           <Button
