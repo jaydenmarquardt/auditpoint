@@ -64,20 +64,15 @@ export function statTiles(view: PublishingAuditView, config: PublishingAuditConf
       info: PublishingAuditContent.tileInfo.versions,
     },
     { iconName: "EditContact", key: "editors", label: PublishingAuditContent.stats.editors, value: formatNumber(totals.editors), info: PublishingAuditContent.tileInfo.editors },
+    { iconName: "Contact", key: "authors", label: PublishingAuditContent.stats.authors, value: formatNumber(totals.authors), info: PublishingAuditContent.tileInfo.authors },
     {
-      iconName: "View", key: "views",
-      label: PublishingAuditContent.stats.views,
-      value: formatNumber(totals.viewsRecent),
-      unavailable: !(config.readPopularity),
-      info: PublishingAuditContent.tileInfo.views,
-    },
-    {
-      iconName: "Hide", key: "unviewed",
-      label: PublishingAuditContent.stats.unviewed,
-      value: formatNumber(totals.unviewed),
-      unavailable: !(config.readPopularity),
+      iconName: "PageRemove",
+      key: "unpublished",
+      label: PublishingAuditContent.stats.unpublished,
+      value: formatNumber(totals.unpublished),
       tone: "warning",
-      info: PublishingAuditContent.tileInfo.unviewed,
+      badge: totals.unpublished > 0 ? PublishingAuditContent.review : undefined,
+      info: PublishingAuditContent.tileInfo.unpublished,
     },
   ];
 }
@@ -92,8 +87,8 @@ export const PublishingAuditStats: React.FC<{
 
 /** Grouped so the overview answers one question at a time. */
 export const STAT_SECTIONS: StatSectionSpec[] = [
-  { title: "Approval", keys: ["items", "lists", "approved", "pending", "draft", "rejected"] },
+  { title: "Approval", keys: ["items", "lists", "approved", "pending", "draft", "rejected", "unpublished"] },
   { title: "Freshness", keys: ["created", "modified", "stale", "never"] },
   { title: "Dates and versions", keys: ["due", "expired", "versionsScanned", "versions"] },
-  { title: "Audience", keys: ["editors", "views", "unviewed"] },
+  { title: "People", keys: ["editors", "authors"] },
 ];

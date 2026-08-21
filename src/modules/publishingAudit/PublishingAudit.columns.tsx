@@ -109,13 +109,7 @@ export const itemColumns: TableColumn<PublishingItem>[] = [
     sortValue: (item) => item.versionCount ?? -1,
     render: (item) => <span>{item.versionCount === undefined ? "-" : formatNumber(item.versionCount)}</span>,
   },
-  {
-    key: "views",
-    header: PublishingAuditContent.columns.views,
-    minWidth: 130,
-    sortValue: (item) => item.viewsRecent ?? -1,
-    render: (item) => <span>{item.viewsRecent === undefined ? "-" : formatNumber(item.viewsRecent)}</span>,
-  },
+  
   actionsColumn,
 ];
 

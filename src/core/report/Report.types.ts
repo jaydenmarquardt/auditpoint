@@ -10,6 +10,8 @@ export interface ConfigField<TConfig> {
   group?: string;
   /** Text fields holding a list read better with room for one entry per line. */
   multiline?: boolean;
+  /** Hides the field until it applies, so the dialog only asks what it needs. */
+  showWhen?: (config: TConfig) => boolean;
   description?: string;
   required?: boolean;
   min?: number;

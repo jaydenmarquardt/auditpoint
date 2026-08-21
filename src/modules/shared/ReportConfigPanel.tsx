@@ -22,7 +22,11 @@ export function ReportConfigPanel<TConfig>({
   const set = (key: string, value: unknown): void =>
     onChange({ ...values, [key]: value } as unknown as TConfig);
 
-  const groups = definition.configFields.reduce<Record<string, ConfigField<TConfig>[]>>((all, field) => {
+  const applies = definition.configFields.filter(
+    (field: ConfigField<TConfig>) => !field.showWhen || field.showWhen(config)
+  );
+
+  const groups = applies.reduce<Record<string, ConfigField<TConfig>[]>>((all, field) => {
     const group = field.group ?? "";
     return { ...all, [group]: [...(all[group] ?? []), field] };
   }, {});

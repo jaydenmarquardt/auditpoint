@@ -13,11 +13,17 @@ import { ComparisonBar } from "@/modules/shared/ComparisonBar";
 import { publishingAuditReport } from "@/modules/publishingAudit/PublishingAudit.report";
 import { PublishingAuditContent } from "@/modules/publishingAudit/PublishingAudit.content";
 import { buildView } from "@/modules/publishingAudit/PublishingAudit.logic";
-import { PublishingAuditConfig, PublishingAuditData } from "@/modules/publishingAudit/PublishingAudit.types";
+import {
+  PublishingAuditConfig,
+  PublishingAuditData,
+  PublishingPerson,
+} from "@/modules/publishingAudit/PublishingAudit.types";
 import { exportPublishingAudit } from "@/modules/publishingAudit/PublishingAudit.csv";
 import { reviewColumns } from "@/modules/publishingAudit/PublishingAudit.columns";
 import { OverviewTab } from "@/modules/publishingAudit/tabs/Overview.tab";
 import { ItemsTab } from "@/modules/publishingAudit/tabs/Items.tab";
+import { PeopleTab } from "@/modules/publishingAudit/People.tab";
+import { PersonDialog } from "@/modules/publishingAudit/Person.dialog";
 import { ItemDialog } from "@/modules/publishingAudit/Item.dialog";
 import { PublishingItem } from "@/api/Publishing.types";
 
@@ -25,6 +31,7 @@ const PublishingAuditPage: React.FC = () => {
   const controller = useReport<PublishingAuditData, PublishingAuditConfig>(publishingAuditReport);
   const [tab, setTab] = React.useState("overview");
   const [configOpen, setConfigOpen] = React.useState(false);
+  const [person, setPerson] = React.useState<PublishingPerson | undefined>(undefined);
   const [selected, setSelected] = React.useState<PublishingItem | undefined>(undefined);
 
   const module = findModule("publishing-audit");
@@ -147,6 +154,25 @@ const PublishingAuditPage: React.FC = () => {
                 content: <ItemsTab items={items} onSelect={setSelected} />,
               },
               {
+                key: "people",
+                label: PublishingAuditContent.tabs.people,
+                count: view.people.length,
+                content: <PeopleTab people={view.people} onSelect={setPerson} />,
+              },
+              {
+                key: "unpublished",
+                label: PublishingAuditContent.tabs.unpublished,
+                count: view.unpublishedItems.length,
+                content: (
+                  <ItemsTab
+                    items={view.unpublishedItems}
+                    emptyTitle={PublishingAuditContent.unpublishedTab}
+                    emptyDescription={PublishingAuditContent.unpublishedEmpty}
+                    onSelect={setSelected}
+                  />
+                ),
+              },
+              {
                 key: "review",
                 label: PublishingAuditContent.tabs.review,
                 count: view.reviewItems.length,
@@ -177,6 +203,15 @@ const PublishingAuditPage: React.FC = () => {
           />
         </div>
       )}
+      <PersonDialog
+        person={person}
+        onDismiss={() => setPerson(undefined)}
+        onSelectItem={(item) => {
+          setPerson(undefined);
+          setSelected(item);
+        }}
+      />
+
       <ItemDialog
         item={selected}
         versionDepth={config.versionDepth}

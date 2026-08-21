@@ -64,10 +64,7 @@ export const ItemDialog: React.FC<ItemDialogProps> = ({ item, versionDepth, onLo
         { label: PublishingAuditContent.columns.version, value: item.versionLabel || "-" },
         { label: PublishingAuditContent.columns.review, value: reviewDate(item) ? formatDate(reviewDate(item)!) : "-" },
         { label: PublishingAuditContent.columns.expiry, value: expiryDate(item) ? formatDate(expiryDate(item)!) : "-" },
-        {
-          label: PublishingAuditContent.columns.views,
-          value: item.viewsRecent === undefined ? "-" : formatNumber(item.viewsRecent),
-        },
+        
       ]}
       actions={
         <>

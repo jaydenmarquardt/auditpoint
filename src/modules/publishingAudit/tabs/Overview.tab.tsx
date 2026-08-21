@@ -41,7 +41,6 @@ export const OverviewTab: React.FC<{
 
       <PublishingAuditStats view={view} config={config} previousTiles={previousTiles} />
 
-      {config.readPopularity && <Notice tone="info" message={PublishingAuditContent.popularityNote} />}
       {config.readVersions && <Notice tone="info" message={PublishingAuditContent.versionsNote} />}
 
       <ErrorBoundary>

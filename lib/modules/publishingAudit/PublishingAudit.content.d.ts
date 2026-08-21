@@ -12,11 +12,34 @@ export declare const PublishingAuditContent: {
     readonly cancel: "Cancel";
     readonly exportCsv: "Export CSV";
     readonly review: "Review";
+    readonly people: {
+        readonly title: "People";
+        readonly description: "Everyone who created or last edited something in this scan.";
+        readonly empty: "No creators or editors were recorded for the scanned items.";
+        readonly columns: {
+            readonly name: "Person";
+            readonly created: "Created";
+            readonly edited: "Last editor of";
+            readonly touched: "Items";
+            readonly unpublished: "Unpublished";
+            readonly stale: "Stale";
+            readonly lists: "Lists";
+            readonly lastEdit: "Last edit";
+        };
+        readonly dialog: {
+            readonly items: "Everything they touched";
+            readonly stats: "Their share of the scan";
+        };
+    };
+    readonly unpublishedTab: "Unpublished";
+    readonly unpublishedEmpty: "Everything scanned has a published version.";
     readonly tabs: {
         readonly overview: "Overview";
         readonly items: "Items";
         readonly review: "Review dates";
         readonly stale: "Stale";
+        readonly people: "People";
+        readonly unpublished: "Unpublished";
     };
     readonly stats: {
         readonly items: "Items read";
@@ -33,8 +56,8 @@ export declare const PublishingAuditContent: {
         readonly versions: "Average versions";
         readonly maxVersions: "Deepest version history";
         readonly editors: "Distinct editors";
-        readonly views: "Recent views";
-        readonly unviewed: "No recent views";
+        readonly authors: "Creators";
+        readonly unpublished: "Unpublished";
         readonly versionsScanned: "Versions scanned";
         readonly lists: "Lists read";
     };
@@ -53,8 +76,8 @@ export declare const PublishingAuditContent: {
         readonly versions: "Mean version count across the sampled items.";
         readonly maxVersions: "The deepest version history found, which is where storage tends to hide.";
         readonly editors: "People who last edited at least one item.";
-        readonly views: "Recent views reported by search for the matched items.";
-        readonly unviewed: "Items search reports with no recent views.";
+        readonly authors: "Distinct people who created something in the scan.";
+        readonly unpublished: "Items with no published version: held by moderation, or sitting on a 0.x draft version.";
         readonly versionsScanned: "Total versions read across the sampled items.";
         readonly lists: "Lists and libraries included in this run.";
     };
@@ -89,7 +112,6 @@ export declare const PublishingAuditContent: {
         readonly versions: "Versions";
         readonly review: "Review date";
         readonly expiry: "Expiry date";
-        readonly views: "Recent views";
         readonly actions: "Actions";
     };
     readonly status: {
@@ -114,7 +136,6 @@ export declare const PublishingAuditContent: {
         readonly loadVersions: "Load version history";
         readonly versionsRead: "versions read, most recent first";
     };
-    readonly popularityNote: "View counts come from the search index and only cover items search returned, so they are a guide rather than a full record.";
     readonly versionsNote: "Version counts come from a sample of the most recently changed items.";
     readonly empty: {
         readonly title: "No audit yet";

@@ -12,14 +12,12 @@ export interface PublishingAuditConfig {
   readVersions: boolean;
   versionDepth: number;
   versionSample: number;
-  readPopularity: boolean;
 }
 
 export interface PublishingAuditData {
   items: PublishingItem[];
   listCount: number;
   scannedSites: string[];
-  popularityRead: boolean;
 }
 
 export interface PublishingTotals {
@@ -38,15 +36,30 @@ export interface PublishingTotals {
   averageVersions: number;
   maxVersions: number;
   editors: number;
-  viewsRecent: number;
-  unviewed: number;
+  authors: number;
+  /** Items with no published version: a draft, pending, rejected or 0.x item. */
+  unpublished: number;
   versionsScanned: number;
   itemsVersioned: number;
   lists: number;
 }
 
+/** One person, with everything they touched in the scan. */
+export interface PublishingPerson {
+  name: string;
+  created: number;
+  edited: number;
+  unpublished: number;
+  stale: number;
+  lists: string[];
+  lastEdit: string;
+  items: PublishingItem[];
+}
+
 export interface PublishingAuditView {
   totals: PublishingTotals;
+  people: PublishingPerson[];
+  unpublishedItems: PublishingItem[];
   createdByMonth: { label: string; value: number }[];
   modifiedByMonth: { label: string; value: number }[];
   modifiedByWeekday: { label: string; value: number }[];

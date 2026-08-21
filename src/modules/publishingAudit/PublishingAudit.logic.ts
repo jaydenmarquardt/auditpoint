@@ -4,6 +4,7 @@ import {
   PublishingAuditConfig,
   PublishingAuditData,
   PublishingAuditView,
+  PublishingPerson,
   PublishingTotals,
 } from "@/modules/publishingAudit/PublishingAudit.types";
 
@@ -25,6 +26,15 @@ export function daysSinceEdit(item: PublishingItem): number {
 
 export function isStale(item: PublishingItem, staleDays: number): boolean {
   return Boolean(item.modified) && daysSinceEdit(item) > staleDays;
+}
+
+/**
+ * Nothing published: either moderation is holding it, or its only version is a minor
+ * one, which is what a draft looks like on a library with major versions switched on.
+ */
+export function isUnpublished(item: PublishingItem): boolean {
+  if (item.moderationStatus === 1 || item.moderationStatus === 2 || item.moderationStatus === 3) return true;
+  return `${item.versionLabel ?? ""}`.startsWith("0.");
 }
 
 export function reviewDate(item: PublishingItem): string | undefined {
@@ -60,8 +70,8 @@ export function buildView(
       versions.length === 0 ? 0 : Math.round((versions.reduce((sum, count) => sum + count, 0) / versions.length) * 10) / 10,
     maxVersions: versions.length === 0 ? 0 : Math.max(...versions),
     editors: new Set(items.map((item) => item.editorTitle).filter(Boolean)).size,
-    viewsRecent: items.reduce((sum, item) => sum + (item.viewsRecent ?? 0), 0),
-    unviewed: items.filter((item) => item.viewsRecent === 0).length,
+    authors: new Set(items.map((item) => item.authorTitle).filter(Boolean)).size,
+    unpublished: items.filter(isUnpublished).length,
     versionsScanned: versions.reduce((sum, count) => sum + count, 0),
     itemsVersioned: versions.length,
     lists: data?.listCount ?? new Set(items.map((item) => item.listId)).size,
@@ -76,9 +86,62 @@ export function buildView(
     topEditors: countBy(items.map((item) => item.editorTitle).filter(Boolean)).slice(0, 12),
     stalenessSplit: bucketAges(items),
     itemsByList: countBy(items.map((item) => item.listTitle)).slice(0, 12),
+    people: peopleFrom(items, config.staleDays),
+    unpublishedItems: items.filter(isUnpublished),
     reviewItems: items.filter((item) => reviewDate(item) || expiryDate(item)),
     staleItems: items.filter((item) => isStale(item, config.staleDays)),
   };
+}
+
+/**
+ * Everyone who created or last edited something, with their own slice of the scan.
+ * Authors and editors share one list: people ask "what has Jo touched", not "what did
+ * Jo touch as an editor".
+ */
+export function peopleFrom(items: PublishingItem[], staleDays: number): PublishingPerson[] {
+  const byName = new Map<string, PublishingPerson>();
+
+  const ensure = (name: string): PublishingPerson => {
+    const existing = byName.get(name);
+    if (existing) return existing;
+
+    const created: PublishingPerson = {
+      name,
+      created: 0,
+      edited: 0,
+      unpublished: 0,
+      stale: 0,
+      lists: [],
+      lastEdit: "",
+      items: [],
+    };
+    byName.set(name, created);
+    return created;
+  };
+
+  const touch = (person: PublishingPerson, item: PublishingItem): void => {
+    if (person.items.indexOf(item) === -1) person.items.push(item);
+    if (item.listTitle && person.lists.indexOf(item.listTitle) === -1) person.lists.push(item.listTitle);
+    if (item.modified && item.modified > person.lastEdit) person.lastEdit = item.modified;
+    if (isUnpublished(item)) person.unpublished = person.unpublished + 1;
+    if (isStale(item, staleDays)) person.stale = person.stale + 1;
+  };
+
+  items.forEach((item) => {
+    if (item.authorTitle) {
+      const author = ensure(item.authorTitle);
+      author.created = author.created + 1;
+      touch(author, item);
+    }
+
+    if (item.editorTitle) {
+      const editor = ensure(item.editorTitle);
+      editor.edited = editor.edited + 1;
+      touch(editor, item);
+    }
+  });
+
+  return [...byName.values()].sort((first, second) => second.items.length - first.items.length);
 }
 
 function isPast(iso: string | undefined): boolean {

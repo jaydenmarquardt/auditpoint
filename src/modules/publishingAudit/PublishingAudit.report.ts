@@ -27,7 +27,6 @@ export const publishingAuditReport: ReportDefinition<PublishingAuditData, Publis
     readVersions: false,
     versionDepth: 50,
     versionSample: 5000,
-    readPopularity: true,
   },
 
   configFields: [
@@ -65,6 +64,7 @@ export const publishingAuditReport: ReportDefinition<PublishingAuditData, Publis
     },
     {
       key: "listNames",
+      showWhen: (config) => config.listScope === "custom",
       label: "List names",
       type: "text",
       group: "Columns and paths",
@@ -133,13 +133,7 @@ export const publishingAuditReport: ReportDefinition<PublishingAuditData, Publis
       step: 5,
       description: "How deep to read each item's history.",
     },
-    {
-      key: "readPopularity",
-      label: "Read view counts from search",
-      type: "toggle",
-      group: "What to scan",
-      description: "One search request adds recent and lifetime views for items search knows about.",
-    },
+    
   ],
 
   stages: [
@@ -247,37 +241,7 @@ export const publishingAuditReport: ReportDefinition<PublishingAuditData, Publis
         }
       },
     },
-    {
-      key: "popularity",
-      work: "network",
-      label: "Read view counts",
-      async run(context) {
-        if (!context.config.readPopularity) {
-          context.progress(0, 0);
-          return;
-        }
-
-        try {
-          const rows = await Publishing(context.siteUrl).popularity(500);
-          const byPath = new Map(rows.map((row) => [normalise(row.path), row]));
-
-          (context.data.items ?? []).forEach((item) => {
-            const match = byPath.get(normalise(item.url));
-            if (!match) return;
-
-            item.viewsRecent = match.viewsRecent;
-            item.viewsLifetime = match.viewsLifetime;
-            item.lastViewed = match.lastModified;
-          });
-
-          context.data.popularityRead = true;
-          context.progress(rows.length, rows.length);
-        } catch (error) {
-          context.issue({ target: context.siteUrl, code: "error", message: toErrorMessage(error) });
-        }
-      },
-    },
-    {
+        {
       key: "summarise",
       work: "client",
       label: "Summarise",
@@ -288,10 +252,6 @@ export const publishingAuditReport: ReportDefinition<PublishingAuditData, Publis
     },
   ],
 };
-
-function normalise(url: string): string {
-  return url.replace(/^https?:\/\/[^/]+/i, "").toLowerCase();
-}
 
 function statusOf(error: unknown): number | undefined {
   const candidate = error as { status?: number; httpStatus?: number };
